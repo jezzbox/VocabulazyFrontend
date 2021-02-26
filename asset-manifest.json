@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/VocabulazyFrontend/static/css/main.14062cc3.chunk.css",
+    "main.js": "/VocabulazyFrontend/static/js/main.332451b7.chunk.js",
+    "main.js.map": "/VocabulazyFrontend/static/js/main.332451b7.chunk.js.map",
+    "runtime-main.js": "/VocabulazyFrontend/static/js/runtime-main.d8a1fced.js",
+    "runtime-main.js.map": "/VocabulazyFrontend/static/js/runtime-main.d8a1fced.js.map",
+    "static/js/2.de60b73a.chunk.js": "/VocabulazyFrontend/static/js/2.de60b73a.chunk.js",
+    "static/js/2.de60b73a.chunk.js.map": "/VocabulazyFrontend/static/js/2.de60b73a.chunk.js.map",
+    "static/js/3.bae5df53.chunk.js": "/VocabulazyFrontend/static/js/3.bae5df53.chunk.js",
+    "static/js/3.bae5df53.chunk.js.map": "/VocabulazyFrontend/static/js/3.bae5df53.chunk.js.map",
+    "index.html": "/VocabulazyFrontend/index.html",
+    "static/css/main.14062cc3.chunk.css.map": "/VocabulazyFrontend/static/css/main.14062cc3.chunk.css.map",
+    "static/js/2.de60b73a.chunk.js.LICENSE.txt": "/VocabulazyFrontend/static/js/2.de60b73a.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.d8a1fced.js",
+    "static/js/2.de60b73a.chunk.js",
+    "static/css/main.14062cc3.chunk.css",
+    "static/js/main.332451b7.chunk.js"
+  ]
+}
