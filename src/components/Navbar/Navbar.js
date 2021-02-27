@@ -1,10 +1,12 @@
 import MenuItems from './MenuItems'
 import './navbar.css'
+import logo from './logo.png'
 const Navbar = ( { toggleNavMenu, onToggleNavMenu  } ) => {
     return (
 
      <nav className="NavbarItems">
         <h1 className="navbar-logo">VocabuLazy</h1>
+        <img className="resize" src={logo} alt = "logo"/>
         <div className="menu-icon" onClick={onToggleNavMenu}>
             <i className={toggleNavMenu ? 'fas fa-times' : 'fas fa-bars'}></i>
         </div>

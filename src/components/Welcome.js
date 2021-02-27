@@ -16,7 +16,7 @@ const Welcome = ({ isAuthenticated, isLoading }) => {
             </div>
             <div className="center">
               <LoginButton />
-              <Button text="take a demo" />
+              <Button text="Try it out" />
             </div>
             </>
         )
