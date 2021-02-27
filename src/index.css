@@ -11,10 +11,10 @@ body {
 }
 
 .container {
-  max-width: 500px;
+  max-width: 1200px;
   margin: 30px auto;
   overflow: auto;
-  min-height: 300px;
+  min-height: 200px;
   border: 1px solid steelblue;
   padding: 30px;
   border-radius: 5px;
@@ -22,7 +22,7 @@ body {
 
 .header {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   margin-bottom: 20px;
 }
@@ -111,3 +111,13 @@ footer {
   text-align: center;
 }
 
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.muted {
+  color:darkgrey
+}

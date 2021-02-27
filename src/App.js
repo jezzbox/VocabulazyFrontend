@@ -1,8 +1,14 @@
 import { useState, useEffect } from 'react'
 import Header from './components/Header'
+import Profile from './components/Profile'
 import Phrases from './components/Phrases'
+import { useAuth0 } from "@auth0/auth0-react"
+import Welcome from './components/Welcome'
+import Navbar from './components/Navbar/Navbar';
 function App() {
+  const { user, isAuthenticated, isLoading } = useAuth0();
   const [phrases, setPhrases] = useState([])
+  const [toggleNavMenu, setToggleNavMenu] = useState(false)
 
   useEffect(() => {
     const getPhrases = async () => {
@@ -20,11 +26,16 @@ function App() {
     return data
   }
 
-  return (
+
+  return (<>
+  <Navbar onToggleNavMenu={() => setToggleNavMenu(!toggleNavMenu)} toggleNavMenu={toggleNavMenu}/>
     <div className="container">
-      <Header />
+      <Header title="Welcome to Vocabulazy!" isAuthenticated={isAuthenticated} isLoading={isLoading} />
+      <Welcome isAuthenticated={isAuthenticated} isLoading={isLoading} />
+      <Profile user={user} isAuthenticated={isAuthenticated} isLoading={isLoading} />
       <Phrases phrases={phrases} />
     </div>
+    </>
   );
 }
 
