@@ -4,9 +4,6 @@ import Button from './Button'
 
 const Welcome = ({ isAuthenticated, isLoading }) => {
 
-    if (isLoading) {
-        return <div>Loading ...</div>;
-      }
 
     return (
         !isAuthenticated && (

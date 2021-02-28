@@ -1,39 +1,58 @@
 import { useState, useEffect } from 'react'
 import Header from './components/Header'
 import Profile from './components/Profile'
-import Phrases from './components/Phrases'
-import { useAuth0 } from "@auth0/auth0-react"
+import { useAuth0 } from "@auth0/auth0-react";
 import Welcome from './components/Welcome'
-import Navbar from './components/Navbar/Navbar';
+import Navbar from './components/Navbar/Navbar'
+import Decks from './components/Decks';
+
 function App() {
   const { user, isAuthenticated, isLoading } = useAuth0();
-  const [phrases, setPhrases] = useState([])
-  const [toggleNavMenu, setToggleNavMenu] = useState(false)
+  const [toggleNavMenu, setToggleNavMenu] = useState(false);
+    //const {data:decks, isPending, Error } = useFetch(`https://localhost:44386/api/Vocabulazy/decks?userId=${userId}`)
+    const [userUrl, setUserUrl] = useState(null);
+  const [decks, setDecks] = useState([]);
 
-  useEffect(() => {
-    const getPhrases = async () => {
-      const phrasesFromServer = await fetchPhrases()
-      setPhrases(phrasesFromServer)
+useEffect(() => {
+    if(!isLoading & isAuthenticated) {
+      const getUserUrl = async () => {
+        const userUrlFromServer = user.sub
+        setUserUrl(userUrlFromServer)
+      }
+      getUserUrl()
     }
-    getPhrases()
-  }, [])
+  },[isAuthenticated, isLoading, user]
+)
 
-  // fetch tasks
-  const fetchPhrases = async () => {
-    const res = await fetch('https://localhost:44386/api/Vocabulazy/phrases?verb=hablar')
-    const data = await res.json()
+useEffect(() => {
+  if(userUrl) {
+    const getDecks = async () => {
+      const DecksFromServer = await fetchDecks(userUrl)
+      setDecks(DecksFromServer)
+    }
 
-    return data
+    getDecks()
   }
+  }, [userUrl]
+  )
 
+  //google-oauth2|109641767784145272988
+// fetch decks
+const fetchDecks = async (userUrl) => {
+    const url = `https://localhost:44386/api/Vocabulazy/decks?userId=${userUrl}`
+    const res = await fetch(url)
+    const data = await res.json()
+    return data
+    }
 
   return (<>
   <Navbar onToggleNavMenu={() => setToggleNavMenu(!toggleNavMenu)} toggleNavMenu={toggleNavMenu}/>
     <div className="container">
-      <Header title="Welcome to Vocabulazy!" isAuthenticated={isAuthenticated} isLoading={isLoading} />
-      <Welcome isAuthenticated={isAuthenticated} isLoading={isLoading} />
-      <Profile user={user} isAuthenticated={isAuthenticated} isLoading={isLoading} />
-      <Phrases phrases={phrases} />
+      { Error && <div>{ Error }</div>}
+      {!isLoading && <Header title="Welcome to Vocabulazy!" isAuthenticated={isAuthenticated} user={user} />}
+      {!isLoading && <Welcome isAuthenticated={isAuthenticated}/>}
+      <Profile user={user} isAuthenticated={isAuthenticated} isLoading={isLoading}/>
+      {isAuthenticated && <Decks decks={decks} isAuthenticated={isAuthenticated} isLoading={isLoading} />}
     </div>
     </>
   );

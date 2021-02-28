@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import LogoutButton from './LogoutButton'
 
-const Header = ({ title, isAuthenticated, isLoading }) => {
+const Header = ({ user, title, isAuthenticated, isLoading }) => {
 
     if (isLoading) {
         return <div>Loading ...</div>;
@@ -9,7 +9,7 @@ const Header = ({ title, isAuthenticated, isLoading }) => {
 
     return (
         <header className='header'>
-            <h1>{title}</h1>
+            {isAuthenticated ? <h1>Welcome, {user.name}</h1> : <h1>{title}</h1>}
             {isAuthenticated && <LogoutButton />}
         </header>
     )

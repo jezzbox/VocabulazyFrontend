@@ -121,3 +121,37 @@ footer {
 .muted {
   color:darkgrey
 }
+
+.deck-container {
+  display: flex;
+  align-items: center;
+  justify-content: center ;
+  max-width: 1200px;
+  margin: 30px auto;
+  overflow: auto;
+  border: 1px solid steelblue;
+  padding: 30px;
+  border-radius: 5px;
+
+}
+
+.btn-decksettings {
+  display: inline-block;
+  background: #000;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  margin: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 15px;
+  font-family: inherit;
+}
+
+.deck-title {
+  justify-self: start;
+  margin-left:20px;
+  margin-right: 500px;
+  cursor:pointer;
+}
