@@ -1,7 +1,10 @@
+import { useState } from 'react'
 import Deck from './Deck'
 import Button from './Button'
+import AddDeck from './AddDeck'
 
-const Decks = ({ decks ,isLoading, isAuthenticated }) => {
+const Decks = ({ addDeck, decks ,isLoading, userUrl, isAuthenticated }) => {
+const [showAddDeck, setShowAddDeck] = useState(false)
 
   if (isLoading) {
     return <div>Loading ...</div>;
@@ -11,10 +14,11 @@ const Decks = ({ decks ,isLoading, isAuthenticated }) => {
     isAuthenticated && (
         <>
         <h1>Decks</h1>
-        <Button text = "create new deck"/>
-        {decks.map((deck) => (
+        <Button text = {showAddDeck ? "Back" : "create new deck"} onClick={() => setShowAddDeck(!showAddDeck)}/>
+        {isAuthenticated && showAddDeck && <AddDeck addDeck={addDeck} userUrl={userUrl}/>}
+        {!showAddDeck && decks.map((deck) => (
             <Deck key={deck.deckId} deck={deck}/>
-        ))}
+            ))}
         </>
     )
   );
