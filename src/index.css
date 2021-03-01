@@ -20,11 +20,65 @@ body {
   border-radius: 5px;
 }
 
+.verbs-container {
+  display:flex;
+  align-items: flex-start;
+  justify-content: left;
+  max-width: 1200px;
+  margin: 5px auto;
+  overflow: auto;
+  min-height: 200px;
+  max-height: 600px;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.add-verbs-container {
+  max-width: 1200px;
+  min-width:400px;
+  overflow: scroll;
+  height: 400px;
+  padding: 5px;
+  margin: 5px auto;
+  border: 1px solid steelblue;
+}
+
+.current-verbs-container {
+  max-width: 1200px;
+  min-width:400px;
+  overflow: scroll;
+  height: 400px;
+  padding: 5px;
+  margin: 5px auto;
+}
+
+
+.verb-container {
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 1200px;
+  margin: 5px auto;
+  overflow: auto;
+  min-height: 50px;
+  border: 1px solid steelblue;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.verb h3 {
+  align-items:center;
+}
 .header {
   display: flex;
   justify-content: center;
   align-items: center;
   margin-bottom: 20px;
+}
+
+.search-box {
+  padding: 10px;
+  margin: 30px auto;
 }
 
 .btn {
@@ -93,7 +147,7 @@ body {
 
 .form-control-check {
   display: flex;
-  align-items: center;
+  align-items: left;
   justify-content: space-between;
 }
 

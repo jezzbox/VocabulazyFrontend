@@ -4,7 +4,7 @@ import Profile from './components/Profile'
 import { useAuth0 } from "@auth0/auth0-react";
 import Welcome from './components/Welcome'
 import Navbar from './components/Navbar/Navbar'
-import Decks from './components/Decks';
+import Decks from './components/Decks/Decks';
 
 function App() {
   const { user, isAuthenticated, isLoading } = useAuth0();
@@ -12,6 +12,9 @@ function App() {
   //const {data:decks, isPending, Error } = useFetch(`https://localhost:44386/api/Vocabulazy/decks?userId=${userId}`)
   const [userUrl, setUserUrl] = useState(null);
   const [decks, setDecks] = useState([]);
+  const [currentDeck, setCurrentDeck] = useState(null);
+  const [verbs, setVerbs] = useState([]);
+  const [deckVerbs, setDeckVerbs] = useState([])
 
   useEffect(() => {
     if (!isLoading & isAuthenticated) {
@@ -36,6 +39,27 @@ function App() {
   }, [userUrl]
   )
 
+  useEffect(() => {
+      const getVerbs = async () => {
+        const VerbsFromServer = await fetchVerbs()
+        setVerbs(VerbsFromServer)
+      }
+
+      getVerbs()
+  }, [])
+
+  useEffect(() => {
+    if(currentDeck) {
+    const getDeckVerbs = async () => {
+      const DeckVerbsFromServer = await fetchDeckVerbs(currentDeck.deckId)
+      setDeckVerbs(DeckVerbsFromServer)
+    }
+
+    getDeckVerbs()
+  }
+}, [currentDeck])
+
+  
   //google-oauth2|109641767784145272988
   // fetch decks
   const fetchDecks = async (userUrl) => {
@@ -44,6 +68,21 @@ function App() {
     const data = await res.json()
     return data
   }
+
+  const fetchVerbs = async () => {
+    const url = `https://localhost:44386/api/Vocabulazy/verbs`
+    const res = await fetch(url)
+    const data = await res.json()
+    return data
+  }
+
+  const fetchDeckVerbs = async (deckId) => {
+  const url = `https://localhost:44386/api/Vocabulazy/deckVerbs?deckId=${deckId}`
+  const res = await fetch(url)
+    const data = await res.json()
+    return data
+  }
+
 
 
   const addDeck = async (deck) => {
@@ -57,6 +96,8 @@ function App() {
 
     const data = await res.json()
     setDecks([...decks, data])
+    setCurrentDeck(data)
+
   }
   return (
     <>
@@ -65,7 +106,7 @@ function App() {
         {!isLoading && <Header title="Welcome to Vocabulazy!" isAuthenticated={isAuthenticated} user={user} />}
         {!isLoading && <Welcome isAuthenticated={isAuthenticated} />}
         <Profile user={user} isAuthenticated={isAuthenticated} isLoading={isLoading} />
-        {isAuthenticated && <Decks userUrl={userUrl} addDeck={addDeck} decks={decks} isAuthenticated={isAuthenticated} isLoading={isLoading} />}
+        {isAuthenticated && <Decks currentDeck={currentDeck} setCurrentDeck={setCurrentDeck} deckVerbs = {deckVerbs} userUrl={userUrl} addDeck={addDeck} decks={decks}  verbs={verbs} isAuthenticated={isAuthenticated} isLoading={isLoading} />}
       </div>
     </>
   );

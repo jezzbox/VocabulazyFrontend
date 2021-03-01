@@ -1,6 +1,7 @@
 import { useState } from 'react'
+import AddVerbs from './AddVerbs'
 
-const AddDeck = ({ addDeck, userUrl }) => {
+const AddDeck = ({ deckVerbs, verbs, currentDeck, showAddVerbs, setShowAddVerbs, onCreate, addDeck, userUrl }) => {
   const [deckName, setDeckName] = useState('')
   const [useSubjunctive, setUseSubjunctive] = useState(true)
   const [useIndicative, setUseIndicative] = useState(true)
@@ -21,22 +22,26 @@ const AddDeck = ({ addDeck, userUrl }) => {
     }
     const userId = userUrl
     addDeck({ deckName, userId, useSubjunctive, useIndicative, useImperative, useParticiple, usePreterite, useImperfect, useFuture, usePresent })
-
+    alert(`Deck ${deckName} created! now add some verbs.`)
+    onCreate()
     setDeckName('')
     
 
   }
 
-  return (
-    <form className='add-form' onSubmit={onSubmit}>
-      <div className='form-control'>
-        <label>Deck name</label>
-        <input
-          type='text'
-          placeholder='My first deck'
-          value={deckName}
-          onChange={(e) => setDeckName(e.target.value)}
-        />
+    return (<>
+    {showAddVerbs && <AddVerbs deckId={currentDeck.deckId} verbs={verbs} deckVerbs={deckVerbs} deckName={currentDeck.deckName} setShowAddVerbs={setShowAddVerbs} />}
+    {!showAddVerbs && 
+    <>
+      <form className='add-form' onSubmit={onSubmit}>
+        <div className='form-control'>
+          <label>Deck name</label>
+          <input
+            type='text'
+            placeholder='My first deck'
+            value={deckName}
+            onChange={(e) => setDeckName(e.target.value)}
+          />
       </div>
       <div className='form-control form-control-check'>
         <label>Subjunctive:</label>
@@ -114,6 +119,8 @@ const AddDeck = ({ addDeck, userUrl }) => {
 
       <input type='submit' value='Save Deck' className='btn btn-block' />
     </form>
+    </>}
+    </>
   )
 }
 
