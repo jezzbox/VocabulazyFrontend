@@ -1,18 +1,23 @@
 import { useState, useEffect } from 'react'
 import Header from './components/Header'
-import Profile from './components/Profile'
 import { useAuth0 } from "@auth0/auth0-react";
 import Welcome from './components/Welcome'
 import Navbar from './components/Navbar/Navbar'
 import Decks from './components/Decks/Decks';
+import Deck from './components/Decks/Deck';
+import AddVerbs from './components/Decks/AddVerbs'
+import Button from './components/Button'
+import AddDeck from './components/Decks/AddDeck'
 
 function App() {
   const { user, isAuthenticated, isLoading } = useAuth0();
   const [toggleNavMenu, setToggleNavMenu] = useState(false);
-  //const {data:decks, isPending, Error } = useFetch(`https://localhost:44386/api/Vocabulazy/decks?userId=${userId}`)
+  const [showAddVerbs, setShowAddVerbs] = useState(false)
+  const [showAddDeck, setShowAddDeck] = useState(false)
+  const [showChangeDeck, setShowChangeDeck] = useState(false)
   const [userUrl, setUserUrl] = useState(null);
   const [decks, setDecks] = useState([]);
-  const [currentDeck, setCurrentDeck] = useState(null);
+  const [currentDeck, setCurrentDeck] = useState([]);
   const [verbs, setVerbs] = useState([]);
   const [deckVerbs, setDeckVerbs] = useState([])
 
@@ -32,6 +37,7 @@ function App() {
       const getDecks = async () => {
         const DecksFromServer = await fetchDecks(userUrl)
         setDecks(DecksFromServer)
+        setCurrentDeck(DecksFromServer.sort((a, b) => b.isDefault - a.isDefault)[0])
       }
 
       getDecks()
@@ -99,14 +105,26 @@ function App() {
     setCurrentDeck(data)
 
   }
+
+  const onCreateDeck = () => {
+    setShowAddDeck(false)
+    setShowAddVerbs(true)
+  }
   return (
     <>
       <Navbar onToggleNavMenu={() => setToggleNavMenu(!toggleNavMenu)} toggleNavMenu={toggleNavMenu} />
       <div className="container">
         {!isLoading && <Header title="Welcome to Vocabulazy!" isAuthenticated={isAuthenticated} user={user} />}
         {!isLoading && <Welcome isAuthenticated={isAuthenticated} />}
-        <Profile user={user} isAuthenticated={isAuthenticated} isLoading={isLoading} />
-        {isAuthenticated && <Decks currentDeck={currentDeck} setCurrentDeck={setCurrentDeck} deckVerbs = {deckVerbs} userUrl={userUrl} addDeck={addDeck} decks={decks}  verbs={verbs} isAuthenticated={isAuthenticated} isLoading={isLoading} />}
+        <div>
+        {!showAddDeck && <Button text={showChangeDeck ? "Hide" : "Change Deck"} color={showChangeDeck ? "steelblue" : "blueviolet"} onClick={() => setShowChangeDeck(!showChangeDeck)}/>}
+        {!showChangeDeck && <Button text={showAddDeck ? "Back" : "Create new Deck"} color={showAddDeck ? "steelblue" : "blueviolet"} onClick={() => setShowAddDeck(!showAddDeck)}/>}
+        {showAddDeck && <AddDeck addDeck={addDeck} userUrl={userUrl} onCreate={onCreateDeck} />}
+        </div>
+        {!isLoading && isAuthenticated && showChangeDeck && <Decks decks={decks} isLoading={isLoading} isAuthenticated={isAuthenticated} setCurrentDeck={setCurrentDeck} currentDeck={currentDeck}/> }
+        {isAuthenticated && !showAddDeck && !showAddVerbs && <Deck deck={currentDeck} setCurrentDeck={setCurrentDeck} verbs={verbs} deckVerbs={deckVerbs} showAddVerbs={showAddVerbs} setShowAddVerbs={setShowAddVerbs} />}
+        {showAddVerbs && <AddVerbs verbs = {verbs} deckVerbs={deckVerbs} deckId={currentDeck.deckId} deckName={currentDeck.deckName} setShowAddVerbs={setShowAddVerbs} />}
+        
       </div>
     </>
   );

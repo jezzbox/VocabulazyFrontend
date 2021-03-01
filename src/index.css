@@ -179,18 +179,19 @@ footer {
 .deck-container {
   display: flex;
   align-items: center;
-  justify-content: center ;
+  justify-content: center;
   max-width: 1200px;
-  margin: 30px auto;
+  margin: 15px auto;
   overflow: auto;
   border: 1px solid steelblue;
-  padding: 30px;
+  padding: 15px;
   border-radius: 5px;
 
 }
 
 .btn-decksettings {
   display: inline-block;
+  justify-self: right;
   background: #000;
   color: #fff;
   border: none;
@@ -206,6 +207,6 @@ footer {
 .deck-title {
   justify-self: start;
   margin-left:20px;
-  margin-right: 500px;
+  margin-right: 200px;
   cursor:pointer;
 }

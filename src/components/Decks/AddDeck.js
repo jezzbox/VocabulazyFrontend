@@ -11,17 +11,18 @@ const AddDeck = ({ deckVerbs, verbs, currentDeck, showAddVerbs, setShowAddVerbs,
   const [useImperfect, setUseImperfect] = useState(true)
   const [useFuture, setUseFuture] = useState(true)
   const [usePresent, setUsePresent] = useState(true)
+  const [isDefault, setIsDefault] = useState(false);
 
 
   const onSubmit = (e) => {
     e.preventDefault()
 
     if (!deckName) {
-      alert('Please add a task')
+      alert('Please add a deck name')
       return
     }
     const userId = userUrl
-    addDeck({ deckName, userId, useSubjunctive, useIndicative, useImperative, useParticiple, usePreterite, useImperfect, useFuture, usePresent })
+    addDeck({ deckName, userId, useSubjunctive, useIndicative, useImperative, useParticiple, usePreterite, useImperfect, useFuture, usePresent, isDefault })
     alert(`Deck ${deckName} created! now add some verbs.`)
     onCreate()
     setDeckName('')
@@ -113,6 +114,15 @@ const AddDeck = ({ deckVerbs, verbs, currentDeck, showAddVerbs, setShowAddVerbs,
           checked={usePresent}
           value={usePresent}
           onChange={(e) => setUsePresent(e.currentTarget.checked)}
+        />
+      </div>
+      <div className='form-control form-control-check'>
+        <label>set as Default:</label>
+        <input
+          type='checkbox'
+          checked={isDefault}
+          value={isDefault}
+          onChange={(e) => setIsDefault(e.currentTarget.checked)}
         />
       </div>
       

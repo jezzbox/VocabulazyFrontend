@@ -8,7 +8,7 @@ const[filterString, setFilterString] = useState('');
 
 
     return (
-        <div>
+        <div className="container">
             <h1>{`Editing deck: ${deckName} `}</h1>
             <Button text="Back" onClick={() => setShowAddVerbs(false)}/>
             <h1>Add/Remove Verbs</h1>

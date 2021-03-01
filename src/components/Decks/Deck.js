@@ -1,10 +1,6 @@
 import Button from '../Button'
-import AddVerbs from './AddVerbs'
-import { useState } from 'react'
 
-
-const Deck = ({ setCurrentDeck, verbs, deckVerbs, deck }) => {
-    const[showAddVerbs, setShowAddVerbs] = useState(false);
+const Deck = ({ showAddVerbs, setShowAddVerbs, setCurrentDeck, verbs, deckVerbs, deck }) => {
 
     const onClick = () => {
         setShowAddVerbs(!showAddVerbs)
@@ -12,19 +8,16 @@ const Deck = ({ setCurrentDeck, verbs, deckVerbs, deck }) => {
     }
 
     return (
-        <>
-        {showAddVerbs && <AddVerbs verbs = {verbs} deckVerbs={deckVerbs} deckId={deck.deckId} deckName={deck.deckName} setShowAddVerbs={setShowAddVerbs} />}
-        {!showAddVerbs && (
             <div className="deck-container">
                 <h3 className="deck-title">{deck.deckName}</h3>
+                <h3> Words: {deckVerbs.length}</h3>
                 <div>
-                    <Button  color = "steelblue" text="Add/Remove Words" onClick={onClick}/>
-                    <Button text="Edit settings"/>
+                <Button className="btn" color="green" text="Start"/>
+                    <Button className="btn" color = "steelblue" text={!showAddVerbs ? "Add/Remove Words" : "Back"} onClick={onClick}/>
+                    <Button className="btn" text="Edit settings"/>
                 </div>
             
             </div>
-        )}
-        </>
     )
 }
 
