@@ -12,7 +12,7 @@ const Verb = ({ verb, deckVerbs, setDeckVerbs, isCurrent }) => {
             <h3>{verb.verb}</h3>
             <Button text={verbCheck && !isCurrent ? "Added" : !isCurrent ? "Add" : "Remove"}
                     color={verbCheck ? "green" : !isCurrent ? "steelblue" : "grey"}
-                    onClick={verbCheck ? null : () => onClick(isCurrent) } />
+                    onClick={verbCheck && !isCurrent ? null : () => onClick(isCurrent) } />
             
         </div>
     )

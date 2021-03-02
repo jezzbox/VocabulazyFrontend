@@ -7,6 +7,12 @@ import Button from '../Button'
 const AddVerbs = ({ updateDeckVerbs, setDeckVerbs, deckVerbs, verbs, deckId, deckName, setShowAddVerbs }) => {
 const[filterString, setFilterString] = useState('');
 
+const onClick = () => {
+    if(window.confirm('Are you sure? progress for removed verbs will be lost')) {
+        updateDeckVerbs(deckId)
+    }
+    
+}
 
     return (
         <div className="container">
@@ -24,7 +30,7 @@ const[filterString, setFilterString] = useState('');
                         <CurrentVerbs deckVerbs={deckVerbs} setDeckVerbs={setDeckVerbs}/>
                     </div>
             </div>
-            <Button text="Submit" onClick={() => updateDeckVerbs(deckId)} />
+            <Button text="Submit" onClick={onClick} />
         </div>
     )
 }
