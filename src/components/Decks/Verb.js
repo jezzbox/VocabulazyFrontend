@@ -1,9 +1,19 @@
 import Button from '../Button'
-const Verb = ({ verb }) => {
+const Verb = ({ verb, deckVerbs, setDeckVerbs, isCurrent }) => {
+
+    const verbCheck = deckVerbs.length === 0 ? false : deckVerbs.some(x => x.verbId === verb.verbId) ? true : false
+
+    const onClick = (isCurrent) => {
+        isCurrent ? setDeckVerbs(deckVerbs.filter(x => x.verbId !== verb.verbId)) : setDeckVerbs([...deckVerbs,verb])
+    }
+
     return (
         <div className="verb-container">
             <h3>{verb.verb}</h3>
-            <Button text="Add" /> 
+            <Button text={verbCheck && !isCurrent ? "Added" : !isCurrent ? "Add" : "Remove"}
+                    color={verbCheck ? "green" : !isCurrent ? "steelblue" : "grey"}
+                    onClick={verbCheck ? null : () => onClick(isCurrent) } />
+            
         </div>
     )
 }

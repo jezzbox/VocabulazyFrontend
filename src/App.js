@@ -103,13 +103,38 @@ function App() {
     const data = await res.json()
     setDecks([...decks, data])
     setCurrentDeck(data)
-
-  }
-
-  const onCreateDeck = () => {
+    alert(`Deck ${data.deckName} created! now add some verbs.`)
     setShowAddDeck(false)
     setShowAddVerbs(true)
+
   }
+
+  const addDeckVerbs = async (deckVerb) => {
+      const res = await fetch('https://localhost:44386/api/Vocabulazy/deckverbs', {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify(deckVerb)
+      
+    })
+    
+    const data = await res.json()
+    setDeckVerbs([...deckVerbs, data])
+
+    };
+  
+
+  const updateDeckVerbs = async (deckId) => {
+    const deckVerbsFromServer = await fetchDeckVerbs(deckId)
+    const verbsToAdd = deckVerbs.filter((verb) => !deckVerbsFromServer.some(x => x.verbId === verb.verbId))
+    //const verbsToRemove = deckVerbsFromServer.filter((verb) => !deckVerbs.some(x => x.verbId === verb.verbId))
+    verbsToAdd.forEach(verb => {
+      const deckVerb = {verbId: verb.verbId, deckId: deckId }
+      addDeckVerbs(deckVerb)
+    })
+  }
+
   return (
     <>
       <Navbar onToggleNavMenu={() => setToggleNavMenu(!toggleNavMenu)} toggleNavMenu={toggleNavMenu} />
@@ -117,13 +142,14 @@ function App() {
         {!isLoading && <Header title="Welcome to Vocabulazy!" isAuthenticated={isAuthenticated} user={user} />}
         {!isLoading && <Welcome isAuthenticated={isAuthenticated} />}
         <div>
-        {!showAddDeck && <Button text={showChangeDeck ? "Hide" : "Change Deck"} color={showChangeDeck ? "steelblue" : "blueviolet"} onClick={() => setShowChangeDeck(!showChangeDeck)}/>}
+        {!showAddDeck && currentDeck && <Button text={showChangeDeck ? "Hide" : "Change Deck"} color={showChangeDeck ? "steelblue" : "blueviolet"} onClick={() => setShowChangeDeck(!showChangeDeck)}/>}
         {!showChangeDeck && <Button text={showAddDeck ? "Back" : "Create new Deck"} color={showAddDeck ? "steelblue" : "blueviolet"} onClick={() => setShowAddDeck(!showAddDeck)}/>}
-        {showAddDeck && <AddDeck addDeck={addDeck} userUrl={userUrl} onCreate={onCreateDeck} />}
+        {showAddDeck && <AddDeck addDeck={addDeck} userUrl={userUrl} />}
         </div>
-        {!isLoading && isAuthenticated && showChangeDeck && <Decks decks={decks} isLoading={isLoading} isAuthenticated={isAuthenticated} setCurrentDeck={setCurrentDeck} currentDeck={currentDeck}/> }
-        {isAuthenticated && !showAddDeck && !showAddVerbs && <Deck deck={currentDeck} setCurrentDeck={setCurrentDeck} verbs={verbs} deckVerbs={deckVerbs} showAddVerbs={showAddVerbs} setShowAddVerbs={setShowAddVerbs} />}
-        {showAddVerbs && <AddVerbs verbs = {verbs} deckVerbs={deckVerbs} deckId={currentDeck.deckId} deckName={currentDeck.deckName} setShowAddVerbs={setShowAddVerbs} />}
+        {!currentDeck && isAuthenticated && !isLoading && !showAddDeck ? <h1>No decks yet, create one to get started!</h1> : null}
+        {currentDeck && showChangeDeck && <Decks decks={decks} isLoading={isLoading} isAuthenticated={isAuthenticated} setCurrentDeck={setCurrentDeck} currentDeck={currentDeck}/> }
+        {currentDeck && !showAddVerbs && <Deck deck={currentDeck} setCurrentDeck={setCurrentDeck} verbs={verbs} deckVerbs={deckVerbs} showAddVerbs={showAddVerbs} setShowAddVerbs={setShowAddVerbs} />}
+        {currentDeck && showAddVerbs && <AddVerbs updateDeckVerbs={updateDeckVerbs} verbs = {verbs} deckVerbs={deckVerbs} setDeckVerbs={setDeckVerbs} deckId={currentDeck.deckId} deckName={currentDeck.deckName} setShowAddVerbs={setShowAddVerbs} />}
         
       </div>
     </>

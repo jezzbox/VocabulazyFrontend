@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import AddVerbs from './AddVerbs'
 
-const AddDeck = ({ deckVerbs, verbs, currentDeck, showAddVerbs, setShowAddVerbs, onCreate, addDeck, userUrl }) => {
+const AddDeck = ({ deckVerbs, verbs, currentDeck, showAddVerbs, setShowAddVerbs, addDeck, userUrl }) => {
   const [deckName, setDeckName] = useState('')
   const [useSubjunctive, setUseSubjunctive] = useState(true)
   const [useIndicative, setUseIndicative] = useState(true)
@@ -23,8 +23,6 @@ const AddDeck = ({ deckVerbs, verbs, currentDeck, showAddVerbs, setShowAddVerbs,
     }
     const userId = userUrl
     addDeck({ deckName, userId, useSubjunctive, useIndicative, useImperative, useParticiple, usePreterite, useImperfect, useFuture, usePresent, isDefault })
-    alert(`Deck ${deckName} created! now add some verbs.`)
-    onCreate()
     setDeckName('')
     
 
