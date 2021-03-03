@@ -8,6 +8,7 @@ import Deck from './components/Decks/Deck';
 import AddVerbs from './components/Decks/AddVerbs'
 import Button from './components/Button'
 import AddDeck from './components/Decks/AddDeck'
+import Flashcards from './components/Flashcards'
 
 function App() {
   const { user, isAuthenticated, isLoading } = useAuth0();
@@ -20,6 +21,9 @@ function App() {
   const [currentDeck, setCurrentDeck] = useState([]);
   const [verbs, setVerbs] = useState([]);
   const [deckVerbs, setDeckVerbs] = useState([])
+  const [showFlashcards, setShowFlashcards] = useState(false)
+  const [flashcard, setFlashcard] = useState(null)
+  const [flashcardNumber, setFlashcardNumber] = useState(0)
 
   useEffect(() => {
     if (!isLoading & isAuthenticated) {
@@ -58,14 +62,42 @@ function App() {
     if (currentDeck) {
       const getDeckVerbs = async () => {
         const DeckVerbsFromServer = await fetchDeckVerbs(currentDeck.deckId)
-        setDeckVerbs(DeckVerbsFromServer)
+        if(DeckVerbsFromServer == null) {
+          setDeckVerbs([])
+        }
+        else {
+          setDeckVerbs(DeckVerbsFromServer)
+        }
+        
       }
 
       getDeckVerbs()
     }
   }, [currentDeck])
 
+  useEffect(() => {
+    if(deckVerbs.length > 0 && deckVerbs.length > flashcardNumber) {
+      const getFlashcard = async (deckVerb) => {
+        const phraseFromServer = await fetchPhrase(deckVerb.verbId)
+        const verb = deckVerb.verb
+        const verbId = deckVerb.verbId
+        if(phraseFromServer == null) {
+          const phrase = "no phrase available for this verb yet"
+          const phraseId = "phraseFromServer.phraseId"
+          const flashcard = { phrase, verb, verbId, phraseId }
+          setFlashcard(flashcard)
+        }
+        else {
+          const phrase = phraseFromServer.phrase
+          const phraseId = phraseFromServer.phraseId
+          const flashcard = { phrase, verb, verbId, phraseId }
+          setFlashcard(flashcard)
+        }
+    }
+    getFlashcard(deckVerbs[flashcardNumber])
+  }},[deckVerbs, flashcardNumber])
 
+  
   //google-oauth2|109641767784145272988
   // fetch decks
   const fetchDecks = async (userUrl) => {
@@ -89,6 +121,15 @@ function App() {
     return data
   }
 
+  const fetchPhrase = async (verbId) => {
+    const url = `https://localhost:44386/api/Vocabulazy/phrases?verbId=${verbId}`
+    const res = await fetch(url)
+    const data = await res.json()
+    const phrase = data[Math.floor(Math.random() * data.length)];
+    
+    return phrase
+  }
+
 
 
   const addDeck = async (deck) => {
@@ -103,9 +144,10 @@ function App() {
     const data = await res.json()
     setDecks([...decks, data])
     setCurrentDeck(data)
+    setDeckVerbs([])
     alert(`Deck ${data.deckName} created! now add some verbs.`)
-    setShowAddDeck(false)
     setShowAddVerbs(true)
+    setShowAddDeck(false)
 
   }
 
@@ -146,6 +188,7 @@ function App() {
     })
   }
 
+
   return (
     <>
       <Navbar onToggleNavMenu={() => setToggleNavMenu(!toggleNavMenu)} toggleNavMenu={toggleNavMenu} />
@@ -153,14 +196,15 @@ function App() {
         {!isLoading && <Header title="Welcome to Vocabulazy!" isAuthenticated={isAuthenticated} user={user} />}
         {!isLoading && <Welcome isAuthenticated={isAuthenticated} />}
         <div>
-          {!showAddDeck && currentDeck && <Button text={showChangeDeck ? "Hide" : "Change Deck"} color={showChangeDeck ? "steelblue" : "blueviolet"} onClick={() => setShowChangeDeck(!showChangeDeck)} />}
-          {!showChangeDeck && <Button text={showAddDeck ? "Back" : "Create new Deck"} color={showAddDeck ? "steelblue" : "blueviolet"} onClick={() => setShowAddDeck(!showAddDeck)} />}
+          {isAuthenticated && !showAddDeck && currentDeck && <Button text={showChangeDeck ? "Hide" : "Change Deck"} color={showChangeDeck ? "steelblue" : "blueviolet"} onClick={() => setShowChangeDeck(!showChangeDeck)} />}
+          {isAuthenticated && !showChangeDeck && <Button text={showAddDeck ? "Back" : "Create new Deck"} color={showAddDeck ? "steelblue" : "blueviolet"} onClick={() => setShowAddDeck(!showAddDeck)} />}
           {showAddDeck && <AddDeck addDeck={addDeck} userUrl={userUrl} />}
         </div>
         {!currentDeck && isAuthenticated && !isLoading && !showAddDeck ? <h1>No decks yet, create one to get started!</h1> : null}
         {currentDeck && showChangeDeck && <Decks decks={decks} isLoading={isLoading} isAuthenticated={isAuthenticated} setCurrentDeck={setCurrentDeck} currentDeck={currentDeck} />}
-        {currentDeck && !showAddVerbs && <Deck deck={currentDeck} setCurrentDeck={setCurrentDeck} verbs={verbs} deckVerbs={deckVerbs} showAddVerbs={showAddVerbs} setShowAddVerbs={setShowAddVerbs} />}
-        {currentDeck && showAddVerbs && <AddVerbs updateDeckVerbs={updateDeckVerbs} verbs={verbs} deckVerbs={deckVerbs} setDeckVerbs={setDeckVerbs} deckId={currentDeck.deckId} deckName={currentDeck.deckName} setShowAddVerbs={setShowAddVerbs} />}
+        {isAuthenticated && currentDeck && !showAddVerbs && <Deck showFlashcards = {() => setShowFlashcards(true)} deck={currentDeck} setCurrentDeck={setCurrentDeck} verbs={verbs} deckVerbs={deckVerbs} showAddVerbs={showAddVerbs} setShowAddVerbs={setShowAddVerbs} />}
+        {deckVerbs && showAddVerbs && <AddVerbs updateDeckVerbs={updateDeckVerbs} verbs={verbs} deckVerbs={deckVerbs} setDeckVerbs={setDeckVerbs} deckId={currentDeck.deckId} deckName={currentDeck.deckName} setShowAddVerbs={setShowAddVerbs} />}
+        {currentDeck && showFlashcards && <Flashcards setFlashcard={setFlashcard} hideFlashcards = {() => setShowFlashcards(false)} deckVerbs = {deckVerbs} flashcard={flashcard} flashcardNumber={flashcardNumber} setFlashcardNumber={setFlashcardNumber} />}
 
       </div>
     </>
