@@ -15,7 +15,7 @@ const Navbar = ( { toggleNavMenu, onToggleNavMenu  } ) => {
             {MenuItems.map((item, index) => {
                 return (
                     <li>
-                        <a className={item.cName} href={item.url} >
+                        <a key={item.id} className={item.cName} href={item.url} >
                             {item.title}
                         </a>
                     </li>
