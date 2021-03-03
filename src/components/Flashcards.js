@@ -1,20 +1,52 @@
 import React from 'react'
 import Flashcard from './Flashcard'
 import Button from './Button'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
-const Flashcards = ({ hideFlashcards, deckVerbs, flashcard, setFlashcardNumber, setFlashcard, flashcardNumber, }) => {
-
+const Flashcards = ({ flashcards, setFlashcards, hideFlashcards}) => {
     const [deckFinished, setDeckFinished] = useState(false)
     const [score, setScore] = useState(0)
     const [showVerb, setShowVerb] = useState(false)
+    const [flashcard, setFlashcard] = useState(null)
+    const [flashcardNumber, setFlashcardNumber] = useState(0)
 
-    const isLastCard = deckVerbs.length === flashcardNumber + 1 ? true : false
+    useEffect(() => {
+        if(flashcards.length > 0 && flashcards.length > flashcardNumber) {
+          const getFlashcard = async (deckVerb) => {
+            const phraseFromServer = await fetchPhrase(deckVerb.verbId)
+            const verb = deckVerb.verb
+            const verbId = deckVerb.verbId
+            if(phraseFromServer == null) {
+              const phrase = "no phrase available for this verb yet"
+              const phraseId = "phraseFromServer.phraseId"
+              const flashcard = { phrase, verb, verbId, phraseId }
+              setFlashcard(flashcard)
+            }
+            else {
+              const phrase = phraseFromServer.phrase
+              const phraseId = phraseFromServer.phraseId
+              const flashcard = { phrase, verb, verbId, phraseId }
+              setFlashcard(flashcard)
+            }
+        }
+        getFlashcard(flashcards[flashcardNumber])
+      }},[flashcards, flashcardNumber])
+
+    
+
+    const fetchPhrase = async (verbId) => {
+        const url = `https://localhost:44386/api/Vocabulazy/phrases?verbId=${verbId}`
+        const res = await fetch(url)
+        const data = await res.json()
+        const phrase = data[Math.floor(Math.random() * data.length)];
+        
+        return phrase
+      }
 
     const onClick = async (cardScore) => {
         setScore(score + cardScore)
         
-        if (isLastCard) {
+        if (flashcardNumber + 1 === flashcards.length) {
             setShowVerb(false)
             setDeckFinished(true)
             setFlashcardNumber(0)
@@ -32,7 +64,7 @@ const Flashcards = ({ hideFlashcards, deckVerbs, flashcard, setFlashcardNumber, 
         <>
             {!deckFinished &&
                 <div>
-                    <Flashcard key={flashcard.verbId} flashcard={flashcard} showVerb={showVerb} />
+                    {flashcard && <Flashcard key={flashcard.verbId} flashcard={flashcard} showVerb={showVerb} />}
                     {!showVerb && <Button text="Show" onClick={() => setShowVerb(true)} />}
                     {showVerb &&
                         <div>
@@ -42,8 +74,6 @@ const Flashcards = ({ hideFlashcards, deckVerbs, flashcard, setFlashcardNumber, 
                             <Button text="Easy" onClick={() => onClick(5)} />
                         </div>}
                 </div>}
-
-        
             {deckFinished &&
                 <div>
                     <h1>Deck finished!</h1>
