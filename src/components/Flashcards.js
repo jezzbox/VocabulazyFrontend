@@ -43,18 +43,21 @@ const Flashcards = ({ verbFlashcards, hideFlashcards }) => {
         if (todaysCards.length > 0 && todaysCards.length > flashcardNumber) {
             const getFlashcard = async (verbFlashcard) => {
                 const phraseFromServer = await fetchPhrase(verbFlashcard.verbId)
+                const phase = verbFlashcard.phase
+                const ease = verbFlashcard.ease
+                const verbFlashcardId = verbFlashcard.verbFlashcardId
                 const verb = verbFlashcard.verb
                 const verbId = verbFlashcard.verbId
                 if (phraseFromServer == null) {
                     const phrase = "no phrase available for this verb yet"
                     const phraseId = "phraseFromServer.phraseId"
-                    const flashcard = { phrase, verb, verbId, phraseId }
+                    const flashcard = { verbFlashcardId, phrase, verb, verbId, phraseId, phase, ease }
                     setFlashcard(flashcard)
                 }
                 else {
                     const phrase = phraseFromServer.phrase
                     const phraseId = phraseFromServer.phraseId
-                    const flashcard = { phrase, verb, verbId, phraseId }
+                    const flashcard = { verbFlashcardId, phrase, verb, verbId, phraseId, phase, ease }
                     setFlashcard(flashcard)
                 }
             }
@@ -92,61 +95,86 @@ const Flashcards = ({ verbFlashcards, hideFlashcards }) => {
 
     const onClickAgain = async () => {
         if(flashcard.phase === "Graduated") {
-            console.log("set interval to 1 day")
-            console.log("set phase to learning")
-            console.log("set ease - 20")
-            console.log("set learning step 10")
-            console.log("set due date + 10 mins")
+            const newDueDate = getNewDueDate(10)
+            const updateData = {learningStep:10, interval: 1, phase:"Learning",ease:flashcard.ease - 20, dueDate: newDueDate }
+
+            updateVerbFlashcard(flashcard.verbFlashcardId, updateData)
         }
         else {
-            console.log("set learning step to 1")
-            console.log("set due date + 1 min")
+            const newDueDate = getNewDueDate(1)
+            const updateData = {learningStep: 1, dueDate: newDueDate }
             if(flashcard.phase === "New") {
-                console.log("set phase to learning")
+                updateData.phase = "Learning"
             }
+            updateVerbFlashcard(flashcard.verbFlashcardId, updateData)
         }
     }
 
-    const onClickHard = async () => {
-        if(flashcard.phase === "Graduated") {
-            console.log("set interval to currentInterval * 1.2")
-            console.log("set ease - 15")
-            console.log("set due date + new interval")
-        }
+    const getNewDueDate = (interval) => {
+        const currentTime = new Date()
+        const dueDate = (new Date(currentTime.setMinutes(currentTime.getMinutes() + interval))).toJSON()
+        return dueDate;
     }
 
-    const onClickGood = async () => {
-        if(flashcard.phase === "Graduated") {
-            console.log("set interval = current interval * ease")
-            console.log("set due date =  now + new interval")
-        }
-        else {
-            if(flashcard.learningStep === 1) {
-                console.log("set learning step = 10")
-                console.log("set due date = now + 10 mins")
+    // const onClickHard = async () => {
+    //     if(flashcard.phase === "Graduated") {
+    //         console.log("set interval to currentInterval * 1.2")
+    //         console.log("set ease - 15")
+    //         console.log("set due date + new interval")
+    //     }
+    // }
+
+    // const onClickGood = async () => {
+    //     if(flashcard.phase === "Graduated") {
+    //         console.log("set interval = current interval * ease")
+    //         console.log("set due date =  now + new interval")
+    //     }
+    //     else {
+    //         if(flashcard.learningStep === 1) {
+    //             console.log("set learning step = 10")
+    //             console.log("set due date = now + 10 mins")
                 
-            }
+    //         }
 
-            if((flashcard.learningStep === 10)) {
-                console.log("set phase = graduated")
-                console.log("set interval = 1 day")
-            }
+    //         if((flashcard.learningStep === 10)) {
+    //             console.log("set phase = graduated")
+    //             console.log("set interval = 1 day")
+    //         }
+    //     }
+    // }
+
+    // const onClickEasy = async () => {
+    //     if(flashcard.phase === "Graduated") {
+    //         console.log("set ease + 15")
+    //         console.log("set interval = current interval x current ease x easy bonus (130%)")
+    //         console.log("set due date = now + new interval")
+    //     }
+    //     else {
+    //         console.log("set phase = graduated")
+    //         console.log("set interval = 4 days")
+    //         console.log("set duedate = now + interval")
+    //     }
+
+
+    // }
+
+    const updateVerbFlashcard = async (verbFlashcardId, updateData) => {
+
+        const patchData = []
+
+        for (const [key, value] of Object.entries(updateData)) {
+            patchData.push({ "op":"replace", "path": "/" + key, "value": value })
+            
         }
-    }
 
-    const onClickEasy = async () => {
-        if(flashcard.phase === "Graduated") {
-            console.log("set ease + 15")
-            console.log("set interval = current interval x current ease x easy bonus (130%)")
-            console.log("set due date = now + new interval")
-        }
-        else {
-            console.log("set phase = graduated")
-            console.log("set interval = 4 days")
-            console.log("set duedate = now + interval")
-        }
+       await fetch(`https://localhost:44386/api/Vocabulazy/verbflashcards/${verbFlashcardId}`, {
+        method: 'PATCH',
+        headers: {
+        'Content-type': 'application/json'
+        },
+      body: JSON.stringify(patchData)
 
-
+    })
     }
     
     return (
@@ -158,9 +186,9 @@ const Flashcards = ({ verbFlashcards, hideFlashcards }) => {
                     {showVerb &&
                         <div>
                             <Button text="Again" onClick={() => onClickAgain()} />
-                            {flashcard.phase === "Graduated" && <Button text="Hard" onClick={() => onClickHard()} />}
-                            <Button text="Good" onClick={() => onClickGood()} />
-                            <Button text="Easy" onClick={() => onClickEasy()} />
+                            {flashcard.phase === "Graduated" && <Button text="Hard" onClick={() => onClick()} />}
+                            <Button text="Good" onClick={() => onClick()} />
+                            <Button text="Easy" onClick={() => onClick()} />
                         </div>}
                 </div>}
             {deckFinished &&
