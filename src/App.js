@@ -20,10 +20,8 @@ function App() {
   const [decks, setDecks] = useState([]);
   const [currentDeck, setCurrentDeck] = useState([]);
   const [verbs, setVerbs] = useState([]);
-  const [deckVerbs, setDeckVerbs] = useState([])
+  const [verbFlashcards, setVerbFlashcards] = useState([])
   const [showFlashcards, setShowFlashcards] = useState(false)
-  const [flashcards, setFlashcards] = useState([])
-
 
   useEffect(() => {
     if (!isLoading & isAuthenticated) {
@@ -58,32 +56,31 @@ function App() {
     getVerbs()
   }, [])
 
+// Get verb flashcards for the current selected deck
   useEffect(() => {
-    if (currentDeck) {
-      const getDeckVerbs = async () => {
-        const DeckVerbsFromServer = await fetchDeckVerbs(currentDeck.deckId)
-        if(DeckVerbsFromServer == null) {
-          setDeckVerbs([])
-          setFlashcards([])
+    if (currentDeck && currentDeck.deckId) {
+      const getVerbFlashcards = async () => {
+        const verbFlashcardsFromServer = await fetchVerbFlashcards(currentDeck.deckId)
+        if (verbFlashcardsFromServer == null) {
+          setVerbFlashcards([])
         }
         else {
-          shuffleArray(DeckVerbsFromServer)
-          setDeckVerbs(DeckVerbsFromServer)
-          setFlashcards(DeckVerbsFromServer)
+          shuffleArray(verbFlashcardsFromServer)
+          setVerbFlashcards(verbFlashcardsFromServer)
         }
-        
+
       }
 
-      getDeckVerbs()
+      getVerbFlashcards()
     }
   }, [currentDeck])
 
   function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
     }
-}
+  }
 
   //google-oauth2|109641767784145272988
   // fetch decks
@@ -94,15 +91,16 @@ function App() {
     return data
   }
 
+  //fetch verbs
   const fetchVerbs = async () => {
     const url = `https://localhost:44386/api/Vocabulazy/verbs`
     const res = await fetch(url)
     const data = await res.json()
     return data
   }
-
-  const fetchDeckVerbs = async (deckId) => {
-    const url = `https://localhost:44386/api/Vocabulazy/deckVerbs?deckId=${deckId}`
+  // fetch verb flashcards
+  const fetchVerbFlashcards = async (deckId) => {
+    const url = `https://localhost:44386/api/Vocabulazy/verbFlashcards?deckId=${deckId}`
     const res = await fetch(url)
     const data = await res.json()
     return data
@@ -111,7 +109,7 @@ function App() {
 
 
 
-
+  //add deck
   const addDeck = async (deck) => {
     const res = await fetch('https://localhost:44386/api/Vocabulazy/decks', {
       method: 'POST',
@@ -124,47 +122,43 @@ function App() {
     const data = await res.json()
     setDecks([...decks, data])
     setCurrentDeck(data)
-    setDeckVerbs([])
+    setVerbFlashcards([])
     alert(`Deck ${data.deckName} created! now add some verbs.`)
     setShowAddVerbs(true)
     setShowAddDeck(false)
 
   }
 
-  const addDeckVerb = async (deckVerb) => {
-    await fetch('https://localhost:44386/api/Vocabulazy/deckverbs', {
+  const addVerbFlashcard = async (verbFlashcard) => {
+    await fetch('https://localhost:44386/api/Vocabulazy/verbFlashcards', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'
       },
-      body: JSON.stringify(deckVerb)
+      body: JSON.stringify(verbFlashcard)
 
     })
 
-    // const data = await res.json()
-    // setDeckVerbs([...deckVerbs, data])
-
   };
 
-  const deleteDeckVerb = async (verb) => {
-    await fetch(`https://localhost:44386/api/Vocabulazy/deckverbs/${verb.deckVerbId}`, {
+  const deleteVerbFlashcard = async (verb) => {
+    await fetch(`https://localhost:44386/api/Vocabulazy/verbFlashcards/${verb.verbFlashcardId}`, {
       method: 'DELETE',
     })
-    // setDeckVerbs(deckVerbs.filter((deckVerb) => deckVerb.deckVerbId !== verb.deckVerbId))
-
   };
 
 
-  const updateDeckVerbs = async (deckId) => {
-    const deckVerbsFromServer = await fetchDeckVerbs(deckId)
-    const verbsToAdd = deckVerbs.filter((verb) => !deckVerbsFromServer.some(x => x.verbId === verb.verbId))
-    const verbsToRemove = deckVerbsFromServer.filter((verb) => !deckVerbs.some(x => x.verbId === verb.verbId))
+  const updateVerbFlashcards = async (deckId) => {
+    const verbFlashcardsFromServer = await fetchVerbFlashcards(deckId)
+    const verbsToAdd = verbFlashcards.filter((verb) => !verbFlashcardsFromServer.some(x => x.verbId === verb.verbId))
+    const verbsToRemove = verbFlashcardsFromServer.filter((verb) => !verbFlashcards.some(x => x.verbId === verb.verbId))
+
     verbsToAdd.forEach(verb => {
-      const deckVerb = { verbId: verb.verbId, deckId: deckId }
-      addDeckVerb(deckVerb)
+      const newVerbFlashcard = { verbId: verb.verbId, deckId: deckId }
+      addVerbFlashcard(newVerbFlashcard)
     })
     verbsToRemove.forEach(verb => {
-      deleteDeckVerb(verb)
+      deleteVerbFlashcard(verb)
     })
   }
 
@@ -182,9 +176,9 @@ function App() {
         </div>
         {!currentDeck && isAuthenticated && !isLoading && !showAddDeck ? <h1>No decks yet, create one to get started!</h1> : null}
         {currentDeck && showChangeDeck && <Decks decks={decks} isLoading={isLoading} isAuthenticated={isAuthenticated} setCurrentDeck={setCurrentDeck} currentDeck={currentDeck} />}
-        {isAuthenticated && currentDeck && !showAddVerbs && <Deck showFlashcards = {() => setShowFlashcards(true)} deck={currentDeck} setCurrentDeck={setCurrentDeck} verbs={verbs} deckVerbs={deckVerbs} showAddVerbs={showAddVerbs} setShowAddVerbs={setShowAddVerbs} />}
-        {deckVerbs && showAddVerbs && <AddVerbs updateDeckVerbs={updateDeckVerbs} verbs={verbs} deckVerbs={deckVerbs} setDeckVerbs={setDeckVerbs} deckId={currentDeck.deckId} deckName={currentDeck.deckName} setShowAddVerbs={setShowAddVerbs} />}
-        {currentDeck && showFlashcards && <Flashcards flashcards={flashcards} setFlashcards={setFlashcards} hideFlashcards = {() => setShowFlashcards(false)} deckVerbs = {deckVerbs} />}
+        {isAuthenticated && currentDeck && !showAddVerbs && <Deck showFlashcards={() => setShowFlashcards(true)} deck={currentDeck} setCurrentDeck={setCurrentDeck} verbs={verbs} verbFlashcards={verbFlashcards} showAddVerbs={showAddVerbs} setShowAddVerbs={setShowAddVerbs} />}
+        {verbFlashcards && showAddVerbs && <AddVerbs updateVerbFlashcards={updateVerbFlashcards} verbs={verbs} verbFlashcards={verbFlashcards} setVerbFlashcards={setVerbFlashcards} deckId={currentDeck.deckId} deckName={currentDeck.deckName} setShowAddVerbs={setShowAddVerbs} />}
+        {currentDeck && showFlashcards && <Flashcards hideFlashcards={() => setShowFlashcards(false)} verbFlashcards={verbFlashcards} />}
 
       </div>
     </>

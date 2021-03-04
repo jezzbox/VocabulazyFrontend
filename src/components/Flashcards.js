@@ -3,7 +3,7 @@ import Flashcard from './Flashcard'
 import Button from './Button'
 import { useState, useEffect } from 'react'
 
-const Flashcards = ({ flashcards, setFlashcards, hideFlashcards}) => {
+const Flashcards = ({ verbFlashcards, hideFlashcards }) => {
     const [deckFinished, setDeckFinished] = useState(false)
     const [score, setScore] = useState(0)
     const [showVerb, setShowVerb] = useState(false)
@@ -11,11 +11,11 @@ const Flashcards = ({ flashcards, setFlashcards, hideFlashcards}) => {
     const [flashcardNumber, setFlashcardNumber] = useState(0)
 
     useEffect(() => {
-        if(flashcards.length > 0 && flashcards.length > flashcardNumber) {
-          const getFlashcard = async (deckVerb) => {
-            const phraseFromServer = await fetchPhrase(deckVerb.verbId)
-            const verb = deckVerb.verb
-            const verbId = deckVerb.verbId
+        if(verbFlashcards.length > 0 && verbFlashcards.length > flashcardNumber) {
+          const getFlashcard = async (verbFlashcard) => {
+            const phraseFromServer = await fetchPhrase(verbFlashcard.verbId)
+            const verb = verbFlashcard.verb
+            const verbId = verbFlashcard.verbId
             if(phraseFromServer == null) {
               const phrase = "no phrase available for this verb yet"
               const phraseId = "phraseFromServer.phraseId"
@@ -29,8 +29,8 @@ const Flashcards = ({ flashcards, setFlashcards, hideFlashcards}) => {
               setFlashcard(flashcard)
             }
         }
-        getFlashcard(flashcards[flashcardNumber])
-      }},[flashcards, flashcardNumber])
+        getFlashcard(verbFlashcards[flashcardNumber])
+      }},[verbFlashcards, flashcardNumber])
 
     
 
@@ -46,7 +46,7 @@ const Flashcards = ({ flashcards, setFlashcards, hideFlashcards}) => {
     const onClick = async (cardScore) => {
         setScore(score + cardScore)
         
-        if (flashcardNumber + 1 === flashcards.length) {
+        if (flashcardNumber + 1 === verbFlashcards.length) {
             setShowVerb(false)
             setDeckFinished(true)
             setFlashcardNumber(0)

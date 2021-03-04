@@ -1,10 +1,10 @@
 import Button from '../Button'
-const Verb = ({ verb, deckVerbs, setDeckVerbs, isCurrent }) => {
+const Verb = ({ verb, verbFlashcards, setVerbFlashcards, isCurrent }) => {
 
-    const verbCheck = deckVerbs.length === 0 ? false : deckVerbs.some(x => x.verbId === verb.verbId) ? true : false
+    const verbCheck = verbFlashcards.length === 0 ? false : verbFlashcards.some(x => x.verbId === verb.verbId) ? true : false
 
     const onClick = (isCurrent) => {
-        isCurrent ? setDeckVerbs(deckVerbs.filter(x => x.verbId !== verb.verbId)) : setDeckVerbs([...deckVerbs,verb])
+        isCurrent ? setVerbFlashcards(verbFlashcards.filter(x => x.verbId !== verb.verbId)) : setVerbFlashcards([...verbFlashcards,verb])
     }
 
     return (

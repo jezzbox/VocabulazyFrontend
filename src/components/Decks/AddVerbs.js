@@ -4,12 +4,13 @@ import CurrentVerbs from './CurrentVerbs'
 import { useState } from 'react'
 import Button from '../Button'
 
-const AddVerbs = ({ updateDeckVerbs, setDeckVerbs, deckVerbs, verbs, deckId, deckName, setShowAddVerbs }) => {
+const AddVerbs = ({ updateVerbFlashcards, setVerbFlashcards, verbFlashcards, verbs, deckId, deckName, setShowAddVerbs }) => {
 const[filterString, setFilterString] = useState('');
 
 const onClick = () => {
     if(window.confirm('Are you sure? progress for removed verbs will be lost')) {
-        updateDeckVerbs(deckId)
+        updateVerbFlashcards(deckId)
+        setShowAddVerbs(false)
     }
     
 }
@@ -23,11 +24,11 @@ const onClick = () => {
             <h3 className="verb"> <input className="search-box" type="text" id="myInput" onChange={(e) => setFilterString(e.target.value.toLowerCase())} value={filterString} placeholder="Search for verbs.."></input></h3>
             <div className="verbs-container">
                     <div className="add-verbs-container">
-                        <Verbs verbs={verbs} filterString = {filterString} deckVerbs={deckVerbs} setDeckVerbs={setDeckVerbs}/>
+                        <Verbs verbs={verbs} filterString = {filterString} verbFlashcards={verbFlashcards} setVerbFlashcards={setVerbFlashcards}/>
                     </div>
                     <h3>Deck: </h3>
                     <div className="current-verbs-container">
-                        <CurrentVerbs deckVerbs={deckVerbs} setDeckVerbs={setDeckVerbs}/>
+                        <CurrentVerbs verbFlashcards={verbFlashcards} setVerbFlashcards={setVerbFlashcards}/>
                     </div>
             </div>
             <Button text="Submit" onClick={onClick} />

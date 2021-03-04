@@ -1,12 +1,12 @@
 import React from 'react'
 import Verb from './Verb'
 
-const CurrentVerbs = ({ setDeckVerbs, deckVerbs }) => {
+const CurrentVerbs = ({ setVerbFlashcards, verbFlashcards }) => {
 const isCurrent = true
     return (
         <div>
-            {deckVerbs.map((verb) => (
-                <Verb key={verb.verbId} verb={verb} deckVerbs={deckVerbs} setDeckVerbs={setDeckVerbs} isCurrent={isCurrent} />
+            {verbFlashcards.map((verb) => (
+                <Verb key={verb.verbId} verb={verb}verbFlashcards={verbFlashcards} setVerbFlashcards={setVerbFlashcards} isCurrent={isCurrent} />
             ))}
 
         </div>
