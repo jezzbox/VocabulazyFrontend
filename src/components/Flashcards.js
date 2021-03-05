@@ -43,15 +43,15 @@ const Flashcards = ({ isFinished, setIsFinished, hideFlashcards, currentDeck }) 
         }
 
         const getTodaysCards = async () => {
-            const reviewCutoff = getReviewCutoff(4)
-            const learningCutoff = getLearningCutoff(20)
-
-            const reviewCardsFromServer = await fetchTodaysFlashcards("Graduated", reviewCutoff)
-            const learningCardsFromServer = await fetchTodaysFlashcards("Learning", learningCutoff)
-
-            const getNewCards = async () => {
-                if (reviewCardsFromServer.length > 0) {
-                    const newCardsFromServer = await fetchTodaysFlashcards("New", learningCutoff)
+            
+            const reviewCardsFromServer = await fetchTodaysFlashcards("Graduated", getCutoff("Graduated",4))
+            const learningCardsFromServer = await fetchTodaysFlashcards("Learning", getCutoff("Learning",20))
+            console.log(reviewCardsFromServer.length)
+            console.log(reviewCardsFromServer)
+            const getNewCards = async (existReviewCard) => {
+                if (existReviewCard) {
+    
+                    const newCardsFromServer = await fetchTodaysFlashcards("New", getCutoff("new",20))
                     return newCardsFromServer
                 }
                 else {
@@ -60,9 +60,15 @@ const Flashcards = ({ isFinished, setIsFinished, hideFlashcards, currentDeck }) 
                 }
             }
 
-            const newCardsFromServer = await getNewCards()
-
+            const newCardsFromServer = await getNewCards(reviewCardsFromServer.length > 0)
+            console.log("review")
+            console.log(reviewCardsFromServer)
+            console.log("learning")
+            console.log(learningCardsFromServer)
+            console.log("new")
+            console.log(newCardsFromServer)
             const todaysCardsFromServer = [...reviewCardsFromServer, ...learningCardsFromServer, ...newCardsFromServer]
+            
             setTodaysCards(todaysCardsFromServer)
         }
         getTodaysCards(deckId)
@@ -101,20 +107,21 @@ const Flashcards = ({ isFinished, setIsFinished, hideFlashcards, currentDeck }) 
         console.log(todaysCards)
     }, [todaysCards])
 
-    const getReviewCutoff = (phase, resetTime) => {
+    const getCutoff = (phase, customTime) => {
         const currentTime = new Date()
         if (phase === "New") {
-
+            const learningCutoff = (new Date(currentTime.setMinutes(currentTime.getMinutes() + customTime))).toJSON()
+            return learningCutoff
         }
-        const setHours = new Date(currentTime.setHours(resetTime))
-        const setMinutes = new Date(setHours.setMinutes(0))
-        return (new Date(setMinutes)).toJSON()
-    }
-
-    const getLearningCutoff = (learnAheadTime) => {
-        const currentTime = new Date()
-        const learningCutoff = (new Date(currentTime.setMinutes(currentTime.getMinutes() + learnAheadTime))).toJSON()
-        return learningCutoff
+        if (phase === "Learning") {
+            const newCutoff = (new Date(currentTime.setMinutes(currentTime.getMinutes() + customTime))).toJSON()
+            return newCutoff
+        }
+        if (phase === "Graduated") {
+            const setHours = new Date(currentTime.setHours(customTime))
+            const setMinutes = new Date(setHours.setMinutes(0))
+            return (new Date(setMinutes)).toJSON()
+        }
     }
 
     const fetchPhrase = async (verbId) => {
