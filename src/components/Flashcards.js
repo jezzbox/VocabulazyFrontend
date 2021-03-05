@@ -48,7 +48,7 @@ const Flashcards = ({ isFinished, setIsFinished, hideFlashcards, currentDeck }) 
             const getNewCards = async (existReviewCard) => {
                 if (existReviewCard) {
 
-                    const newCardsFromServer = await fetchTodaysFlashcards("New", getCutoff("new", 20))
+                    const newCardsFromServer = await fetchTodaysFlashcards("New", getCutoff("New", 20))
                     return newCardsFromServer
                 }
                 else {
