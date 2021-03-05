@@ -178,7 +178,7 @@ function App() {
         {currentDeck && showChangeDeck && <Decks decks={decks} isLoading={isLoading} isAuthenticated={isAuthenticated} setCurrentDeck={setCurrentDeck} currentDeck={currentDeck} />}
         {isAuthenticated && currentDeck && !showAddVerbs && <Deck showFlashcards={() => setShowFlashcards(true)} deck={currentDeck} setCurrentDeck={setCurrentDeck} verbs={verbs} verbFlashcards={verbFlashcards} showAddVerbs={showAddVerbs} setShowAddVerbs={setShowAddVerbs} />}
         {verbFlashcards && showAddVerbs && <AddVerbs updateVerbFlashcards={updateVerbFlashcards} verbs={verbs} verbFlashcards={verbFlashcards} setVerbFlashcards={setVerbFlashcards} deckId={currentDeck.deckId} deckName={currentDeck.deckName} setShowAddVerbs={setShowAddVerbs} />}
-        {verbFlashcards && showFlashcards && <Flashcards hideFlashcards={() => setShowFlashcards(false)} verbFlashcards={verbFlashcards} />}
+        {verbFlashcards && showFlashcards && <Flashcards hideFlashcards={() => setShowFlashcards(false)} verbFlashcards={verbFlashcards} fetchVerbFlashcards={fetchVerbFlashcards} currentDeck={currentDeck} setVerbFlashcards={setVerbFlashcards} />}
 
       </div>
     </>

@@ -3,7 +3,7 @@ import Flashcard from './Flashcard'
 import Button from './Button'
 import { useState, useEffect } from 'react'
 
-const Flashcards = ({ verbFlashcards, hideFlashcards }) => {
+const Flashcards = ({ verbFlashcards, hideFlashcards, fetchVerbFlashcards, currentDeck, setVerbFlashcards }) => {
     const [deckFinished, setDeckFinished] = useState(false)
     const [showVerb, setShowVerb] = useState(false)
     const [flashcard, setFlashcard] = useState(null)
@@ -11,29 +11,55 @@ const Flashcards = ({ verbFlashcards, hideFlashcards }) => {
     const [todaysCards, setTodaysCards] = useState([])
 
     useEffect(() => {
-        const currentTime = (new Date()).toJSON();
+        if(verbFlashcards.length > 0) {
+        const reviewCutoff = getReviewCutoff(4)
+        const learningCutoff = getLearningCutoff(20)
 
-        const getReviewCards = () => {
-            const reviewCards = verbFlashcards.filter(verbFlashcard => verbFlashcard.dueDate <= currentTime | verbFlashcard.phase !== "New")
-            const sortedReviewCards = sortByDueDate(reviewCards)
-            return sortedReviewCards.slice(0, 200);
+        const getTodaysCards = async (cardsFromServer,learningCutoff, reviewCutoff) => {
+            
+            const reviewCards = await getCards(reviewCutoff, cardsFromServer, "Graduated")
+            const learningCards = await getCards(learningCutoff, cardsFromServer, "Learning")
+            const newCards = await getCards(learningCutoff, cardsFromServer, "New", reviewCards.length)
+
+
+            const allCards = [...reviewCards,...learningCards, ...newCards]
+            setTodaysCards(allCards)
+            
         }
 
-        const getNewCards = (reviewCardsLength) => {
-            const newCards = verbFlashcards.filter(verbFlashcard => verbFlashcard.phase === "New")
-            const sortedNewCards = sortByDueDate(newCards)
-            reviewCardsLength > 0 && sortedNewCards.filter(newCard => newCard.dueDate <= currentTime)
-            return sortedNewCards.slice(0, 20);
+        const getCards = async (cutoff, cards, cardPhase, reviewCardsLength=0) => {
+            if(cardPhase === "New") {
+                const newCards = cards.filter(card => card.phase === "New")
+                reviewCardsLength > 0 && newCards.filter(card => card.dueDate <= cutoff)
+                const sortedNewCards = sortByDueDate(newCards)
+                return sortedNewCards.slice(0, 20);
+            }
+            if(cardPhase !== "New") {
+                const newCards = cards.filter(card => card.dueDate <= cutoff && card.phase === cardPhase)
+                const sortedNewCards = sortByDueDate(newCards)
+                return sortedNewCards.slice(0, 200);
+            }
         }
 
-        const reviewCards = getReviewCards()
-        const newCards = getNewCards(reviewCards.length)
-        const allCards = [...reviewCards, ...newCards]
-        setTodaysCards(allCards)
+        getTodaysCards(verbFlashcards, learningCutoff, reviewCutoff)
+        }
     }, [verbFlashcards])
 
     const sortByDueDate = (cards) => {
-        return cards.sort((a, b) => b.DueDate - a.DueDate)
+        return cards.sort((a, b) => b.dueDate - a.dueDate)
+    }
+
+    const getReviewCutoff = (resetTime) => {
+        const currentTime = new Date()
+        const setHours = new Date(currentTime.setHours(resetTime))
+        const setMinutes = new Date(setHours.setMinutes(0))
+        return (new Date(setMinutes)).toJSON()
+    }
+
+    const getLearningCutoff = (learnAheadTime) => {
+        const currentTime = new Date()
+        const learningCutoff = (new Date(currentTime.setMinutes(currentTime.getMinutes() + learnAheadTime))).toJSON()
+        return learningCutoff
     }
 
 
@@ -77,40 +103,48 @@ const Flashcards = ({ verbFlashcards, hideFlashcards }) => {
         return phrase
     }
 
-    const onClick = async () => {
-
-        if (flashcardNumber + 1 === todaysCards.length) {
-            setShowVerb(false)
-            setDeckFinished(true)
-            setFlashcardNumber(0)
-            setFlashcard([])
-        }
-        else {
-            setShowVerb(false)
-            const nextFlashcardnumber = flashcardNumber + 1
-            setFlashcardNumber(nextFlashcardnumber)
-        }
-
-    }
-
     const onClickAgain = async () => {
+        console.log(flashcard)
+        console.log("clicked again")
+
         if (flashcard.phase === "Graduated") {
+            console.log("card was graduated, turning to learning and due for 10 mins")
             const newEase = flashcard.ease - 20
             const newDueDate = getNewDueDate(10)
             const updateData = { learningStep: 10, interval: 1 * 24 * 60, phase: "Learning", ease: newEase, dueDate: newDueDate }
 
-            updateVerbFlashcard(flashcard.verbFlashcardId, updateData)
+            const updatedCard = await updateVerbFlashcard(flashcard.verbFlashcardId, updateData)
+
+            console.log("card will be added to end of deck")
+                const updateTodaysCards = async () => {
+                    setTodaysCards([...todaysCards, updatedCard])
+                } 
+                await updateTodaysCards(updatedCard)
+
+                console.log(todaysCards)
+                await onClick()
 
         }
         else {
+            console.log("learning card, so reset step to 1 and show in 1 minute")
             const newDueDate = getNewDueDate(1)
             const updateData = { learningStep: 1, dueDate: newDueDate }
             if (flashcard.phase === "New") {
                 updateData.phase = "Learning"
             }
-            updateVerbFlashcard(flashcard.verbFlashcardId, updateData)
+
+            const updatedCard = await updateVerbFlashcard(flashcard.verbFlashcardId, updateData)
+            console.log(updatedCard)
+
+            console.log("card will be added to end of deck")
+                const updateTodaysCards = async () => {
+                    setTodaysCards([...todaysCards, updatedCard, {test:"hello"}])
+                } 
+                await updateTodaysCards(updatedCard)
+
+                console.log(todaysCards)
+                await onClick()
         }
-        onClick()
     }
 
     const onClickHard = async () => {
@@ -120,42 +154,63 @@ const Flashcards = ({ verbFlashcards, hideFlashcards }) => {
             const newDueDate = getNewDueDate(newInterval)
             const updateData = { interval: newInterval, ease: newEase, dueDate: newDueDate }
 
-            updateVerbFlashcard(flashcard.verbFlashcardId, updateData)
-            onClick()
+            await updateVerbFlashcard(flashcard.verbFlashcardId, updateData)
+            await onClick()
         }
     }
 
     const onClickGood = async () => {
+        console.log("clicked good")
         if (flashcard.phase === "Graduated") {
+            console.log("as card was already gradeuated, will not add to todays cards")
             const newInterval = flashcard.interval * flashcard.ease
             const newDueDate = getNewDueDate(newInterval)
             const updateData = { interval: newInterval, dueDate: newDueDate }
 
-            updateVerbFlashcard(flashcard.verbFlashcardId, updateData)
+            const updatedCard = await updateVerbFlashcard(flashcard.verbFlashcardId, updateData)
+            setTodaysCards(todaysCards => [...todaysCards, updatedCard])
+            console.log(updatedCard)
+            console.log(todaysCards)
+            await onClick()
         }
 
         else {
+            console.log(flashcard)
             if (flashcard.learningStep === 1) {
-
+                console.log("was at learning step 1")
                 const newLearningStep = 10
                 const newInterval = 10
                 const newDueDate = getNewDueDate(10)
                 const newPhase = "Learning"
                 const updateData = { phase: newPhase, learningStep: newLearningStep, interval: newInterval, dueDate: newDueDate }
 
-                updateVerbFlashcard(flashcard.verbFlashcardId, updateData)
+                const updatedCard = await updateVerbFlashcard(flashcard.verbFlashcardId, updateData)
+                console.log(updatedCard)
 
-
-
+                
+                console.log("card will be added to end of deck")
+                
+                const updateVerbFlashcards = async (updatedCard) => {
+                    const index = verbFlashcards.findIndex(x => x.verbFlashcardId === flashcard.verbflashcardId)
+                    verbFlashcards[index] = updatedCard
+                }
+                updateVerbFlashcards(updatedCard)
+                setTodaysCards(todaysCards => [...todaysCards, updatedCard])
+                console.log(todaysCards)
+                console.log(verbFlashcards)
+                await onClick()
             }
 
             if ((flashcard.learningStep === 10)) {
+                console.log("was at learning step 10, so card will now be graduated")
                 const newPhase = "Graduated"
                 const newInterval = 1 * 24 * 60
                 const newDueDate = getNewDueDate(newInterval)
                 const updateData = { learningStep: null, interval: newInterval, phase: newPhase, dueDate: newDueDate }
 
-                updateVerbFlashcard(flashcard.verbFlashcardId, updateData)
+                const updatedCard = await updateVerbFlashcard(flashcard.verbFlashcardId, updateData)
+                console.log(updatedCard)
+                await onClick()
 
             }
         }
@@ -163,28 +218,56 @@ const Flashcards = ({ verbFlashcards, hideFlashcards }) => {
     }
 
     const onClickEasy = async () => {
+        console.log(flashcard)
+        console.log("easy was clicked")
         if (flashcard.phase === "Graduated") {
             const newEase = flashcard.ease + 15
             const newInterval = flashcard.interval * flashcard.ease * 1.3
             const newDueDate = getNewDueDate(newInterval)
             const updateData = { interval: newInterval, ease: newEase, dueDate: newDueDate }
 
-            updateVerbFlashcard(flashcard.verbFlashcardId, updateData)
+            const updatedCard = await updateVerbFlashcard(flashcard.verbFlashcardId, updateData)
+            console.log(updatedCard)
+            await onClick()
 
         }
         else {
+            console.log("graduating card")
             const newPhase = "Graduated"
             const newInterval = 4 * 24 * 60
             const newDueDate = getNewDueDate(newInterval)
 
             const updateData = { learningStep: null, interval: newInterval, phase: newPhase, dueDate: newDueDate }
 
-            updateVerbFlashcard(flashcard.verbFlashcardId, updateData)
+            const updatedCard = await updateVerbFlashcard(flashcard.verbFlashcardId, updateData)
+            console.log(updatedCard)
+            await onClick()
 
         }
-        onClick()
+
+        
 
 
+    }
+
+    const onClick = async () => {
+        if (flashcardNumber + 1 >= todaysCards.length) {
+            console.log("no cards left")
+            console.log("finishing")
+            setShowVerb(false)
+            setDeckFinished(true)
+            setFlashcardNumber(0)
+            setFlashcard([])
+        }
+        else {
+            console.log("still some cards left")
+            console.log(todaysCards.length)
+            console.log(flashcardNumber)
+
+            setShowVerb(false)
+            const nextFlashcardnumber = flashcardNumber + 1
+            setFlashcardNumber(nextFlashcardnumber)
+        }
     }
 
     const getNewDueDate = (interval) => {
@@ -197,20 +280,6 @@ const Flashcards = ({ verbFlashcards, hideFlashcards }) => {
 
 
 
-    // const onClickEasy = async () => {
-    //     if(flashcard.phase === "Graduated") {
-    //         console.log("set ease + 15")
-    //         console.log("set interval = current interval x current ease x easy bonus (130%)")
-    //         console.log("set due date = now + new interval")
-    //     }
-    //     else {
-    //         console.log("set phase = graduated")
-    //         console.log("set interval = 4 days")
-    //         console.log("set duedate = now + interval")
-    //     }
-
-
-    // }
 
     const updateVerbFlashcard = async (verbFlashcardId, updateData) => {
 
@@ -221,7 +290,7 @@ const Flashcards = ({ verbFlashcards, hideFlashcards }) => {
 
         }
 
-        await fetch(`https://localhost:44386/api/Vocabulazy/verbflashcards/${verbFlashcardId}`, {
+        const res = await fetch(`https://localhost:44386/api/Vocabulazy/verbflashcards/${verbFlashcardId}`, {
             method: 'PATCH',
             headers: {
                 'Content-type': 'application/json'
@@ -229,15 +298,21 @@ const Flashcards = ({ verbFlashcards, hideFlashcards }) => {
             body: JSON.stringify(patchData)
 
         })
+        const updatedCard = await res.json()
+        return updatedCard
     }
 
     return (
         <>
+            {!flashcard && <div>
+                <h1>No cards left for today, come back tomorrow</h1>
+                <Button text="Close" onClick={hideFlashcards} />
+                </div>}
             {!deckFinished &&
                 <div>
                     {flashcard && <Flashcard key={flashcard.verbId} flashcard={flashcard} showVerb={showVerb} />}
-                    {!showVerb && <Button text="Show" onClick={() => setShowVerb(true)} />}
-                    {showVerb &&
+                    {flashcard && !showVerb && <Button text="Show" onClick={() => setShowVerb(true)} />}
+                    {flashcard && showVerb &&
                         <div>
                             <Button text="Again" onClick={() => onClickAgain()} />
                             {flashcard.phase === "Graduated" && <Button text="Hard" onClick={() => onClickHard()} />}
