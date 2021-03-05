@@ -22,6 +22,7 @@ function App() {
   const [verbs, setVerbs] = useState([]);
   const [verbFlashcards, setVerbFlashcards] = useState([])
   const [showFlashcards, setShowFlashcards] = useState(false)
+  const [isFinished, setIsFinished] = useState(false)
 
   useEffect(() => {
     if (!isLoading & isAuthenticated) {
@@ -65,22 +66,16 @@ function App() {
           setVerbFlashcards([])
         }
         else {
-          shuffleArray(verbFlashcardsFromServer)
           setVerbFlashcards(verbFlashcardsFromServer)
         }
-
       }
 
       getVerbFlashcards()
     }
-  }, [currentDeck])
+  }, [currentDeck, isFinished])
 
-  function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-  }
+
+
 
   //google-oauth2|109641767784145272988
   // fetch decks
@@ -178,7 +173,7 @@ function App() {
         {currentDeck && showChangeDeck && <Decks decks={decks} isLoading={isLoading} isAuthenticated={isAuthenticated} setCurrentDeck={setCurrentDeck} currentDeck={currentDeck} />}
         {isAuthenticated && currentDeck && !showAddVerbs && <Deck showFlashcards={() => setShowFlashcards(true)} deck={currentDeck} setCurrentDeck={setCurrentDeck} verbs={verbs} verbFlashcards={verbFlashcards} showAddVerbs={showAddVerbs} setShowAddVerbs={setShowAddVerbs} />}
         {verbFlashcards && showAddVerbs && <AddVerbs updateVerbFlashcards={updateVerbFlashcards} verbs={verbs} verbFlashcards={verbFlashcards} setVerbFlashcards={setVerbFlashcards} deckId={currentDeck.deckId} deckName={currentDeck.deckName} setShowAddVerbs={setShowAddVerbs} />}
-        {verbFlashcards && showFlashcards && <Flashcards hideFlashcards={() => setShowFlashcards(false)} verbFlashcards={verbFlashcards} fetchVerbFlashcards={fetchVerbFlashcards} currentDeck={currentDeck} setVerbFlashcards={setVerbFlashcards} />}
+        {verbFlashcards && showFlashcards && <Flashcards isFinished = {isFinished} setIsFinished={setIsFinished} hideFlashcards={() => setShowFlashcards(false)} verbFlashcards={verbFlashcards} fetchVerbFlashcards={fetchVerbFlashcards} currentDeck={currentDeck} setVerbFlashcards={setVerbFlashcards} />}
 
       </div>
     </>

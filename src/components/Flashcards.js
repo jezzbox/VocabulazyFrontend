@@ -3,8 +3,7 @@ import Flashcard from './Flashcard'
 import Button from './Button'
 import { useState, useEffect } from 'react'
 
-const Flashcards = ({ hideFlashcards, currentDeck }) => {
-    const [isFinished, setIsFinished] = useState(false)
+const Flashcards = ({ isFinished, setIsFinished, hideFlashcards, currentDeck }) => {
     const [showVerb, setShowVerb] = useState(false)
     const [flashcard, setFlashcard] = useState([])
     const [todaysCards, setTodaysCards] = useState([])
@@ -262,9 +261,21 @@ const Flashcards = ({ hideFlashcards, currentDeck }) => {
         else {
             setShowVerb(false)
             setIsFinished(true)
+            setFlashcard([])
+            setTodaysCards([])
 
             console.log("finished")
         }
+    }
+
+    const onClickQuit = async () => {
+        setShowVerb(false)
+        setIsFinished(true)
+        setFlashcard([])
+        setTodaysCards([])
+        hideFlashcards()
+
+
     }
 
 
@@ -302,18 +313,19 @@ const Flashcards = ({ hideFlashcards, currentDeck }) => {
                 <Button text="Close" onClick={hideFlashcards} />
             </div>}
 
-            {!isFinished && <div>
-                {flashcard && <Flashcard key={flashcard.verbId} flashcard={flashcard} showVerb={showVerb} />}
-                {flashcard && !showVerb && <Button text="Show" onClick={() => setShowVerb(true)} />}
-                {flashcard && showVerb &&
+            {!isFinished && flashcard && <div>
+                {<Flashcard key={flashcard.verbId} flashcard={flashcard} showVerb={showVerb} />}
+                {!showVerb && <Button text="Show" onClick={() => setShowVerb(true)} />}
+                {showVerb &&
                     <div>
                         <Button text="Again" onClick={() => onClickAgain()} />
                         {flashcard.phase === "Graduated" && <Button text="Hard" onClick={() => onClickHard()} />}
                         <Button text="Good" onClick={() => onClickGood()} />
                         <Button text="Easy" onClick={() => onClickEasy()} />
                     </div>}
+                {<Button text="Quit" onClick={() => onClickQuit()} />}    
             </div>}
-            {deckFinished &&
+            {isFinished &&
                 <div>
                     <h1>Deck finished!</h1>
                     <h2>Come back tomorrow for more flashcards</h2>
