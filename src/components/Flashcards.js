@@ -3,54 +3,104 @@ import Flashcard from './Flashcard'
 import Button from './Button'
 import { useState, useEffect } from 'react'
 
-const Flashcards = ({ verbFlashcards, hideFlashcards, fetchVerbFlashcards, currentDeck, setVerbFlashcards }) => {
+const Flashcards = ({ verbFlashcards, hideFlashcards, currentDeck }) => {
     const [deckFinished, setDeckFinished] = useState(false)
     const [showVerb, setShowVerb] = useState(false)
     const [flashcard, setFlashcard] = useState(null)
     const [flashcardNumber, setFlashcardNumber] = useState(0)
-    const [todaysCards, setTodaysCards] = useState([])
+    const [todaysCards, setTodaysCards] = useState(verbFlashcards)
+    const deckId = currentDeck.deckId
 
     useEffect(() => {
-        if(verbFlashcards.length > 0) {
-        const reviewCutoff = getReviewCutoff(4)
-        const learningCutoff = getLearningCutoff(20)
+        const getTodaysCards = async () => {
+            const reviewCutoff = getReviewCutoff(4)
+            const learningCutoff = getLearningCutoff(20)
 
-        const getTodaysCards = async (cardsFromServer,learningCutoff, reviewCutoff) => {
-            
-            const reviewCards = await getCards(reviewCutoff, cardsFromServer, "Graduated")
-            const learningCards = await getCards(learningCutoff, cardsFromServer, "Learning")
-            const newCards = await getCards(learningCutoff, cardsFromServer, "New", reviewCards.length)
+            const reviewCardsFromServer = await fetchTodaysFlashcards("Graduated", reviewCutoff)
+            const learningCardsFromServer = await fetchTodaysFlashcards("Learning", learningCutoff)
 
+            const getNewCards = async () => {
+                if(reviewCardsFromServer.length > 0) {
+                    newCardsFromServer = await fetchTodaysFlashcards("New", learningCutoff)
+                    return newCardsFromServer
+                }
+                else {
+                    newCardsFromServer = await fetchTodaysFlashcards("New")
+                    return newCardsFromServer
+                }
+            }
 
-            const allCards = [...reviewCards,...learningCards, ...newCards]
-            setTodaysCards(allCards)
-            
+            const newCardsFromServer = await getNewCards()
+
+            const todaysCardsFromServer = [...reviewCardsFromServer,...learningCardsFromServer,...newCardsFromServer]
+            setTodaysCards(todaysCardsFromServer)
         }
+        getTodaysCards(deckId)
+        }
+        ,[deckId])
 
-        const getCards = async (cutoff, cards, cardPhase, reviewCardsLength=0) => {
+    const fetchTodaysFlashcards = async (cardPhase, cutoff=null) => {
+
+        const getDueDateParameter = async (cutoff=null) => {
+            if(cutoff) {
+                dueDateString = `&dueDate=${cutoff}`
+                return dueDateString
+                }
+            else {
+                return ``
+                }
+            }
+    
+        const getMaxCardsParameter = async (cardPhase) => {
             if(cardPhase === "New") {
-                const newCards = cards.filter(card => card.phase === "New")
-                reviewCardsLength > 0 && newCards.filter(card => card.dueDate <= cutoff)
-                const sortedNewCards = sortByDueDate(newCards)
-                return sortedNewCards.slice(0, 20);
+                maxCardsString = `&maxCards=20`
+                return maxCardsString
+                }
+            else {
+                maxCardsString = `&maxCards=200`
+                return maxCardsString
+                }
             }
-            if(cardPhase !== "New") {
-                const newCards = cards.filter(card => card.dueDate <= cutoff && card.phase === cardPhase)
-                const sortedNewCards = sortByDueDate(newCards)
-                return sortedNewCards.slice(0, 200);
-            }
-        }
+            const dueDate = getDueDateParameter(cutoff) 
+            const maxCards = getMaxCardsParameter(cardPhase)
+            const url = `https://localhost:44386/api/Vocabulazy/verbFlashcards?deckId=${deckId}&phase=${cardPhase}`+dueDate+maxCards
+            const res = await fetch(url)
+            const data = await res.json()
+            return data
+          }
 
-        getTodaysCards(verbFlashcards, learningCutoff, reviewCutoff)
+    
+
+    useEffect(() => {
+        const getFlashcard = async (verbFlashcard) => {
+            const phraseFromServer = await fetchPhrase(verbFlashcard.verbId)
+            const flashcard = verbFlashcard
+
+            if (phraseFromServer == null) {
+                flashcard.phrase = flashcard.verb
+                flashcard.phraseId = null
+            }
+            else {
+                flashcard.phrase = phraseFromServer.phrase
+                flashcard.phraseId = phraseFromServer.phraseId
+            }
+            setFlashcard(flashcard)
+
         }
-    }, [verbFlashcards])
+        getFlashcard(todaysCards[0])
+        },[verbFlashcards, todaysCards])
 
     const sortByDueDate = (cards) => {
         return cards.sort((a, b) => b.dueDate - a.dueDate)
     }
 
-    const getReviewCutoff = (resetTime) => {
+    
+
+    const getReviewCutoff = (phase, resetTime) => {
         const currentTime = new Date()
+        if(phase === "New") {
+            
+        }
         const setHours = new Date(currentTime.setHours(resetTime))
         const setMinutes = new Date(setHours.setMinutes(0))
         return (new Date(setMinutes)).toJSON()
@@ -61,8 +111,6 @@ const Flashcards = ({ verbFlashcards, hideFlashcards, fetchVerbFlashcards, curre
         const learningCutoff = (new Date(currentTime.setMinutes(currentTime.getMinutes() + learnAheadTime))).toJSON()
         return learningCutoff
     }
-
-
 
     useEffect(() => {
         if (todaysCards.length > 0 && todaysCards.length > flashcardNumber) {
