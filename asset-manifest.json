@@ -1,21 +1,21 @@
 {
   "files": {
-    "main.css": "/www.vocabulazy.co.uk/static/css/main.1dd4f822.chunk.css",
-    "main.js": "/www.vocabulazy.co.uk/static/js/main.490aeb93.chunk.js",
-    "main.js.map": "/www.vocabulazy.co.uk/static/js/main.490aeb93.chunk.js.map",
-    "runtime-main.js": "/www.vocabulazy.co.uk/static/js/runtime-main.90c0d6a6.js",
-    "runtime-main.js.map": "/www.vocabulazy.co.uk/static/js/runtime-main.90c0d6a6.js.map",
-    "static/js/2.2d5b1ffe.chunk.js": "/www.vocabulazy.co.uk/static/js/2.2d5b1ffe.chunk.js",
-    "static/js/2.2d5b1ffe.chunk.js.map": "/www.vocabulazy.co.uk/static/js/2.2d5b1ffe.chunk.js.map",
-    "static/js/3.fa073902.chunk.js": "/www.vocabulazy.co.uk/static/js/3.fa073902.chunk.js",
-    "static/js/3.fa073902.chunk.js.map": "/www.vocabulazy.co.uk/static/js/3.fa073902.chunk.js.map",
-    "index.html": "/www.vocabulazy.co.uk/index.html",
-    "static/css/main.1dd4f822.chunk.css.map": "/www.vocabulazy.co.uk/static/css/main.1dd4f822.chunk.css.map",
-    "static/js/2.2d5b1ffe.chunk.js.LICENSE.txt": "/www.vocabulazy.co.uk/static/js/2.2d5b1ffe.chunk.js.LICENSE.txt",
-    "static/media/logo.1783d326.png": "/www.vocabulazy.co.uk/static/media/logo.1783d326.png"
+    "main.css": "/VocabulazyFrontend/static/css/main.1dd4f822.chunk.css",
+    "main.js": "/VocabulazyFrontend/static/js/main.490aeb93.chunk.js",
+    "main.js.map": "/VocabulazyFrontend/static/js/main.490aeb93.chunk.js.map",
+    "runtime-main.js": "/VocabulazyFrontend/static/js/runtime-main.f37985e5.js",
+    "runtime-main.js.map": "/VocabulazyFrontend/static/js/runtime-main.f37985e5.js.map",
+    "static/js/2.2d5b1ffe.chunk.js": "/VocabulazyFrontend/static/js/2.2d5b1ffe.chunk.js",
+    "static/js/2.2d5b1ffe.chunk.js.map": "/VocabulazyFrontend/static/js/2.2d5b1ffe.chunk.js.map",
+    "static/js/3.fa073902.chunk.js": "/VocabulazyFrontend/static/js/3.fa073902.chunk.js",
+    "static/js/3.fa073902.chunk.js.map": "/VocabulazyFrontend/static/js/3.fa073902.chunk.js.map",
+    "index.html": "/VocabulazyFrontend/index.html",
+    "static/css/main.1dd4f822.chunk.css.map": "/VocabulazyFrontend/static/css/main.1dd4f822.chunk.css.map",
+    "static/js/2.2d5b1ffe.chunk.js.LICENSE.txt": "/VocabulazyFrontend/static/js/2.2d5b1ffe.chunk.js.LICENSE.txt",
+    "static/media/logo.1783d326.png": "/VocabulazyFrontend/static/media/logo.1783d326.png"
   },
   "entrypoints": [
-    "static/js/runtime-main.90c0d6a6.js",
+    "static/js/runtime-main.f37985e5.js",
     "static/js/2.2d5b1ffe.chunk.js",
     "static/css/main.1dd4f822.chunk.css",
     "static/js/main.490aeb93.chunk.js"
