@@ -4,6 +4,7 @@ import Button from './Button'
 import { useState, useEffect } from 'react'
 
 const Flashcards = ({ hideFlashcards, currentDeck }) => {
+    const [isFinished, setIsFinished] = useState(false)
     const [showVerb, setShowVerb] = useState(false)
     const [flashcard, setFlashcard] = useState([])
     const [todaysCards, setTodaysCards] = useState([])
@@ -70,11 +71,11 @@ const Flashcards = ({ hideFlashcards, currentDeck }) => {
         , [deckId])
 
     useEffect(() => {
-        if(todaysCards.length > 0) {
+        if (todaysCards.length > 0) {
 
             const getFlashcard = async (verbFlashcard) => {
                 const phraseFromServer = await fetchPhrase(verbFlashcard.verbId)
-                const flashcard = Object.assign({},verbFlashcard)
+                const flashcard = Object.assign({}, verbFlashcard)
                 if (phraseFromServer == null) {
                     flashcard.phrase = flashcard.verb
                     flashcard.phraseId = null
@@ -83,22 +84,23 @@ const Flashcards = ({ hideFlashcards, currentDeck }) => {
                     flashcard.phrase = phraseFromServer.phrase
                     flashcard.phraseId = phraseFromServer.phraseId
                 }
-                
-                setFlashcard(flashcard)
-                }
-        getFlashcard(todaysCards[flashcardNumber])
 
-    }},[todaysCards, flashcardNumber])
+                setFlashcard(flashcard)
+            }
+            getFlashcard(todaysCards[flashcardNumber])
+
+        }
+    }, [todaysCards, flashcardNumber])
 
     useEffect(() => {
         console.log("current Flashcard: ")
         console.log(flashcard)
-    },[flashcard])
+    }, [flashcard])
 
     useEffect(() => {
         console.log("todays cards: ")
         console.log(todaysCards)
-    },[todaysCards])
+    }, [todaysCards])
 
     const getReviewCutoff = (phase, resetTime) => {
         const currentTime = new Date()
@@ -138,10 +140,7 @@ const Flashcards = ({ hideFlashcards, currentDeck }) => {
             const updatedCard = await updateVerbFlashcard(flashcard.verbFlashcardId, updateData)
 
             console.log("card will be added to end of deck")
-            const updateTodaysCards = async () => {
-            }
-            await updateTodaysCards(updatedCard)
-
+            todaysCards.push(updatedCard)
             console.log(todaysCards)
             await onClick()
 
@@ -155,8 +154,6 @@ const Flashcards = ({ hideFlashcards, currentDeck }) => {
             }
 
             const updatedCard = await updateVerbFlashcard(flashcard.verbFlashcardId, updateData)
-            console.log(updatedCard)
-            console.log("card will be added to end of deck")
             todaysCards.push(updatedCard)
             console.log(todaysCards)
             await onClick()
@@ -204,7 +201,7 @@ const Flashcards = ({ hideFlashcards, currentDeck }) => {
                 todaysCards.push(updatedCard)
                 console.log(todaysCards)
                 console.log(todaysCards.length)
-                
+
                 await onClick()
             }
 
@@ -258,12 +255,15 @@ const Flashcards = ({ hideFlashcards, currentDeck }) => {
     }
 
     const onClick = async () => {
-        if(todaysCards.length > 0 && flashcardNumber + 1 !== todaysCards.length) {
+        if (todaysCards.length > 0 && flashcardNumber + 1 !== todaysCards.length) {
             setShowVerb(false)
             setFlashcardNumber(flashcardNumber + 1)
         }
         else {
-        console.log("finished")
+            setShowVerb(false)
+            setIsFinished(true)
+
+            console.log("finished")
         }
     }
 
@@ -301,24 +301,24 @@ const Flashcards = ({ hideFlashcards, currentDeck }) => {
                 <h1>No cards left for today, come back tomorrow</h1>
                 <Button text="Close" onClick={hideFlashcards} />
             </div>}
-            
-                <div>
-                    {flashcard && <Flashcard key={flashcard.verbId} flashcard={flashcard} showVerb={showVerb} />}
-                    {flashcard && !showVerb && <Button text="Show" onClick={() => setShowVerb(true)} />}
-                    {flashcard && showVerb &&
-                        <div>
-                            <Button text="Again" onClick={() => onClickAgain()} />
-                            {flashcard.phase === "Graduated" && <Button text="Hard" onClick={() => onClickHard()} />}
-                            <Button text="Good" onClick={() => onClickGood()} />
-                            <Button text="Easy" onClick={() => onClickEasy()} />
-                        </div>}
-                </div>
-            {/* {deckFinished &&
+
+            {!isFinished && <div>
+                {flashcard && <Flashcard key={flashcard.verbId} flashcard={flashcard} showVerb={showVerb} />}
+                {flashcard && !showVerb && <Button text="Show" onClick={() => setShowVerb(true)} />}
+                {flashcard && showVerb &&
+                    <div>
+                        <Button text="Again" onClick={() => onClickAgain()} />
+                        {flashcard.phase === "Graduated" && <Button text="Hard" onClick={() => onClickHard()} />}
+                        <Button text="Good" onClick={() => onClickGood()} />
+                        <Button text="Easy" onClick={() => onClickEasy()} />
+                    </div>}
+            </div>}
+            {deckFinished &&
                 <div>
                     <h1>Deck finished!</h1>
                     <h2>Come back tomorrow for more flashcards</h2>
                     <Button text="Close" onClick={hideFlashcards} />
-                </div>} */}
+                </div>}
         </>
     )
 }
