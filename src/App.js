@@ -9,6 +9,7 @@ import AddVerbs from './components/Decks/AddVerbs'
 import Button from './components/Button'
 import AddDeck from './components/Decks/AddDeck'
 import Flashcards from './components/Flashcards'
+import AddFlashcards from './components/Decks/AddFlashcards';
 
 function App() {
   const { user, isAuthenticated, isLoading } = useAuth0();
@@ -164,6 +165,7 @@ function App() {
       <div className="container">
         {!isLoading && <Header title="Welcome to Vocabulazy!" isAuthenticated={isAuthenticated} user={user} />}
         {!isLoading && <Welcome isAuthenticated={isAuthenticated} />}
+        <AddFlashcards />
         <div>
           {isAuthenticated && !showAddDeck && currentDeck && <Button text={showChangeDeck ? "Hide" : "Change Deck"} color={showChangeDeck ? "steelblue" : "blueviolet"} onClick={() => setShowChangeDeck(!showChangeDeck)} />}
           {isAuthenticated && !showChangeDeck && <Button text={showAddDeck ? "Back" : "Create new Deck"} color={showAddDeck ? "steelblue" : "blueviolet"} onClick={() => setShowAddDeck(!showAddDeck)} />}
