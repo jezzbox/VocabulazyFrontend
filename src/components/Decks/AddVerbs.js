@@ -4,7 +4,7 @@ import CurrentVerbs from './CurrentVerbs'
 import { useState } from 'react'
 import Button from '../Button'
 
-const AddVerbs = ({ updateVerbFlashcards, setVerbFlashcards, verbFlashcards, verbs, deckId, deckName, setShowAddVerbs }) => {
+const AddVerbs = ({ updateVerbFlashcards, setVerbFlashcards, verbFlashcards, verbs, deckId, name, setShowAddVerbs }) => {
 const[filterString, setFilterString] = useState('');
 
 const onClick = () => {
@@ -17,7 +17,7 @@ const onClick = () => {
 
     return (
         <div className="container">
-            <h1>{`Editing deck: ${deckName} `}</h1>
+            <h1>{`Editing deck: ${name} `}</h1>
             <Button text="Back" onClick={() => setShowAddVerbs(false)}/>
             <h1>Add/Remove Verbs</h1>
             <h1>{ deckId }</h1>

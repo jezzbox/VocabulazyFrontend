@@ -14,14 +14,14 @@ body {
   max-width: 1200px;
   margin: 30px auto;
   overflow: auto;
-  min-height: 200px;
+  min-height: 100px;
   border: 1px solid steelblue;
   padding: 30px;
   border-radius: 5px;
 }
 
 .verbs-container {
-  display:flex;
+  display: flex;
   align-items: flex-start;
   justify-content: left;
   max-width: 1200px;
@@ -35,7 +35,7 @@ body {
 
 .add-verbs-container {
   max-width: 1200px;
-  min-width:400px;
+  min-width: 400px;
   overflow: scroll;
   height: 400px;
   padding: 5px;
@@ -45,16 +45,15 @@ body {
 
 .current-verbs-container {
   max-width: 1200px;
-  min-width:400px;
+  min-width: 400px;
   overflow: scroll;
   height: 400px;
   padding: 5px;
   margin: 5px auto;
 }
 
-
 .verb-container {
-  display:flex;
+  display: flex;
   align-items: center;
   justify-content: center;
   max-width: 1200px;
@@ -67,7 +66,7 @@ body {
 }
 
 .verb h3 {
-  align-items:center;
+  align-items: center;
 }
 .header {
   display: flex;
@@ -91,8 +90,12 @@ body {
   border-radius: 5px;
   cursor: pointer;
   text-decoration: none;
-  font-size: 15px;
+  font-size: 20px;
   font-family: inherit;
+}
+
+.start {
+  font-size: 50px;
 }
 
 .btn:focus {
@@ -171,9 +174,8 @@ footer {
   align-items: center;
 }
 
-
 .muted {
-  color:darkgrey
+  color: darkgrey;
 }
 
 .deck-container {
@@ -186,7 +188,6 @@ footer {
   border: 1px solid steelblue;
   padding: 15px;
   border-radius: 5px;
-
 }
 
 .btn-decksettings {
@@ -206,7 +207,80 @@ footer {
 
 .deck-title {
   justify-self: start;
-  margin-left:20px;
+  margin-left: 20px;
   margin-right: 200px;
-  cursor:pointer;
+  cursor: pointer;
+}
+
+.word {
+  text-align:left;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  max-width: 700px;
+  margin: 10px auto;
+  overflow: auto;
+  border: 5px solid rgb(187, 53, 75);
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.word-container {
+  width: 77%;
+  float: left;
+}
+
+.right {
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+}
+
+.left {
+  display:flex;
+  justify-content:flex-start;
+  align-items:center;
+}
+
+.center {
+  justify-content:center;
+  align-items:center;
+}
+
+.btn-word {
+  display:flex;
+  justify-self:right;
+  border: 1px solid steelblue;
+}
+
+.search-words-container {
+  width:45%;
+  max-width: 1200px;
+  margin: 15px auto;
+  overflow: auto;
+  border: 1px solid steelblue;
+  padding: 15px;
+  border-radius: 5px;
+
+}
+
+.add-flashcards-container {
+  justify-content: center;
+  max-width: 1200px;
+  margin: 30px auto;
+  overflow: auto;
+  min-height: 200px;
+  border: 1px solid steelblue;
+  padding: 30px;
+  border-radius: 5px;
+}
+.horizontal-align {
+  display:flex;
+  justify-content:center;
+  align-items:flex-start
+}
+
+.scroll {
+  max-height:400px;
+  overflow:scroll;
 }
