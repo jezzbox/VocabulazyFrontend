@@ -17,61 +17,119 @@ function App() {
   const [showAddVerbs, setShowAddVerbs] = useState(false)
   const [showAddDeck, setShowAddDeck] = useState(false)
   const [showChangeDeck, setShowChangeDeck] = useState(false)
-  const [userUrl, setUserUrl] = useState(null);
   const [decks, setDecks] = useState([]);
   const [currentDeck, setCurrentDeck] = useState([]);
   const [verbs, setVerbs] = useState([]);
   const [verbFlashcards, setVerbFlashcards] = useState([])
   const [showFlashcards, setShowFlashcards] = useState(false)
   const [isFinished, setIsFinished] = useState(false)
+  const [userProfile, setUserProfile] = useState([])
+  const [showAddFlashcards, setShowAddFlashcards] = useState(false)
+  const [flashcards, setFlashcards] = useState([])
 
+  //adds user profile if doesnt exist
   useEffect(() => {
-    if (!isLoading & isAuthenticated) {
-      const getUserUrl = async () => {
-        const userUrlFromServer = await user.sub
-        setUserUrl(userUrlFromServer)
+    if (isAuthenticated) {
+      const getUserProfile = async () => {
+        const authIdentifier = await user.sub
+        const userProfileFromServer = await fetchUserProfile(authIdentifier)
+
+        if (userProfileFromServer.status === 404) {
+          const newUser = { authIdentifier: authIdentifier, defaultDeckId: null }
+          const userProfileFromServer = await addUserProfile(newUser)
+          setUserProfile(userProfileFromServer)
+        }
+
+        else if (userProfileFromServer.authIdentifier === user.sub) {
+          setUserProfile(userProfileFromServer)
+        }
+
+        else {
+          console.log("Error")
+        }
+
       }
-      getUserUrl()
+      getUserProfile()
+
+
     }
-  }, [isAuthenticated, isLoading, user]
-  )
+  }, [isAuthenticated, user])
+
+  const fetchUserProfile = async (authIdentifier) => {
+    const url = `https://localhost:44386/api/Vocabulazy/userprofiles?authIdentifier=${authIdentifier}`
+    const res = await fetch(url)
+    const data = await res.json()
+    return data
+  }
+  const addUserProfile = async (newUser) => {
+    const res = await fetch('https://localhost:44386/api/Vocabulazy/userprofiles', {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify(newUser)
+    })
+    const data = await res.json()
+    return data
+
+  }
 
   useEffect(() => {
-    if (userUrl) {
+    if (userProfile) {
       const getDecks = async () => {
-        const DecksFromServer = await fetchDecks(userUrl)
-        setDecks(DecksFromServer)
-        setCurrentDeck(DecksFromServer.sort((a, b) => b.isDefault - a.isDefault)[0])
+        const decksFromServer = await fetchDecks(userProfile.userId)
+
+        if (userProfile.defaultDeckId) {
+          const defaultDeck = decksFromServer.filter(x => x.deckId === userProfile.defaultDeckId)
+          console.log("has default deck")
+          console.log(defaultDeck)
+          setCurrentDeck(defaultDeck)
+          setDecks(decksFromServer)
+
+        }
+
+        else if (decksFromServer[0]) {
+          const defaultDeck = decksFromServer[0]
+          console.log("Doesnt have default deck")
+          console.log(defaultDeck)
+          setCurrentDeck(defaultDeck)
+          setDecks(decksFromServer)
+        }
+
       }
 
       getDecks()
     }
-  }, [userUrl]
+  }, [userProfile]
   )
 
+  // Get flashcards for the current selected deck
   useEffect(() => {
-    const getVerbs = async () => {
-      const VerbsFromServer = await fetchVerbs()
-      setVerbs(VerbsFromServer)
-    }
+    if (currentDeck.deckId) {
 
-    getVerbs()
-  }, [])
+      const getFlashcards = async (deckId) => {
+        const flashcardsFromServer = []
+        // wordTypes = ["Verb", "Adjective", "Noun", "Adverb", "Pronoun", "Conjunction", "Preposition", "Article"]
+        const wordTypes = ["Verb","Adjective"]
+        
+        for (const wordType of wordTypes) {
+          const data = await fetchFlashcards(wordType, deckId)
+          data.forEach(word => {
+            flashcardsFromServer.push(word)
+          })
+          }
+          
+        
 
-// Get verb flashcards for the current selected deck
-  useEffect(() => {
-    if (currentDeck && currentDeck.deckId) {
-      const getVerbFlashcards = async () => {
-        const verbFlashcardsFromServer = await fetchVerbFlashcards(currentDeck.deckId)
-        if (verbFlashcardsFromServer == null) {
-          setVerbFlashcards([])
+        if (flashcardsFromServer == null) {
+          setFlashcards([])
         }
         else {
-          setVerbFlashcards(verbFlashcardsFromServer)
+          setFlashcards(flashcardsFromServer)
         }
       }
 
-      getVerbFlashcards()
+      getFlashcards(currentDeck.deckId)
     }
   }, [currentDeck, isFinished])
 
@@ -80,8 +138,8 @@ function App() {
 
   //google-oauth2|109641767784145272988
   // fetch decks
-  const fetchDecks = async (userUrl) => {
-    const url = `https://localhost:44386/api/Vocabulazy/decks?userId=${userUrl}`
+  const fetchDecks = async (userId) => {
+    const url = `https://localhost:44386/api/Vocabulazy/decks?userId=${userId}`
     const res = await fetch(url)
     const data = await res.json()
     return data
@@ -94,35 +152,19 @@ function App() {
     const data = await res.json()
     return data
   }
+  // fetch flashcards
+  const fetchFlashcards = async (wordType, deckId) => {
+    const url = `https://localhost:44386/api/Vocabulazy/${wordType}Flashcards?deckId=${deckId}`
+    const res = await fetch(url)
+    const data = await res.json()
+    return data
+  }
   // fetch verb flashcards
   const fetchVerbFlashcards = async (deckId) => {
     const url = `https://localhost:44386/api/Vocabulazy/verbFlashcards?deckId=${deckId}`
     const res = await fetch(url)
     const data = await res.json()
     return data
-  }
-
-
-
-
-  //add deck
-  const addDeck = async (deck) => {
-    const res = await fetch('https://localhost:44386/api/Vocabulazy/decks', {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify(deck)
-    })
-
-    const data = await res.json()
-    setDecks([...decks, data])
-    setCurrentDeck(data)
-    setVerbFlashcards([])
-    alert(`Deck ${data.deckName} created! now add some verbs.`)
-    setShowAddVerbs(true)
-    setShowAddDeck(false)
-
   }
 
   const addVerbFlashcard = async (verbFlashcard) => {
@@ -165,18 +207,30 @@ function App() {
       <div className="container">
         {!isLoading && <Header title="Welcome to Vocabulazy!" isAuthenticated={isAuthenticated} user={user} />}
         {!isLoading && <Welcome isAuthenticated={isAuthenticated} />}
-        <AddFlashcards />
         <div>
-          {isAuthenticated && !showAddDeck && currentDeck && <Button text={showChangeDeck ? "Hide" : "Change Deck"} color={showChangeDeck ? "steelblue" : "blueviolet"} onClick={() => setShowChangeDeck(!showChangeDeck)} />}
-          {isAuthenticated && !showChangeDeck && <Button text={showAddDeck ? "Back" : "Create new Deck"} color={showAddDeck ? "steelblue" : "blueviolet"} onClick={() => setShowAddDeck(!showAddDeck)} />}
-          {showAddDeck && <AddDeck addDeck={addDeck} userUrl={userUrl} />}
+          {showAddDeck && <AddDeck userProfile={userProfile} setDecks={setDecks} decks={decks} setCurrentDeck={setCurrentDeck} setFlashcards={setVerbFlashcards} setShowAddDeck={setShowAddDeck} setShowAddVerbs={setShowAddVerbs} showAddVerbs={showAddVerbs} />}
         </div>
         {!currentDeck && isAuthenticated && !isLoading && !showAddDeck ? <h1>No decks yet, create one to get started!</h1> : null}
         {currentDeck && showChangeDeck && <Decks decks={decks} isLoading={isLoading} isAuthenticated={isAuthenticated} setCurrentDeck={setCurrentDeck} currentDeck={currentDeck} />}
-        {isAuthenticated && currentDeck && !showAddVerbs && <Deck showFlashcards={() => setShowFlashcards(true)} deck={currentDeck} setCurrentDeck={setCurrentDeck} verbs={verbs} verbFlashcards={verbFlashcards} showAddVerbs={showAddVerbs} setShowAddVerbs={setShowAddVerbs} />}
-        {verbFlashcards && showAddVerbs && <AddVerbs updateVerbFlashcards={updateVerbFlashcards} verbs={verbs} verbFlashcards={verbFlashcards} setVerbFlashcards={setVerbFlashcards} deckId={currentDeck.deckId} deckName={currentDeck.deckName} setShowAddVerbs={setShowAddVerbs} />}
-        {verbFlashcards && showFlashcards && <Flashcards isFinished = {isFinished} setIsFinished={setIsFinished} hideFlashcards={() => setShowFlashcards(false)} verbFlashcards={verbFlashcards} fetchVerbFlashcards={fetchVerbFlashcards} currentDeck={currentDeck} setVerbFlashcards={setVerbFlashcards} />}
+        {isAuthenticated && currentDeck && !showAddFlashcards && <Deck showFlashcards={() => setShowFlashcards(true)} deck={currentDeck} setCurrentDeck={setCurrentDeck} verbs={verbs} verbFlashcards={verbFlashcards} showAddFlashcards={showAddFlashcards} setShowAddFlashcards={setShowAddFlashcards} />}
 
+        {isAuthenticated && !showAddFlashcards && <div>
+          <div className="center">
+            <Button className="btn start" text="Start" color="green" />
+          </div>
+
+          <div className="center">
+            {!showAddDeck && currentDeck && <Button text={showChangeDeck ? "Hide" : "Change Deck"} color={showChangeDeck ? "blueviolet" : "steelblue"} onClick={() => setShowChangeDeck(!showChangeDeck)} />}
+            {!showChangeDeck && <Button text={showAddDeck ? "Back" : "Create new Deck"} color={showAddDeck ? "blueviolet" : "grey"} onClick={() => setShowAddDeck(!showAddDeck)} />}
+          </div>
+        </div>}
+
+        {verbFlashcards && showAddVerbs && <AddVerbs updateVerbFlashcards={updateVerbFlashcards} verbs={verbs} verbFlashcards={verbFlashcards} setVerbFlashcards={setVerbFlashcards} deckId={currentDeck.deckId} deckName={currentDeck.name} setShowAddVerbs={setShowAddVerbs} />}
+        {verbFlashcards && showFlashcards && <Flashcards isFinished={isFinished} setIsFinished={setIsFinished} hideFlashcards={() => setShowFlashcards(false)} verbFlashcards={verbFlashcards} fetchVerbFlashcards={fetchVerbFlashcards} currentDeck={currentDeck} setVerbFlashcards={setVerbFlashcards} />}
+
+      </div>
+      <div className="add-flashcards-container">
+        {showAddFlashcards && <AddFlashcards hideAddFlashcards={() => setShowAddFlashcards(false)} />}
       </div>
     </>
   );
