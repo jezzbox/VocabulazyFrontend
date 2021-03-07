@@ -12,7 +12,11 @@ const Word = ({ word, flashcards, setFlashcards, isCurrent }) => {
             console.log("do nothing")
         }
         else {
+            console.log("hello")
+            console.log(flashcards)
+            console.log(word)
             setFlashcards([...flashcards,word])
+            console.log(flashcards)
         }
         }
 

@@ -4,7 +4,7 @@ import Button from '../Button'
 import { useState, useEffect } from 'react'
 
 
-const AddFlashcards = ( { hideAddFlashcards } ) => {
+const AddFlashcards = ({ hideAddFlashcards, currentFlashcards, setCurrentFlashcards }) => {
     const [searchString, setSearchString] = useState('');
     const [searchResult, setSearchResult] = useState([]);
     const [filterString, setFilterString] = useState('')
@@ -44,7 +44,7 @@ const AddFlashcards = ( { hideAddFlashcards } ) => {
 
     //     const verbsToAdd = verbFlashcards.filter((verb) => !verbFlashcardsFromServer.some(x => x.verbId === verb.verbId))
     //     const verbsToRemove = verbFlashcardsFromServer.filter((verb) => !verbFlashcards.some(x => x.verbId === verb.verbId))
-    
+
     //     verbsToAdd.forEach(verb => {
     //       const newVerbFlashcard = { verbId: verb.verbId, deckId: deckId }
     //       addVerbFlashcard(newVerbFlashcard)
@@ -57,44 +57,45 @@ const AddFlashcards = ( { hideAddFlashcards } ) => {
 
     return (
         <>
-        <div>
-            <h1>Editing Deck: my first deck</h1>
-        </div>
-        <div className="container horizontal-align">
-            <div className="search-words-container">
-            <h2>Add words: </h2>
-                <form className='add-form' onSubmit={onSubmit}>
-                    <div className='form-control'>
-                        <input
-                            type='text'
-                            placeholder='Search words'
-                            value={searchString}
-                            onChange={(e) => setSearchString(e.target.value)}
-                        />
-                    </div>
-                    <input type='submit' value='Search' className='btn btn-block' />
-                </form>
-                {isLoading && <h1>Loading....</h1>}
-                {showResult && <Words words={searchResult} flashcards={flashcards} setFlashcards={setFlashcards} isCurrent={false} />}
+            <div>
+                <h1>Editing Deck: my first deck</h1>
             </div>
-            <div className="search-words-container">
-                <h2>Current words: </h2>
-                    {flashcards.length > 0 && <div className='form-control'>
-                        <input type="text" id="myInput" onChange={(e) => setFilterString(e.target.value.toLowerCase())} value={filterString} placeholder="Search deck..."></input>
+            <div className="container horizontal-align">
+                <div className="search-words-container">
+                    <h2>Add words: </h2>
+                    <form className='add-form' onSubmit={onSubmit}>
+                        <div className='form-control'>
+                            <input
+                                type='text'
+                                placeholder='Search words'
+                                value={searchString}
+                                onChange={(e) => setSearchString(e.target.value)}
+                            />
+                        </div>
+                        <input type='submit' value='Search' className='btn btn-block' />
+                    </form>
+                    {isLoading && <h1>Loading....</h1>}
+                    {showResult && <Words words={searchResult} currentFlashcards={currentFlashcards} setCurrentFlashcards={setCurrentFlashcards} isCurrent={false} />}
+                </div>
+                <div className="search-words-container">
+                    <h2>Current words: </h2>
+                    {currentFlashcards.length > 0 && <div className='form-control'>
+                        <input type="text" id="myInput" onChange={(e) => setFilterString(e.target.value.toLowerCase())} value={filterString} placeholder="Search deck...">
+
+                        </input>
                     </div>}
-                    {flashcards.length === 0 && <h3>Deck is empty</h3>}
-                {isLoading && <h1>Loading....</h1>}
-                {showResult && <Words words={flashcards} setFlashcards={setFlashcards} isCurrent={true} flashcards={flashcards}  />}
+                    {currentFlashcards.length === 0 && <h3>Deck is empty</h3>}
+                    {currentFlashcards.length > 0 && <Words words={currentFlashcards} setFlashcards={setFlashcards} isCurrent={true} flashcards={flashcards} />}
+                </div>
             </div>
-        </div>
-        <div className="horizontal-align">
-            <div className="word-container left">
-                <Button text="Back" onClick={hideAddFlashcards}/>
+            <div className="horizontal-align">
+                <div className="word-container left">
+                    <Button text="Back" onClick={hideAddFlashcards} />
+                </div>
+                <div className="word-container right">
+                    <Button text="Submit" />
+                </div>
             </div>
-            <div className="word-container right">
-                <Button text="Submit" />
-            </div>
-        </div>
         </>
     )
 }
