@@ -15,7 +15,7 @@ const AddDeck = ({ decks, setDecks, setCurrentDeck, setFlashcards, setShowAddDec
 
   //add deck
   const addDeck = async (deck) => {
-    const res = await fetch('https://localhost:44386/api/Vocabulazy/decks', {
+    const res = await fetch('https://localhost:44386/api/decks', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'

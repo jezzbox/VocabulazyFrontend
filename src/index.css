@@ -220,7 +220,7 @@ footer {
   max-width: 700px;
   margin: 10px auto;
   overflow: auto;
-  border: 5px solid rgb(187, 53, 75);
+  border: 3px solid rgb(187, 53, 75);
   padding: 10px;
   border-radius: 10px;
 }
@@ -251,6 +251,9 @@ footer {
   display:flex;
   justify-self:right;
   border: 1px solid steelblue;
+  padding: 10px 10px;
+  margin: 3px;
+  font-size: 14px;
 }
 
 .search-words-container {

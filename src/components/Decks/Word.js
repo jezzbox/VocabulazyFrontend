@@ -32,8 +32,8 @@ const Word = ({ word, flashcards, setFlashcards, isCurrent }) => {
             word.wordType === "Adverb" ? "blueviolet" : "white"
         }}>
             <div className="word-container">
-                <h3>{word.word}</h3>
-                <h4>{word.wordType}</h4>
+                <h5>{word.word}</h5>
+                <h6>{word.wordType}</h6>
             </div>
             <div className="word-container right">
                 <Button className="btn btn-word" color={wordInDeck ? "green" : "blueviolet"} text={isCurrent? "Remove" : wordInDeck ? "Added" : "Add"} onClick={() => onClick()} />

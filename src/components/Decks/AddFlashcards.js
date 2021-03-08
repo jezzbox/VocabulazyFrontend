@@ -1,6 +1,7 @@
 import React from 'react'
 import Words from './Words'
 import Button from '../Button'
+import CurrentFlashcards from './CurrentFlashcards'
 import { useState, useEffect } from 'react'
 
 
@@ -75,7 +76,7 @@ const AddFlashcards = ({ hideAddFlashcards, currentFlashcards, setCurrentFlashca
                         <input type='submit' value='Search' className='btn btn-block' />
                     </form>
                     {isLoading && <h1>Loading....</h1>}
-                    {showResult && <Words words={searchResult} currentFlashcards={currentFlashcards} setCurrentFlashcards={setCurrentFlashcards} isCurrent={false} />}
+                    {showResult && <Words words={searchResult} currentFlashcards={currentFlashcards} setCurrentFlashcards={setCurrentFlashcards} />}
                 </div>
                 <div className="search-words-container">
                     <h2>Current words: </h2>
@@ -85,7 +86,7 @@ const AddFlashcards = ({ hideAddFlashcards, currentFlashcards, setCurrentFlashca
                         </input>
                     </div>}
                     {currentFlashcards.length === 0 && <h3>Deck is empty</h3>}
-                    {currentFlashcards.length > 0 && <Words words={currentFlashcards} setFlashcards={setFlashcards} isCurrent={true} flashcards={flashcards} />}
+                    {currentFlashcards.length > 0 && <CurrentFlashcards flashcards={currentFlashcards} setCurrentFlashcards={setCurrentFlashcards}/>}
                 </div>
             </div>
             <div className="horizontal-align">

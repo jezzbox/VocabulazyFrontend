@@ -57,13 +57,13 @@ function App() {
 
 
   const fetchUserProfile = async (authIdentifier) => {
-    const url = `https://localhost:44386/api/Vocabulazy/userprofiles?authIdentifier=${authIdentifier}`
+    const url = `https://localhost:44386/api/users?authIdentifier=${authIdentifier}`
     const res = await fetch(url)
     const data = await res.json()
     return data
   }
   const addUserProfile = async (newUser) => {
-    const res = await fetch('https://localhost:44386/api/Vocabulazy/userprofiles', {
+    const res = await fetch('https://localhost:44386/api/users', {
       method: 'POST',
       headers: {
         'Content-type': 'application/json'
@@ -126,14 +126,14 @@ useEffect(() => {
   //google-oauth2|109641767784145272988
   // fetch decks
   const fetchDecks = async (userId) => {
-    const url = `https://localhost:44386/api/Vocabulazy/decks?userId=${userId}`
+    const url = `https://localhost:44386/api/decks?userId=${userId}`
     const res = await fetch(url)
     const data = await res.json()
     return data
   }
 
   const fetchCurrentFlashcards = async (deckId) => {
-    const url = `https://localhost:44386/api/Vocabulazy/currentflashcards?deckId=${deckId}`
+    const url = `https://localhost:44386/api/flashcards?deckId=${deckId}`
     const res = await fetch(url)
     const data = await res.json()
     return data
