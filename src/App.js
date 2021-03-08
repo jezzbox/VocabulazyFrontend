@@ -139,33 +139,6 @@ useEffect(() => {
     return data
   }
 
-  // // fetch flashcards
-  // const fetchFlashcards = async (wordType, deckId) => {
-  //   const url = `https://localhost:44386/api/Vocabulazy/${wordType}Flashcards?deckId=${deckId}`
-  //   const res = await fetch(url)
-  //   const data = await res.json()
-  //   return data
-  //}
-
-  const addVerbFlashcard = async (verbFlashcard) => {
-    await fetch('https://localhost:44386/api/Vocabulazy/verbFlashcards', {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify(verbFlashcard)
-
-    })
-
-  };
-
-  const deleteVerbFlashcard = async (verb) => {
-    await fetch(`https://localhost:44386/api/Vocabulazy/verbFlashcards/${verb.verbFlashcardId}`, {
-      method: 'DELETE',
-    })
-  };
-
-
   // const updateVerbFlashcards = async (deckId) => {
   //   const verbFlashcardsFromServer = await fetchVerbFlashcards(deckId)
   //   const verbsToAdd = verbFlashcards.filter((verb) => !verbFlashcardsFromServer.some(x => x.verbId === verb.verbId))
@@ -210,7 +183,7 @@ useEffect(() => {
 
       </div>
       <div className="add-flashcards-container">
-        {!showFlashcards && showAddFlashcards && <AddFlashcards setCurrentFlashcards={setFlashcards} currentFlashcards={flashcards} hideAddFlashcards={() => setShowAddFlashcards(false)} />}
+        {!showFlashcards && showAddFlashcards && <AddFlashcards setCurrentFlashcards={setFlashcards} currentFlashcards={flashcards} hideAddFlashcards={() => setShowAddFlashcards(false)} deckId={currentDeck.deckId} />}
       </div>
     </>
   );

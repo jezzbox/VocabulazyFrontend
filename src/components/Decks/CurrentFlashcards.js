@@ -1,11 +1,11 @@
 import React from 'react'
 import Word from './Word'
 
-const CurrentFlashcards = ({ flashcards, setCurrentFlashcards }) => {
+const CurrentFlashcards = ({ flashcards, setFlashcards }) => {
     return (
         <div className="scroll">
             {flashcards.map((flashcard, index) => (
-                <Word key={index} word={flashcard} flashcards={flashcards} setFlashcards={setCurrentFlashcards} isCurrent={true} />
+                <Word key={index} word={flashcard} flashcards={flashcards} setFlashcards={setFlashcards} isCurrent={true} />
             ))}
 
         </div>
