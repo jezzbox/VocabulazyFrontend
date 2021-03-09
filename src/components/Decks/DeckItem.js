@@ -9,7 +9,7 @@ const onClick = () => {
 
     return (
         <div className="verb-container">
-        <h3>{deck.deckName}</h3>
+        <h3>{deck.name}</h3>
         {currentDeck === deck ? <Button color="green" text="Selected"/>: <Button text="Select" onClick={onClick}/>}
         </div>
     )

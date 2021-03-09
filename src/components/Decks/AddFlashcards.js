@@ -5,7 +5,7 @@ import CurrentFlashcards from './CurrentFlashcards'
 import { useState, useEffect } from 'react'
 
 
-const AddFlashcards = ({ hideAddFlashcards, currentFlashcards, setCurrentFlashcards, deckId }) => {
+const AddFlashcards = ({ currentDeck, hideAddFlashcards, currentFlashcards, setCurrentFlashcards, deckId, wordTypes }) => {
     const [searchString, setSearchString] = useState('');
     const [searchResult, setSearchResult] = useState([]);
     const [filterString, setFilterString] = useState('')
@@ -71,30 +71,10 @@ const AddFlashcards = ({ hideAddFlashcards, currentFlashcards, setCurrentFlashca
 
         for (i = 0, len, deckId; i < len; i++) {
             const newFlashcard = { deckId }
-            if (flashcardsToAdd[i].verbId) {
-                newFlashcard.verbId = flashcardsToAdd[i].verbId
-            }
-            if (flashcardsToAdd[i].adjectiveId) {
-                newFlashcard.adjectiveId = flashcardsToAdd[i].adjectiveId
-            }
-            if (flashcardsToAdd[i].nounId) {
-                newFlashcard.nounId = flashcardsToAdd[i].nounId
-            }
-            if (flashcardsToAdd[i].adverbId) {
-                newFlashcard.adverbId = flashcardsToAdd[i].adverbId
-            }
-            if (flashcardsToAdd[i].pronounId) {
-                newFlashcard.pronounId = flashcardsToAdd[i].pronounId
-            }
-            if (flashcardsToAdd[i].prepositionId) {
-                newFlashcard.prepositionId = flashcardsToAdd[i].prepositionId
-            }
-            if (flashcardsToAdd[i].articleId) {
-                newFlashcard.articleId = flashcardsToAdd[i].articleId
-            }
-            if (flashcardsToAdd[i].conjunctionId) {
-                newFlashcard.conjunctionId = flashcardsToAdd[i].conjunctionId
-            }
+            const id = wordTypes[flashcardsToAdd[i].wordType]["id"]
+
+            newFlashcard[id] = flashcardsToAdd[i][id]
+            console.log(newFlashcard)
             const flashcardFromServer = await addFlashcard(newFlashcard, flashcardsToAdd[i].wordType)
             setCurrentFlashcards([...currentFlashcards,flashcardFromServer])
         }
@@ -124,32 +104,9 @@ const AddFlashcards = ({ hideAddFlashcards, currentFlashcards, setCurrentFlashca
     };
 
     const deleteFlashcard = async (flashcard) => {
-        const flashcardToDelete = { deckId }
-        if (flashcard.verbId) {
-            flashcardToDelete.id = flashcard.verbId
-        }
-        if (flashcard.adjectiveId) {
-            flashcardToDelete.id = flashcard.adjectiveId
-        }
-        if (flashcard.nounId) {
-            flashcardToDelete.id = flashcard.nounId
-        }
-        if (flashcard.adverbId) {
-            flashcardToDelete.id = flashcard.adverbId
-        }
-        if (flashcard.pronounId) {
-            flashcardToDelete.id = flashcard.pronounId
-        }
-        if (flashcard.prepositionId) {
-            flashcardToDelete.id = flashcard.prepositionId
-        }
-        if (flashcard.articleId) {
-            flashcardToDelete.id = flashcard.articleId
-        }
-        if (flashcard.conjunctionId) {
-            flashcardToDelete.id = flashcard.conjunctionId
-        }
-        await fetch(`https://localhost:44386/api/Flashcards/${flashcard.wordType}s?id=${flashcardToDelete.id}&deckId=${flashcardToDelete.deckId}`, {
+        const id = wordTypes[flashcard.wordType]["id"]
+        
+        await fetch(`https://localhost:44386/api/Flashcards/${flashcard.wordType}s?id=${flashcard[id]}&deckId=${deckId}`, {
             method: 'DELETE',
         })
     };
@@ -157,7 +114,7 @@ const AddFlashcards = ({ hideAddFlashcards, currentFlashcards, setCurrentFlashca
     return (
         <>
             <div>
-                <h1>Editing Deck: my first deck</h1>
+                <h1>Editing Deck: {currentDeck.name}</h1>
             </div>
             <div className="container horizontal-align">
                 <div className="search-words-container">

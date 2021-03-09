@@ -1,7 +1,6 @@
 import { useState } from 'react'
-import AddVerbs from './AddVerbs'
 
-const AddDeck = ({ decks, setDecks, setCurrentDeck, setFlashcards, setShowAddDeck, showAddVerbs, setShowAddVerbs, userProfile }) => {
+const AddDeck = ({ decks, setDecks, setCurrentDeck, setCurrentFlashcards, setShowAddDeck, showAddVerbs, setShowAddVerbs, userProfile }) => {
   const [name, setName] = useState('')
   const [useSubjunctive, setUseSubjunctive] = useState(true)
   const [useIndicative, setUseIndicative] = useState(true)
@@ -26,7 +25,7 @@ const AddDeck = ({ decks, setDecks, setCurrentDeck, setFlashcards, setShowAddDec
     const data = await res.json()
     setDecks([...decks, data])
     setCurrentDeck(data)
-    setFlashcards([])
+    setCurrentFlashcards([])
     alert(`Deck ${data.name} created! now add some verbs.`)
     setShowAddVerbs(true)
     setShowAddDeck(false)

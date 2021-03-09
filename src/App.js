@@ -8,7 +8,7 @@ import Deck from './components/Decks/Deck';
 //import AddVerbs from './components/Decks/AddVerbs'
 import Button from './components/Button'
 import AddDeck from './components/Decks/AddDeck'
-//import Flashcards from './components/Flashcards'
+import Flashcards from './components/Flashcards'
 import AddFlashcards from './components/Decks/AddFlashcards';
 
 function App() {
@@ -19,13 +19,22 @@ function App() {
   const [showChangeDeck, setShowChangeDeck] = useState(false)
   const [decks, setDecks] = useState([]);
   const [currentDeck, setCurrentDeck] = useState([]);
-  const [verbs, setVerbs] = useState([]);
-  const [verbFlashcards, setVerbFlashcards] = useState([])
   const [showFlashcards, setShowFlashcards] = useState(false)
   const [isFinished, setIsFinished] = useState(false)
   const [userProfile, setUserProfile] = useState([])
   const [showAddFlashcards, setShowAddFlashcards] = useState(false)
-  const [flashcards, setFlashcards] = useState([])
+  const [currentFlashcards, setCurrentFlashcards] = useState([])
+
+  const wordTypes = {
+    Verb: { id:"verbId"},
+    Adjective: { id:"adjectiveId"},
+    Adverb: { id:"adverbId"},
+    Noun:{ id:"nounId"},
+    Preposition:{ id:"prepositionId"},
+    Pronoun: {id:"pronounId"},
+    Conjunction:{ id:"conjunctionId"},
+    Article: { id:"articleId"}
+    }
 
   //adds user profile if doesnt exist
   useEffect(() => {
@@ -75,7 +84,7 @@ function App() {
 
   }
 
-//gets users decks (if any) and sets default deck
+  //gets users decks (if any) and sets default deck
   useEffect(() => {
     if (userProfile.userId) {
       const getDecks = async () => {
@@ -110,18 +119,14 @@ function App() {
     if (currentDeck.deckId) {
 
       const getFlashcards = async (deckId) => {
-        const currentFlashcards = await fetchCurrentFlashcards(deckId)
-        setFlashcards(currentFlashcards)
+        const flashcardsFromServer = await fetchCurrentFlashcards(deckId)
+        setCurrentFlashcards(flashcardsFromServer)
       }
 
       getFlashcards(currentDeck.deckId)
     }
   }, [currentDeck, isFinished])
 
-useEffect(() => {
-  console.log(flashcards)
-},[flashcards])
-  
 
   //google-oauth2|109641767784145272988
   // fetch decks
@@ -161,11 +166,11 @@ useEffect(() => {
         {!isLoading && <Header title="Welcome to Vocabulazy!" isAuthenticated={isAuthenticated} user={user} />}
         {!isLoading && <Welcome isAuthenticated={isAuthenticated} />}
         <div>
-          {showAddDeck && <AddDeck userProfile={userProfile} setDecks={setDecks} decks={decks} setCurrentDeck={setCurrentDeck} setFlashcards={setVerbFlashcards} setShowAddDeck={setShowAddDeck} setShowAddVerbs={setShowAddVerbs} showAddVerbs={showAddVerbs} />}
+          {showAddDeck && <AddDeck userProfile={userProfile} setDecks={setDecks} decks={decks} setCurrentDeck={setCurrentDeck} setShowAddDeck={setShowAddDeck} setShowAddVerbs={setShowAddVerbs} showAddVerbs={showAddVerbs} setCurrentFlashcards={setCurrentFlashcards} />}
         </div>
         {!currentDeck && isAuthenticated && !isLoading && !showAddDeck ? <h1>No decks yet, create one to get started!</h1> : null}
         {currentDeck && showChangeDeck && <Decks decks={decks} isLoading={isLoading} isAuthenticated={isAuthenticated} setCurrentDeck={setCurrentDeck} currentDeck={currentDeck} />}
-        {isAuthenticated && currentDeck && !showAddFlashcards && <Deck showFlashcards={() => setShowFlashcards(true)} deck={currentDeck} setCurrentDeck={setCurrentDeck} verbs={verbs} verbFlashcards={verbFlashcards} showAddFlashcards={showAddFlashcards} setShowAddFlashcards={setShowAddFlashcards} />}
+        {isAuthenticated && currentDeck && !showAddFlashcards && <Deck showFlashcards={() => setShowFlashcards(true)} currentDeck={currentDeck} setCurrentDeck={setCurrentDeck} currentFlashcards={currentFlashcards} showAddFlashcards={showAddFlashcards} setShowAddFlashcards={setShowAddFlashcards} />}
 
         {isAuthenticated && !showAddFlashcards && <div>
           <div className="center">
@@ -179,11 +184,11 @@ useEffect(() => {
         </div>}
 
         {/* {verbFlashcards && showAddVerbs && <AddVerbs updateVerbFlashcards={updateVerbFlashcards} verbs={verbs} verbFlashcards={verbFlashcards} setVerbFlashcards={setVerbFlashcards} deckId={currentDeck.deckId} deckName={currentDeck.name} setShowAddVerbs={setShowAddVerbs} />} */}
-        {/* {verbFlashcards && showFlashcards && <Flashcards isFinished={isFinished} setIsFinished={setIsFinished} hideFlashcards={() => setShowFlashcards(false)} verbFlashcards={verbFlashcards} fetchVerbFlashcards={fetchVerbFlashcards} currentDeck={currentDeck} setVerbFlashcards={setVerbFlashcards} />} */}
+        {currentFlashcards && showFlashcards && <Flashcards  wordTypes={wordTypes} isFinished={isFinished} setIsFinished={setIsFinished} hideFlashcards={() => setShowFlashcards(false)} currentFlashcards={currentFlashcards} currentDeck={currentDeck} />}
 
       </div>
       <div className="add-flashcards-container">
-        {!showFlashcards && showAddFlashcards && <AddFlashcards setCurrentFlashcards={setFlashcards} currentFlashcards={flashcards} hideAddFlashcards={() => setShowAddFlashcards(false)} deckId={currentDeck.deckId} />}
+        {!showFlashcards && showAddFlashcards && <AddFlashcards currentDeck={currentDeck} wordTypes={wordTypes} setCurrentFlashcards={setCurrentFlashcards} currentFlashcards={currentFlashcards} hideAddFlashcards={() => setShowAddFlashcards(false)} deckId={currentDeck.deckId} />}
       </div>
     </>
   );
