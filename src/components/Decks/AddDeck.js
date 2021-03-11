@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-const AddDeck = ({ decks, setDecks, setCurrentDeck, setCurrentFlashcards, setShowAddDeck, showAddVerbs, setShowAddVerbs, userProfile }) => {
+const AddDeck = ({ decks, setDecks, setCurrentDeck, setCurrentFlashcards, setShowAddDeck, showAddFlashcards, setShowAddFlashcards, userProfile }) => {
   const [name, setName] = useState('')
   const [useSubjunctive, setUseSubjunctive] = useState(true)
   const [useIndicative, setUseIndicative] = useState(true)
@@ -27,7 +27,7 @@ const AddDeck = ({ decks, setDecks, setCurrentDeck, setCurrentFlashcards, setSho
     setCurrentDeck(data)
     setCurrentFlashcards([])
     alert(`Deck ${data.name} created! now add some verbs.`)
-    setShowAddVerbs(true)
+    setShowAddFlashcards(true)
     setShowAddDeck(false)
 
   }
@@ -47,7 +47,7 @@ const AddDeck = ({ decks, setDecks, setCurrentDeck, setCurrentFlashcards, setSho
   }
 
   return (<>
-    {!showAddVerbs &&
+    {!showAddFlashcards &&
       <>
         <form className='add-form' onSubmit={onSubmit}>
           <div className='form-control'>

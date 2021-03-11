@@ -24,7 +24,8 @@ const AddFlashcards = ({ currentDeck, hideAddFlashcards, currentFlashcards, setC
     const onClickSubmit = async () => {
         console.log(flashcards)
         console.log(currentFlashcards)
-        updateFlashcards(deckId)
+        await updateFlashcards(deckId)
+        
     }
 
     const getSearchResult = async (word) => {
@@ -48,24 +49,10 @@ const AddFlashcards = ({ currentDeck, hideAddFlashcards, currentFlashcards, setC
 
     const updateFlashcards = async (deckId) => {
         const flashcardsToAdd = flashcards.filter((flashcard) => !currentFlashcards.some(
-            x => (x.wordType === "Verb" && x.verbId === flashcard.verbId)
-                | (x.wordType === "Adjective" && x.adjectiveId === flashcard.adjectiveId)
-                | (x.wordType === "Noun" && x.nounId === flashcard.nounId)
-                | (x.wordType === "Adverb" && x.adverbId === flashcard.adverbId)
-                | (x.wordType === "Conjunction" && x.conjunctionId === flashcard.conjunctionId)
-                | (x.wordType === "Pronoun" && x.pronounId === flashcard.pronounId)
-                | (x.wordType === "Preposition" && x.prepositionId === flashcard.prepositionId)
-                | (x.wordType === "Article" && x.articleId === flashcard.articleId)))
+            x => (x.wordType === flashcard.wordType && x[wordTypes[flashcard.wordType]["id"]] === flashcard[wordTypes[flashcard.wordType]["id"]])))
 
         const flashcardsToRemove = currentFlashcards.filter((currentFlashcard) => !flashcards.some(
-            x => (x.wordType === "Verb" && x.verbId === currentFlashcard.verbId)
-                | (x.wordType === "Adjective" && x.adjectiveId === currentFlashcard.adjectiveId)
-                | (x.wordType === "Noun" && x.nounId === currentFlashcard.nounId)
-                | (x.wordType === "Adverb" && x.adverbId === currentFlashcard.adverbId)
-                | (x.wordType === "Conjunction" && x.conjunctionId === currentFlashcard.conjunctionId)
-                | (x.wordType === "Pronoun" && x.pronounId === currentFlashcard.pronounId)
-                | (x.wordType === "Preposition" && x.prepositionId === currentFlashcard.prepositionId)
-                | (x.wordType === "Article" && x.articleId === currentFlashcard.articleId)))
+            x => (x.wordType === currentFlashcard.wordType && x[wordTypes[currentFlashcard.wordType]["id"]] === currentFlashcard[wordTypes[currentFlashcard.wordType]["id"]])))
         var i;
         var len = flashcardsToAdd.length
 
