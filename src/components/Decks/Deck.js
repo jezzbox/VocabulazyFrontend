@@ -1,11 +1,16 @@
 import Button from '../Button'
 import Decks from './Decks'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import AddDeck from './AddDeck'
 
 const Deck = ({ decks, setDecks, setCurrentDeck, showAddFlashcards, setShowAddFlashcards, currentDeck, currentFlashcards, userProfile, setCurrentFlashcards }) => {
     const [showChangeDeck, setShowChangeDeck] = useState(false)
     const [showAddDeck, setShowAddDeck] = useState(false)
+    useEffect(() => {
+        if(decks.length === 0) {
+            setShowChangeDeck(false)
+        }
+    },[decks])
 
     const onClick = () => {
         setShowAddFlashcards(!showAddFlashcards)
@@ -20,7 +25,7 @@ const Deck = ({ decks, setDecks, setCurrentDeck, showAddFlashcards, setShowAddFl
 
     return (
         <>
-            <div className="deck-container">
+            {!showChangeDeck && currentDeck.deckId && <div className="deck-container">
                 <h3 className="deck-title">{currentDeck.name}</h3>
                 <h3> Words: {currentFlashcards.length}</h3>
                 <div>
@@ -30,13 +35,13 @@ const Deck = ({ decks, setDecks, setCurrentDeck, showAddFlashcards, setShowAddFl
                 <div className="center">
                 
               </div>
-            </div>
+            </div>}
             {showAddDeck &&
                 <div>
                     <AddDeck userProfile={userProfile} setDecks={setDecks} decks={decks} setCurrentDeck={setCurrentDeck} setShowAddDeck={setShowAddDeck} setCurrentFlashcards={setCurrentFlashcards} showAddFlashcards={showAddFlashcards} setShowAddFlashcards={setShowAddFlashcards} />
                 </div>
                     }
-            {!showAddDeck && currentDeck && <Button text={showChangeDeck ? "Hide" : "Change Deck"} color={showChangeDeck ? "blueviolet" : "steelblue"} onClick={() => setShowChangeDeck(!showChangeDeck)} />}
+            {!showAddDeck && currentDeck.deckId && <Button text={showChangeDeck ? "Hide" : "Change Deck"} color={showChangeDeck ? "blueviolet" : "steelblue"} onClick={() => setShowChangeDeck(!showChangeDeck)} />}
                 {!showChangeDeck && <Button text={showAddDeck ? "Back" : "Create new Deck"} color={showAddDeck ? "blueviolet" : "grey"} onClick={() => setShowAddDeck(!showAddDeck)} />}
             {showChangeDeck && <Decks deleteDeck={deleteDeck} decks={decks} setDecks={setDecks} setCurrentDeck={setCurrentDeck} currentDeck={currentDeck} />}
         </>

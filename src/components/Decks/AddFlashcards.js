@@ -122,13 +122,14 @@ const AddFlashcards = ({ currentDeck, hideAddFlashcards, currentFlashcards, setC
                 </div>
                 <div className="search-words-container">
                     <h2>Current words: </h2>
-                    {currentFlashcards.length > 0 && <div className='form-control'>
+                    <div className='form-control'>
                         <input type="text" id="myInput" onChange={(e) => setFilterString(e.target.value.toLowerCase())} value={filterString} placeholder="Search deck...">
 
                         </input>
-                    </div>}
+                    </div>
+                    <input type='submit' value='Search' className='btn btn-block' />
                     {currentFlashcards.length === 0 && <h3>Deck is empty</h3>}
-                    {currentFlashcards.length > 0 && <CurrentFlashcards flashcards={flashcards} setFlashcards={setFlashcards} currentFlashcards={currentFlashcards} />}
+                    <CurrentFlashcards flashcards={flashcards} setFlashcards={setFlashcards} currentFlashcards={currentFlashcards} />
                 </div>
             </div>
             <div className="horizontal-align">

@@ -89,6 +89,7 @@ function App() {
           console.log(defaultDeck)
           setCurrentDeck(defaultDeck)
           setDecks(decksFromServer)
+          console.log("dekcs")
 
         }
 
@@ -98,6 +99,7 @@ function App() {
           console.log(defaultDeck)
           setCurrentDeck(defaultDeck)
           setDecks(decksFromServer)
+          console.log("dekcs")
         }
 
       }
@@ -119,6 +121,13 @@ function App() {
       getFlashcards(currentDeck.deckId)
     }
   }, [currentDeck, isFinished, showAddFlashcards])
+
+  //change current deck if decks changes
+  useEffect(() => {
+    if(decks.length === 0) {
+      setCurrentDeck([])
+    }
+  },[decks])
 
 
   //google-oauth2|109641767784145272988
@@ -148,7 +157,7 @@ function App() {
       {userProfile.userId &&
         <div className="container">
           
-          {!currentDeck ? <h1>No decks yet, create one to get started!</h1> : null}
+          {!currentDeck.deckId ? <h1>No decks yet, create one to get started!</h1> : null}
           {currentDeck && !showAddFlashcards && <Deck userProfile = {userProfile} decks={decks} setDecks={setDecks} setCurrentDeck={setCurrentDeck} currentDeck={currentDeck} currentFlashcards={currentFlashcards} showAddFlashcards={showAddFlashcards} setShowAddFlashcards={setShowAddFlashcards} setCurrentFlashcards={setCurrentFlashcards} />}
 
           {!showAddFlashcards &&

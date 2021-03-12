@@ -248,12 +248,13 @@ footer {
 }
 
 .btn-word {
-  display:flex;
   justify-self:right;
   border: 1px solid steelblue;
   padding: 10px 10px;
   margin: 3px;
-  font-size: 14px;
+  text-align: center;
+  font-size: 15px;
+  width:80%;
 }
 
 .search-words-container {
@@ -286,4 +287,24 @@ footer {
 .scroll {
   max-height:400px;
   overflow:scroll;
+}
+
+table {
+  width:100%;
+  border-spacing: 5px;
+  padding:5px;
+}
+
+tr {
+  border:1px solid black;
+  padding:5px;
+}
+
+th {
+  padding-left: 10px;
+}
+
+.table-container {
+  border:1px solid black;
+  overflow-x:hidden;
 }
