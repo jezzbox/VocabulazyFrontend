@@ -44,23 +44,37 @@ const Flashcards = ({ isFinished, setIsFinished, hideFlashcards, currentDeck, cu
             console.log(todaysCards)
 
             const getFlashcard = async (currentFlashcard) => {
-                const phraseFromServer = await fetchPhrase(currentFlashcard.verbId)
+                console.log("getting phrases")
                 const flashcard = Object.assign({}, currentFlashcard)
+                const verbTypeString = `&useSubjunctive=${currentDeck.useSubjunctive}
+                    &useIndicative=${currentDeck.useIndicative}
+                    &useImperative=${currentDeck.useImperative}
+                    &useInfinitive=${currentDeck.useInfinitive}
+                    &useParticiple=${currentDeck.useParticiple}
+                    &usePreterite=${currentDeck.usePreterite}
+                    &useImperfect=${currentDeck.useImperfect}
+                    &usePresent=${currentDeck.usePresent}
+                    &useFuture=${currentDeck.usePresent}`
+
+                console.log(verbTypeString)
+
+                flashcard.flashcardId = flashcard[wordTypes[flashcard.wordType]["id"]]
+                const phraseFromServer = await fetchPhrase(flashcard.flashcardId, flashcard.wordType, verbTypeString)
                 if (phraseFromServer == null) {
-                    flashcard.phrase = "this is the phrase"
+                    flashcard.phrase = "no phrase for this word yet"
                     flashcard.phraseId = null
                 }
                 else {
                     flashcard.phrase = phraseFromServer.phrase
                     flashcard.phraseId = phraseFromServer.phraseId
                 }
-                flashcard.flashcardId = flashcard[wordTypes[flashcard.wordType]["id"]]
+                console.log(flashcard)
                 setFlashcard(flashcard)
             }
             getFlashcard(todaysCards[flashcardNumber])
 
         }
-    }, [todaysCards, flashcardNumber, wordTypes])
+    }, [currentDeck, todaysCards, flashcardNumber, wordTypes])
 
     const getCutoff = (phase, customTime) => {
         const currentTime = new Date()
@@ -79,8 +93,9 @@ const Flashcards = ({ isFinished, setIsFinished, hideFlashcards, currentDeck, cu
         }
     }
 
-    const fetchPhrase = async (verbId) => {
-        const url = `https://localhost:44386/api/Vocabulazy/phrases?verbId=${verbId}`
+    const fetchPhrase = async (flashcardId, wordType, verbTypeString) => {
+
+        const url = `https://localhost:44386/api/Vocabulazy/phrases?${wordType}Id=${flashcardId}` + verbTypeString
         const res = await fetch(url)
         const data = await res.json()
         const phrase = data[Math.floor(Math.random() * data.length)];
@@ -219,6 +234,11 @@ const Flashcards = ({ isFinished, setIsFinished, hideFlashcards, currentDeck, cu
 
     }
 
+    const onClickClose = () => {
+        hideFlashcards()
+        setIsFinished(false)
+    }
+
 
     const getNewDueDate = (interval) => {
         const currentTime = new Date()
@@ -271,7 +291,7 @@ const Flashcards = ({ isFinished, setIsFinished, hideFlashcards, currentDeck, cu
                 <div>
                     <h1>Deck finished!</h1>
                     <h2>Come back tomorrow for more flashcards</h2>
-                    <Button text="Close" onClick={hideFlashcards} />
+                    <Button text="Close" onClick={() => onClickClose()} />
                 </div>}
         </>
     )

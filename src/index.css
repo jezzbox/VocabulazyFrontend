@@ -149,12 +149,13 @@ body {
 }
 
 .form-control-check {
-  display: flex;
-  align-items: left;
-  justify-content: space-between;
+  align-items: center;
+  justify-content: center;
+  width:15%;
 }
 
 .form-control-check label {
+  text-align:center;
   flex: 1;
 }
 

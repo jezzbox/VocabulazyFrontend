@@ -19,6 +19,7 @@ function App() {
   const [userProfile, setUserProfile] = useState([])
   const [showAddFlashcards, setShowAddFlashcards] = useState(false)
   const [currentFlashcards, setCurrentFlashcards] = useState([])
+  const [showStartButton, setShowStartButton] = useState(true)
 
   const wordTypes = {
     Verb: { id: "verbId" },
@@ -128,6 +129,7 @@ function App() {
       setCurrentDeck([])
     }
   },[decks])
+  
 
 
   //google-oauth2|109641767784145272988
@@ -158,9 +160,9 @@ function App() {
         <div className="container">
           
           {!currentDeck.deckId ? <h1>No decks yet, create one to get started!</h1> : null}
-          {currentDeck && !showAddFlashcards && <Deck userProfile = {userProfile} decks={decks} setDecks={setDecks} setCurrentDeck={setCurrentDeck} currentDeck={currentDeck} currentFlashcards={currentFlashcards} showAddFlashcards={showAddFlashcards} setShowAddFlashcards={setShowAddFlashcards} setCurrentFlashcards={setCurrentFlashcards} />}
+          {currentDeck && !showAddFlashcards && <Deck setShowStartButton = {setShowStartButton} userProfile = {userProfile} decks={decks} setDecks={setDecks} setCurrentDeck={setCurrentDeck} currentDeck={currentDeck} currentFlashcards={currentFlashcards} showAddFlashcards={showAddFlashcards} setShowAddFlashcards={setShowAddFlashcards} setCurrentFlashcards={setCurrentFlashcards} />}
 
-          {!showAddFlashcards &&
+          {showStartButton && !showAddFlashcards &&
             <div>
               <div className="center">
                 <Button className="btn start" text="Start" color="green" onClick={() => setShowFlashcards(true)} />
