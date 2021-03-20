@@ -1,9 +1,8 @@
 .NavbarItems {
-    background: blueviolet;
-    height: 80px;
+    background:blueviolet;
+    width:71%;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: flex-end;
     font-size: 1.2rem;
 
 }
@@ -23,14 +22,17 @@
 }
 
 .nav-menu {
+    background:white;
     display: grid;
-    grid-template-columns: repeat(5,auto);
-    grid-gap:10px;
+    grid-template-columns: repeat(2,auto);
+    grid-gap:10%;
     list-style:none;
-    text-align: centre;
-    width:70vw;
-    justify-content: end;
-    margin-right: 2rem;
+    text-align: center;
+    border-radius: 0px 0px 5px 5px;
+    height:40%;
+    width:15%;
+    justify-content: center;
+    margin-right: 1%;
 }
 
 .nav-container {

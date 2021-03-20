@@ -1,17 +1,16 @@
 import { useState, useEffect } from 'react'
-import Header from './components/Header'
+import Header from './components/Header/Header'
 import { useAuth0 } from "@auth0/auth0-react";
 import Welcome from './components/Welcome'
-import Navbar from './components/Navbar/Navbar'
 import Deck from './components/Decks/Deck';
 //import AddVerbs from './components/Decks/AddVerbs'
 import Button from './components/Button'
 import Flashcards from './components/Flashcards'
 import AddFlashcards from './components/Decks/AddFlashcards';
+import Section from './components/Section'
 
 function App() {
   const { user, isAuthenticated, isLoading } = useAuth0();
-  const [toggleNavMenu, setToggleNavMenu] = useState(false);
   const [decks, setDecks] = useState([]);
   const [currentDeck, setCurrentDeck] = useState([]);
   const [showFlashcards, setShowFlashcards] = useState(false)
@@ -86,23 +85,15 @@ function App() {
 
         if (userProfile.defaultDeckId) {
           const defaultDeck = decksFromServer.filter(x => x.deckId === userProfile.defaultDeckId)
-          console.log("has default deck")
-          console.log(defaultDeck)
           setCurrentDeck(defaultDeck)
           setDecks(decksFromServer)
-          console.log("dekcs")
-
         }
 
         else if (decksFromServer[0]) {
           const defaultDeck = decksFromServer[0]
-          console.log("Doesnt have default deck")
-          console.log(defaultDeck)
           setCurrentDeck(defaultDeck)
           setDecks(decksFromServer)
-          console.log("dekcs")
         }
-
       }
 
       getDecks()
@@ -116,6 +107,7 @@ function App() {
 
       const getFlashcards = async (deckId) => {
         const flashcardsFromServer = await fetchCurrentFlashcards(deckId)
+        currentDeck.flashcards = flashcardsFromServer
         setCurrentFlashcards(flashcardsFromServer)
       }
 
@@ -150,17 +142,17 @@ function App() {
 
   return (
     <>
-      <Navbar onToggleNavMenu={() => setToggleNavMenu(!toggleNavMenu)} toggleNavMenu={toggleNavMenu} />
-      <div className="container">
-        <Header title="Welcome to Vocabulazy!" isAuthenticated={isAuthenticated} user={user} />
-        <Welcome isAuthenticated={isAuthenticated} />
-        {isAuthenticated && !userProfile.userId && <h1>Loading ... </h1>}
-      </div>
-      {userProfile.userId &&
-        <div className="container">
+      <Header title="Welcome to Vocabulazy!" isAuthenticated={isAuthenticated} user={user} />
+      <main className='main'>
+        <article>
+          {isLoading && <h1>Loading ... </h1>}
+          {!isAuthenticated && !isLoading && <Welcome isAuthenticated={isAuthenticated} />}
+          <Section />
+            {currentDeck && !showAddFlashcards && <Deck setShowStartButton = {setShowStartButton} userProfile = {userProfile} decks={decks} setDecks={setDecks} setCurrentDeck={setCurrentDeck} currentDeck={currentDeck} currentFlashcards={currentFlashcards} showAddFlashcards={showAddFlashcards} setShowAddFlashcards={setShowAddFlashcards} setCurrentFlashcards={setCurrentFlashcards} />}
+          {userProfile.userId &&
+          <div className="container">
           
           {!currentDeck.deckId ? <h1>No decks yet, create one to get started!</h1> : null}
-          {currentDeck && !showAddFlashcards && <Deck setShowStartButton = {setShowStartButton} userProfile = {userProfile} decks={decks} setDecks={setDecks} setCurrentDeck={setCurrentDeck} currentDeck={currentDeck} currentFlashcards={currentFlashcards} showAddFlashcards={showAddFlashcards} setShowAddFlashcards={setShowAddFlashcards} setCurrentFlashcards={setCurrentFlashcards} />}
 
           {showStartButton && !showAddFlashcards &&
             <div>
@@ -168,7 +160,7 @@ function App() {
                 <Button className="btn start" text="Start" color="green" onClick={() => setShowFlashcards(true)} />
               </div>
             </div>}
-
+          
           {currentFlashcards && showFlashcards &&
             <>
               <Flashcards wordTypes={wordTypes} isFinished={isFinished} setIsFinished={setIsFinished} hideFlashcards={() => setShowFlashcards(false)} currentFlashcards={currentFlashcards} currentDeck={currentDeck} />
@@ -176,11 +168,16 @@ function App() {
           }
 
         </div>}
+        </article>
+          
+  
 
       {!isLoading && isAuthenticated && !showFlashcards && showAddFlashcards &&
         <div className="add-flashcards-container">
           <AddFlashcards currentDeck={currentDeck} wordTypes={wordTypes} setCurrentFlashcards={setCurrentFlashcards} currentFlashcards={currentFlashcards} hideAddFlashcards={() => setShowAddFlashcards(false)} deckId={currentDeck.deckId} />
         </div>}
+        </main>
+        <footer>This is the footer</footer>
     </>
   );
 }

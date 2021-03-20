@@ -40,7 +40,6 @@ const Deck = ({ decks, setDecks, setCurrentDeck, showAddFlashcards, setShowAddFl
     return (
         <>
         <div>
-        <h2>Current deck:</h2>
         {!showAddDeck && currentDeck.deckId && <Button text={showChangeDeck ? "Hide" : "Change Deck"} color={showChangeDeck ? "blueviolet" : "steelblue"} onClick={() => setShowChangeDeck(!showChangeDeck)} />}
                 {!showChangeDeck && <Button text={showAddDeck ? "Back" : "Create new Deck"} color={showAddDeck ? "blueviolet" : "grey"} onClick={() => onClickAddDeck()} />}
                 </div>

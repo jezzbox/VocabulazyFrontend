@@ -1,5 +1,7 @@
 import PropTypes from 'prop-types'
-import LogoutButton from './LogoutButton'
+import LogoutButton from '../LogoutButton'
+import Navbar from '../Navbar/Navbar'
+import logo from './logo.png'
 
 const Header = ({ user, title, isAuthenticated, isLoading }) => {
 
@@ -9,8 +11,10 @@ const Header = ({ user, title, isAuthenticated, isLoading }) => {
 
     return (
         <header className='header'>
-            {isAuthenticated ? <h1>Welcome, {user.name}</h1> : <h1>{title}</h1>}
-            {isAuthenticated && <LogoutButton />}
+            <img src={logo} alt = "logo"/>
+            <h1>VocabuLazy</h1>
+            <Navbar onToggleNavMenu={null} toggleNavMenu={null}/>
+            
         </header>
     )
 }
