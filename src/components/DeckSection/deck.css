@@ -1,0 +1,55 @@
+.deck-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.deck-section header {
+  width: 85%;
+  justify-content: left;
+  border-bottom: 1px solid steelblue;
+}
+
+.current-deck {
+    display:flex;
+    justify-content: space-around;
+    width:50%;
+    border: 3px solid steelblue;
+    border-radius: 10px;
+    padding-left:20px;
+    padding-right:20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  
+  .current-deck-options {
+    width:15%;
+    margin-left:1%;
+  }
+  
+  .current-deck h4 {
+    align-self:center;
+    justify-self:center;
+  }
+  
+  .current-deck h2 {
+    border-right: 1px solid steelblue;
+    align-self:center;
+    padding-right:10%;
+  }
+
+  .btn {
+    display: inline-block;
+    background: #000;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 15px;
+    font-family: inherit;
+    min-width:100%;
+  }

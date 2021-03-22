@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types'
 import LogoutButton from '../LogoutButton'
-import Navbar from '../Navbar/Navbar'
+import SecondaryNavbar from './SecondaryNavbar'
 import logo from './logo.png'
 
-const Header = ({ user, title, isAuthenticated, isLoading }) => {
+const Header = ({ isLoading }) => {
 
     if (isLoading) {
         return <div>Loading ...</div>;
@@ -13,7 +13,7 @@ const Header = ({ user, title, isAuthenticated, isLoading }) => {
         <header className='header'>
             <img src={logo} alt = "logo"/>
             <h1>VocabuLazy</h1>
-            <Navbar onToggleNavMenu={null} toggleNavMenu={null}/>
+            <SecondaryNavbar />
             
         </header>
     )

@@ -21,8 +21,11 @@ header {
 
 main {
   flex: 1 0 auto;
-  border:1px solid steelblue;
+  width:100%;
   height:100%;
+  padding-top:1%;
+  padding-left:3%;
+  padding-right:3%;
 }
 
 footer {
@@ -89,7 +92,6 @@ footer {
 }
 .header {
   flex: 1 0 auto;
-  border: 1px solid black;
   display: flex;
   flex-wrap:wrap;
   background: blueviolet;
@@ -279,8 +281,10 @@ footer {
 }
 
 .center {
+  display:flex;
   justify-content:center;
   align-items:center;
+  width:100%;
 }
 
 .btn-word {
@@ -358,4 +362,35 @@ article header {
   display:flex;
   justify-content: center;
   align-items: center;
+}
+
+.deck-Navbar {
+  background:white;
+  display: flex;
+  justify-content: center;
+  align-items:center;
+  border-radius: 0px 0px 5px 5px;
+  font-size: 1.2rem;
+  width:100%;
+}
+
+.deck-menu {
+  padding: 2px;
+  color:steelblue;
+  width:95%;
+  display:grid;
+  grid-template-columns: repeat(4,auto);
+  grid-gap:1%;
+  list-style:none;
+
+
+}
+
+.deck-menu li {
+  border: 3px solid white;
+  display:flex;
+  color:white;
+  background:steelblue;
+  border-radius:10px;
+  justify-content:center;
 }

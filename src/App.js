@@ -7,120 +7,31 @@ import Deck from './components/Decks/Deck';
 import Button from './components/Button'
 import Flashcards from './components/Flashcards'
 import AddFlashcards from './components/Decks/AddFlashcards';
-import Section from './components/Section'
+import DeckSection from './components/DeckSection/DeckSection'
+import WordTypes from './components/WordTypes'
+import Word from './components/Decks/Word';
+import useFetch from './UseFetch';
+import processFlashcards from './ProcessFlashcards'
 
 function App() {
-  const { user, isAuthenticated, isLoading } = useAuth0();
-  const [decks, setDecks] = useState([]);
+  const { isAuthenticated, isLoading } = useAuth0();
+  const { data:userProfile, isPending, error } = useFetch(`users?authIdentifier=`)
+  const [decks, setDecks] = useState([])
   const [currentDeck, setCurrentDeck] = useState([]);
   const [showFlashcards, setShowFlashcards] = useState(false)
   const [isFinished, setIsFinished] = useState(false)
-  const [userProfile, setUserProfile] = useState([])
   const [showAddFlashcards, setShowAddFlashcards] = useState(false)
   const [currentFlashcards, setCurrentFlashcards] = useState([])
   const [showStartButton, setShowStartButton] = useState(true)
 
-  const wordTypes = {
-    Verb: { id: "verbId" },
-    Adjective: { id: "adjectiveId" },
-    Adverb: { id: "adverbId" },
-    Noun: { id: "nounId" },
-    Preposition: { id: "prepositionId" },
-    Pronoun: { id: "pronounId" },
-    Conjunction: { id: "conjunctionId" },
-    Article: { id: "articleId" }
-  }
 
-  //adds user profile if doesnt exist
-  useEffect(() => {
-    if (isAuthenticated) {
-      const getUserProfile = async () => {
-        const authIdentifier = await user.sub
-        const userProfileFromServer = await fetchUserProfile(authIdentifier)
 
-        if (userProfileFromServer.status === 404) {
-          const newUser = { authIdentifier: authIdentifier, defaultDeckId: null }
-          const userProfileFromServer = await addUserProfile(newUser)
-          setUserProfile(userProfileFromServer)
-        }
-
-        else if (userProfileFromServer.authIdentifier === user.sub) {
-          setUserProfile(userProfileFromServer)
-        }
-
-        else {
-          console.log("Error")
-        }
-      }
-      getUserProfile()
-
-    }
-  }, [isAuthenticated, user])
-
-  const fetchUserProfile = async (authIdentifier) => {
-    const url = `https://localhost:44386/api/users?authIdentifier=${authIdentifier}`
-    const res = await fetch(url)
-    const data = await res.json()
-    return data
-  }
-
-  const addUserProfile = async (newUser) => {
-    const res = await fetch('https://localhost:44386/api/users', {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json'
-      },
-      body: JSON.stringify(newUser)
-    })
-    const data = await res.json()
-    return data
-
-  }
-
-  //gets users decks (if any) and sets default deck
-  useEffect(() => {
-    if (userProfile.userId) {
-      const getDecks = async () => {
-        const decksFromServer = await fetchDecks(userProfile.userId)
-
-        if (userProfile.defaultDeckId) {
-          const defaultDeck = decksFromServer.filter(x => x.deckId === userProfile.defaultDeckId)
-          setCurrentDeck(defaultDeck)
-          setDecks(decksFromServer)
-        }
-
-        else if (decksFromServer[0]) {
-          const defaultDeck = decksFromServer[0]
-          setCurrentDeck(defaultDeck)
-          setDecks(decksFromServer)
-        }
-      }
-
-      getDecks()
-    }
-  }, [userProfile]
-  )
-
-  // Get flashcards for the current selected deck
-  useEffect(() => {
-    if (currentDeck.deckId) {
-
-      const getFlashcards = async (deckId) => {
-        const flashcardsFromServer = await fetchCurrentFlashcards(deckId)
-        currentDeck.flashcards = flashcardsFromServer
-        setCurrentFlashcards(flashcardsFromServer)
-      }
-
-      getFlashcards(currentDeck.deckId)
-    }
-  }, [currentDeck, isFinished, showAddFlashcards])
-
-  //change current deck if decks changes
-  useEffect(() => {
-    if(decks.length === 0) {
-      setCurrentDeck([])
-    }
-  },[decks])
+  // //change current deck if decks changes
+  // useEffect(() => {
+  //   if(decks) {
+  //     setCurrentDeck([])
+  //   }
+  // },[decks])
   
 
 
@@ -142,18 +53,26 @@ function App() {
 
   return (
     <>
-      <Header title="Welcome to Vocabulazy!" isAuthenticated={isAuthenticated} user={user} />
-      <main className='main'>
+      <Header isAuthenticated={userProfile ? true:false} />
+      {!isPending && <nav className="deck-Navbar">
+        <ul className = "deck-menu">
+          <li>Home</li>
+          <li>Create new deck</li>
+          <li>Change deck</li>
+          <li>User settings</li>
+        </ul>
+      </nav>}
+
+      {isLoading && <div className="center"><h1>Loading ... </h1></div>}
+
+      {<main className='main'>
         <article>
-          {isLoading && <h1>Loading ... </h1>}
-          {!isAuthenticated && !isLoading && <Welcome isAuthenticated={isAuthenticated} />}
-          <Section />
-            {currentDeck && !showAddFlashcards && <Deck setShowStartButton = {setShowStartButton} userProfile = {userProfile} decks={decks} setDecks={setDecks} setCurrentDeck={setCurrentDeck} currentDeck={currentDeck} currentFlashcards={currentFlashcards} showAddFlashcards={showAddFlashcards} setShowAddFlashcards={setShowAddFlashcards} setCurrentFlashcards={setCurrentFlashcards} />}
-          {userProfile.userId &&
+          {!isLoading && <Welcome isAuthenticated={isAuthenticated} />}
+          {userProfile && userProfile.decks && <DeckSection userProfile={userProfile}/>}
+
+          {isAuthenticated &&
           <div className="container">
           
-          {!currentDeck.deckId ? <h1>No decks yet, create one to get started!</h1> : null}
-
           {showStartButton && !showAddFlashcards &&
             <div>
               <div className="center">
@@ -163,7 +82,7 @@ function App() {
           
           {currentFlashcards && showFlashcards &&
             <>
-              <Flashcards wordTypes={wordTypes} isFinished={isFinished} setIsFinished={setIsFinished} hideFlashcards={() => setShowFlashcards(false)} currentFlashcards={currentFlashcards} currentDeck={currentDeck} />
+              <Flashcards wordTypes={WordTypes} isFinished={isFinished} setIsFinished={setIsFinished} hideFlashcards={() => setShowFlashcards(false)} currentFlashcards={currentFlashcards} currentDeck={currentDeck} />
             </>
           }
 
@@ -172,11 +91,11 @@ function App() {
           
   
 
-      {!isLoading && isAuthenticated && !showFlashcards && showAddFlashcards &&
+      {isAuthenticated && !showFlashcards && showAddFlashcards &&
         <div className="add-flashcards-container">
-          <AddFlashcards currentDeck={currentDeck} wordTypes={wordTypes} setCurrentFlashcards={setCurrentFlashcards} currentFlashcards={currentFlashcards} hideAddFlashcards={() => setShowAddFlashcards(false)} deckId={currentDeck.deckId} />
+          {currentDeck.flashcards && <AddFlashcards currentDeck={currentDeck} wordTypes={WordTypes} setCurrentFlashcards={setCurrentFlashcards} currentFlashcards={currentFlashcards} hideAddFlashcards={() => setShowAddFlashcards(false)} deckId={currentDeck.deckId} />}
         </div>}
-        </main>
+        </main>}
         <footer>This is the footer</footer>
     </>
   );
