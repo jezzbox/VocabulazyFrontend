@@ -7,7 +7,7 @@ const Welcome = ({ isAuthenticated, isLoading }) => {
 
     return (
         !isAuthenticated && (
-        <>
+        <section>
           <header>
             <h1>Welcome to Vocabulazy!</h1>
           </header>
@@ -18,7 +18,7 @@ const Welcome = ({ isAuthenticated, isLoading }) => {
             <LoginButton />
             <Button text="Try it out" />
           </div>
-        </>
+        </section>
         )
 
     );

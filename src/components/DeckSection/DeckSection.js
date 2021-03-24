@@ -59,24 +59,24 @@ const DeckSection = ({ userProfile, setShowAddFlashcards, setShowEditDeck, showA
 
                 <section className="deck-section">
                     <header>
-                        <h4>Current deck:</h4>
+                        <h4>{showAddFlashcards? "Editing deck:" :showEditDeck ? "Editing deck settings:" : "Current deck:"}</h4>
                     </header>
 
                     <div className="center">
                         <CurrentDeck currentDeck={currentDeck}/>
-
-                        {!showAddFlashcards && !showEditDeck && <div className="current-deck-options">
-                            <Button className="btn" color="steelblue" text="Add/Remove Words" onClick={() => setShowAddFlashcards(true)} />
-                            {!showAddFlashcards && <Button className="btn" text="Edit settings" color="steelblue" onClick={() => setShowEditDeck(true)} />}
-                        </div>}
-
                     </div>
+
+                    {!showAddFlashcards && !showEditDeck && 
+
+                        <div className="current-deck deck-options">
+                            <Button className="deck-options-btn" color="steelblue" text="Add/Remove Words" onClick={() => setShowAddFlashcards(true)} />
+                            <Button className="deck-options-btn" text="Edit settings" color="steelblue" onClick={() => setShowEditDeck(true)} />
+                        </div>}
 
                     {showAddFlashcards && currentDeck.flashcards && <AddFlashcards currentDeck={currentDeck} setCurrentDeck={setCurrentDeck} onClickAddFlashcards={() => setShowAddFlashcards(!showAddFlashcards)} />}
 
                     {showEditDeck &&
-                        <div>
-                            <h1>Edit deck settings</h1>
+                        <div className="container blue-border">
                             <DeckForm deck={currentDeck} setDeck={setUpdatedDeck} onClickBack={() => setShowEditDeck(false)} />
                         </div>
                     }

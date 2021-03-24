@@ -83,10 +83,10 @@ const AddFlashcards = ({ currentDeck, onClickAddFlashcards, setCurrentDeck }) =>
 
     return (
         <>
-        <div className="container">
+        <div className="container blue-border">
             <div className="container horizontal-align">
                 <div className="search-words-container">
-                    <h2>Add words: </h2>
+                    <h2>Add: </h2>
                     <form className='add-form' onSubmit={onSubmitSearch}>
                         <div className='form-control'>
                             <input
@@ -103,7 +103,7 @@ const AddFlashcards = ({ currentDeck, onClickAddFlashcards, setCurrentDeck }) =>
                 </div>
             
             <div className="search-words-container">
-                <h2>Current words: </h2>
+                <h2>Current: </h2>
                     <div className='form-control'>
                         <input type="text" id="myInput" onChange={(e) => setFilterString(e.target.value.toLowerCase())} value={filterString} placeholder="Search deck...">
                         </input>
@@ -113,9 +113,9 @@ const AddFlashcards = ({ currentDeck, onClickAddFlashcards, setCurrentDeck }) =>
                     <CurrentFlashcards flashcards={flashcards} setFlashcards={setFlashcards} currentFlashcards={currentDeck.flashcards} />
             </div>
         </div>
-            <div>
+            <div className="center">
+                <Button className="btn" text="Back" color="steelblue" onClick={onClickAddFlashcards}/>
                 <Button text="Submit" color="black" onClick={() => onClickSubmit()} />
-                <Button className="btn" text="Back" onClick={onClickAddFlashcards}/>
             </div>
         </div>
         </>

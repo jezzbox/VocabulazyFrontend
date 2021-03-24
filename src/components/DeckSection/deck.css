@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-bottom: 100px;
   width: 100%;
 }
 
@@ -9,6 +10,30 @@
   width: 85%;
   justify-content: left;
   border-bottom: 1px solid steelblue;
+}
+
+.deck-fieldset {
+  border:1px solid steelblue;
+  border-radius:5px;
+  width:30%;
+  padding:1%;
+  margin:2%;
+}
+
+
+
+.deck-fieldset legend {
+  border:2px solid steelblue;
+  text-align: center;
+  border-radius:5px;
+  padding:5px;
+  width:100%;
+}
+
+.fieldset-container {
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
 }
 
 .current-deck {
@@ -23,9 +48,8 @@
     padding-bottom: 10px;
   }
   
-  .current-deck-options {
-    width:15%;
-    margin-left:1%;
+  .deck-options {
+    border: none;
   }
   
   .current-deck h4 {
@@ -51,5 +75,20 @@
     text-decoration: none;
     font-size: 15px;
     font-family: inherit;
-    min-width:100%;
+    min-width:45%;
+  }
+
+  .deck-options-btn {
+    display: inline-block;
+    background: #000;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 15px;
+    font-family: inherit;
+    min-width:45%;
   }

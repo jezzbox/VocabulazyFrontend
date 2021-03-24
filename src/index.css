@@ -34,12 +34,15 @@ footer {
 
 .container {
   max-width: 1200px;
-  margin: 30px auto;
+  margin: 10px auto;
   overflow: auto;
   min-height: 100px;
-  border: 1px solid steelblue;
-  padding: 30px;
+  padding: 10px;
   border-radius: 5px;
+}
+
+.blue-border{
+  border: 2px solid black;
 }
 
 .verbs-container {
@@ -169,6 +172,14 @@ footer {
   margin-bottom: 40px;
 }
 
+.add-form p, h4 {
+  margin:3%;
+}
+
+.add-form p {
+  font-size:17px;
+}
+
 .form-control {
   margin: 20px 0;
 }
@@ -186,19 +197,43 @@ footer {
 }
 
 .form-control-check {
+  display:flex;
   align-items: center;
-  justify-content: center;
-  width:15%;
+  justify-content: right;
 }
 
-.form-control-check label {
+.default-deck {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height:100%;
+}
+
+.default-deck label {
   text-align:center;
+  border:none;
+  font-size: 23px;
+
+
+}
+
+
+.form-control-check label {
+  font-size: 23px;
+  text-align:left;
+  min-width:70%;
   flex: 1;
 }
 
+.form-control-check .center {
+  text-align:center;
+}
+
+
+
 .form-control-check input {
   flex: 2;
-  height: 20px;
+  align-self:right;
 }
 
 footer {
@@ -210,6 +245,10 @@ footer {
   display: flex;
   justify-content: center;
   align-items: center;
+  width:50%;
+}
+.width-50 {
+  width:50%;
 }
 
 .muted {
@@ -302,7 +341,8 @@ footer {
   max-width: 1200px;
   margin: 15px auto;
   overflow: auto;
-  border: 1px solid steelblue;
+  border: 2px solid black;
+  height:100%;
   padding: 15px;
   border-radius: 5px;
 
@@ -347,6 +387,7 @@ th {
 .table-container {
   border:1px solid black;
   overflow-x:hidden;
+  height:80%;
 }
 
 p {

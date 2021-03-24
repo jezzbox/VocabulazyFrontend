@@ -1,89 +1,91 @@
-import {useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import Button from '../Button'
 
-const DeckForm = ({deck, setDeck, onClickBack}) => {
-    const [name, setName] = useState(deck.name)
-    const [useSubjunctive, setUseSubjunctive] = useState(deck.useSubjunctive)
-    const [useIndicative, setUseIndicative] = useState(deck.useIndicative)
-    const [useImperative, setUseImperative] = useState(deck.useImperative)
-    const [useParticiple, setUseParticiple] = useState(deck.useParticiple)
-    const [usePreterite, setUsePreterite] = useState(deck.usePreterite)
-    const [useImperfect, setUseImperfect] = useState(deck.useImperfect)
-    const [useFuture, setUseFuture] = useState(deck.useFuture)
-    const [usePresent, setUsePresent] = useState(deck.usePresent)
-    const [isDefault, setIsDefault] = useState(deck.IsDefault)
-    const [useInfinitive, setUseInfinitive] = useState(deck.useInfinitive);
-    const [useYo, setUseYo] = useState(deck.useYo);
-    const [useTu, setUseTu] = useState(deck.useTu);
-    const [useEl, setUseEl] = useState(deck.useEl);
-    const [useVos, setUseVos] = useState(deck.useVos);
-    const [useEllos, setUseEllos] = useState(deck.useEllos);
-    const [useNosotros, setUseNosotros] = useState(deck.useNosotros);
-    const [useVosotros, setUseVosotros] = useState(deck.useVosotros);
+const DeckForm = ({ deck, setDeck, onClickBack }) => {
+  const [name, setName] = useState(deck.name)
+  const [useSubjunctive, setUseSubjunctive] = useState(deck.useSubjunctive)
+  const [useIndicative, setUseIndicative] = useState(deck.useIndicative)
+  const [useImperative, setUseImperative] = useState(deck.useImperative)
+  const [useParticiple, setUseParticiple] = useState(deck.useParticiple)
+  const [usePreterite, setUsePreterite] = useState(deck.usePreterite)
+  const [useImperfect, setUseImperfect] = useState(deck.useImperfect)
+  const [useFuture, setUseFuture] = useState(deck.useFuture)
+  const [usePresent, setUsePresent] = useState(deck.usePresent)
+  const [isDefault, setIsDefault] = useState(deck.IsDefault)
+  const [useInfinitive, setUseInfinitive] = useState(deck.useInfinitive);
+  const [useYo, setUseYo] = useState(deck.useYo);
+  const [useTu, setUseTu] = useState(deck.useTu);
+  const [useEl, setUseEl] = useState(deck.useEl);
+  const [useVos, setUseVos] = useState(deck.useVos);
+  const [useEllos, setUseEllos] = useState(deck.useEllos);
+  const [useNosotros, setUseNosotros] = useState(deck.useNosotros);
+  const [useVosotros, setUseVosotros] = useState(deck.useVosotros);
 
-    const onSubmit = (e) => {
-        e.preventDefault()
+  const onSubmit = (e) => {
+    e.preventDefault()
 
-        const clickYes = () => {
-            setDeck({
-                name, useSubjunctive, useInfinitive, useIndicative, useImperative, useParticiple, usePreterite, useImperfect, useFuture, usePresent,
-                useYo, useTu, useEl, useVos, useEllos, useNosotros, useVosotros
-              })
-        }
-
-        const clickNo = () => {
-            return
-        }
-
-        confirmAlert({
-            title: 'Confirm',
-            message: 'Confirm settings?',
-            buttons: [
-              {
-                label: 'Yes',
-                onClick: () => clickYes()
-              },
-              {
-                label: 'No',
-                onClick: () => clickNo()
-              }
-            ]
-          });
-        
+    const clickYes = () => {
+      setDeck({
+        name, useSubjunctive, useInfinitive, useIndicative, useImperative, useParticiple, usePreterite, useImperfect, useFuture, usePresent,
+        useYo, useTu, useEl, useVos, useEllos, useNosotros, useVosotros
+      })
     }
 
+    const clickNo = () => {
+      return
+    }
 
-    return (
-        <>
-        <form className='add-form' onSubmit={onSubmit}>
-          <fieldset>
+    confirmAlert({
+      title: 'Confirm',
+      message: 'Confirm settings?',
+      buttons: [
+        {
+          label: 'Yes',
+          onClick: () => clickYes()
+        },
+        {
+          label: 'No',
+          onClick: () => clickNo()
+        }
+      ]
+    });
+
+  }
+
+
+  return (
+    <>
+      <form className='add-form' onSubmit={onSubmit}>
+        <fieldset className="fieldset-container default-deck">
           <div className='form-control'>
             <label>Deck name</label>
             <input
               type='text'
-              placeholder= {deck.name ? deck.name : 'My first deck' }
+              placeholder={deck.name ? deck.name : 'My first deck'}
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
           </div>
-          <div className="center">
-          <div className='form-control form-control-check'>
-            <label>set as default deck</label>
-            <input
-              type='checkbox'
-              checked={isDefault}
-              value={isDefault}
-              onChange={(e) => setIsDefault(e.currentTarget.checked)}
-            />
-          </div>
-          </div>
-          </fieldset>
-          <p>You can customise the type of verb conjugations you will see below. Make sure that the forms and tenses are compatible (for example if you only tick subjunctive and preterite, nothing will come up as subjunctive has no preterite form).</p>
-          <fieldset>
-            <legend>Verb forms:</legend>
-            <div className="center">
+          <div className='form-control form-control-check default-deck'>
+              <label className="center">Default deck</label>
+              <input
+                type='checkbox'
+                checked={isDefault}
+                value={isDefault}
+                onChange={(e) => setIsDefault(e.currentTarget.checked)}
+              />
+            </div>
+        </fieldset>
+        <div className="center">
+          <h4>Verb settings</h4>
+        </div>
+        <p>You can customise the type of verb conjugations you will see below. Make sure that the forms and tenses are compatible (for example if you only tick subjunctive and preterite, nothing will come up as subjunctive has no preterite form).</p>
+        <div className="fieldset-container">
+          <fieldset className="deck-fieldset">
+            <legend>Forms:</legend>
+            <div>
               <div className='form-control form-control-check'>
                 <label>Infinitive</label>
                 <input
@@ -131,9 +133,9 @@ const DeckForm = ({deck, setDeck, onClickBack}) => {
               </div>
             </div>
           </fieldset>
-          <fieldset>
-            <legend>Verb tenses:</legend>
-            <div className="center">
+          <fieldset className="deck-fieldset">
+            <legend>Tenses:</legend>
+            <div>
               <div className='form-control form-control-check'>
                 <label>Preterite</label>
                 <input
@@ -172,9 +174,9 @@ const DeckForm = ({deck, setDeck, onClickBack}) => {
               </div>
             </div>
           </fieldset>
-          <fieldset>
-            <legend>Verb verbs:</legend>
-            <div className="center">
+          <fieldset className="deck-fieldset">
+            <legend>Conjugations:</legend>
+            <div>
               <div className='form-control form-control-check'>
                 <label>Yo</label>
                 <input
@@ -241,11 +243,14 @@ const DeckForm = ({deck, setDeck, onClickBack}) => {
 
             </div>
           </fieldset>
+        </div>
+        <div className="center">
+        <Button className="btn" text="Back" onClick={onClickBack} />
           <input type='submit' value='Save Deck' className='btn btn-block' />
-          <Button className="btn" text="Back" onClick={onClickBack}/>
-        </form>
-      </>
-    )
+        </div>
+      </form>
+    </>
+  )
 }
 
 export default DeckForm
