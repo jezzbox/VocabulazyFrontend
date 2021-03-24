@@ -7,9 +7,7 @@ import fetchData from '../../FetchData'
 import { useState, useEffect } from 'react'
 import './deck.css'
 
-const DeckSection = ({ userProfile, wordTypes }) => {
-    const [showAddFlashcards, setShowAddFlashcards] = useState(false)
-    const [showEditDeck, setShowEditDeck] = useState(false)
+const DeckSection = ({ userProfile, setShowAddFlashcards, setShowEditDeck, showAddFlashcards, showEditDeck }) => {
     const [currentDeck, setCurrentDeck] = useState([])
     const [updatedDeck, setUpdatedDeck] = useState(null)
     const [deckId, setDeckId] = useState(null)
@@ -65,21 +63,21 @@ const DeckSection = ({ userProfile, wordTypes }) => {
                     </header>
 
                     <div className="center">
-                        <CurrentDeck currentDeck={currentDeck} onClickAddFlashcards={() => setShowAddFlashcards(!showAddFlashcards)} showAddFlashcards={showAddFlashcards} />
+                        <CurrentDeck currentDeck={currentDeck}/>
 
-                        <div className="current-deck-options">
-                            <Button className="btn" color="steelblue" text={!showAddFlashcards ? "Add/Remove Words" : "Hide"} onClick={() => setShowAddFlashcards(!showAddFlashcards)} />
-                            {!showAddFlashcards && <Button className="btn" text="Edit settings" color="steelblue" onClick={() => setShowEditDeck(!showEditDeck)} />}
-                        </div>
+                        {!showAddFlashcards && !showEditDeck && <div className="current-deck-options">
+                            <Button className="btn" color="steelblue" text="Add/Remove Words" onClick={() => setShowAddFlashcards(true)} />
+                            {!showAddFlashcards && <Button className="btn" text="Edit settings" color="steelblue" onClick={() => setShowEditDeck(true)} />}
+                        </div>}
 
                     </div>
 
-                    {showAddFlashcards && <AddFlashcards currentDeck={currentDeck} wordTypes={wordTypes} onClickAddFlashcards={() => setShowAddFlashcards(!showAddFlashcards)} />}
+                    {showAddFlashcards && currentDeck.flashcards && <AddFlashcards currentDeck={currentDeck} setCurrentDeck={setCurrentDeck} onClickAddFlashcards={() => setShowAddFlashcards(!showAddFlashcards)} />}
 
                     {showEditDeck &&
                         <div>
                             <h1>Edit deck settings</h1>
-                            <DeckForm deck={currentDeck} setDeck={setUpdatedDeck} />
+                            <DeckForm deck={currentDeck} setDeck={setUpdatedDeck} onClickBack={() => setShowEditDeck(false)} />
                         </div>
                     }
 

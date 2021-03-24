@@ -1,8 +1,9 @@
 import {useState, useEffect } from 'react'
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css';
+import Button from '../Button'
 
-const DeckForm = ({deck, setDeck}) => {
+const DeckForm = ({deck, setDeck, onClickBack}) => {
     const [name, setName] = useState(deck.name)
     const [useSubjunctive, setUseSubjunctive] = useState(deck.useSubjunctive)
     const [useIndicative, setUseIndicative] = useState(deck.useIndicative)
@@ -241,6 +242,7 @@ const DeckForm = ({deck, setDeck}) => {
             </div>
           </fieldset>
           <input type='submit' value='Save Deck' className='btn btn-block' />
+          <Button className="btn" text="Back" onClick={onClickBack}/>
         </form>
       </>
     )

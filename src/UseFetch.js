@@ -6,7 +6,7 @@ const useFetch = (url) => {
     const [isPending, setIsPending] = useState(true)
     const [data, setData] = useState([])
     const [error, setError] = useState(null)
-    const { user, isAuthenticated } = useAuth0();
+    const {user, isAuthenticated } = useAuth0();
 
     useEffect(() => {
         if (isAuthenticated) {
@@ -15,9 +15,10 @@ const useFetch = (url) => {
                 setIsPending(true)
                 if (url === `users?authIdentifier=`) {
                     const authIdentifier = user.sub
-
+                    console.log("here")
                     const { dataFromServer, error } = await fetchData(url + authIdentifier);
                         setError(error)
+                        console.log(dataFromServer)
                         setData(dataFromServer)
                         setIsPending(false)
 

@@ -21,6 +21,7 @@ function App() {
   const [showFlashcards, setShowFlashcards] = useState(false)
   const [isFinished, setIsFinished] = useState(false)
   const [showAddFlashcards, setShowAddFlashcards] = useState(false)
+  const [showEditDeck, setShowEditDeck] = useState(false)
   const [currentFlashcards, setCurrentFlashcards] = useState([])
   const [showStartButton, setShowStartButton] = useState(true)
 
@@ -68,12 +69,12 @@ function App() {
       {<main className='main'>
         <article>
           {!isLoading && <Welcome isAuthenticated={isAuthenticated} />}
-          {userProfile && userProfile.decks && <DeckSection userProfile={userProfile}/>}
+          {userProfile && userProfile.decks && <DeckSection userProfile={userProfile} showEditDeck={showEditDeck} showAddFlashcards={showAddFlashcards} setShowEditDeck={setShowEditDeck} setShowAddFlashcards={setShowAddFlashcards}/>}
 
           {isAuthenticated &&
           <div className="container">
           
-          {showStartButton && !showAddFlashcards &&
+          {showStartButton && !showAddFlashcards && !showEditDeck &&
             <div>
               <div className="center">
                 <Button className="btn start" text="Start" color="green" onClick={() => setShowFlashcards(true)} />
@@ -88,13 +89,6 @@ function App() {
 
         </div>}
         </article>
-          
-  
-
-      {isAuthenticated && !showFlashcards && showAddFlashcards &&
-        <div className="add-flashcards-container">
-          {currentDeck.flashcards && <AddFlashcards currentDeck={currentDeck} wordTypes={WordTypes} setCurrentFlashcards={setCurrentFlashcards} currentFlashcards={currentFlashcards} hideAddFlashcards={() => setShowAddFlashcards(false)} deckId={currentDeck.deckId} />}
-        </div>}
         </main>}
         <footer>This is the footer</footer>
     </>
