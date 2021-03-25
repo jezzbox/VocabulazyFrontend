@@ -3,7 +3,7 @@ import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import Button from './Button'
 
-const ChangeUserSettings = ({userProfile, setUserProfile, onClickBack}) => {
+const ChangeUserSettings = ({userProfile, setUpdatedUserProfile, onClickBack}) => {
             const [displayName, setDisplayName] = useState(userProfile.displayName)
             const [defaultDeckId, setDefaultDeckId] = useState(userProfile.defaultDeckId)
             const [newCardsPerDay, setNewCardsPerDay] = useState(userProfile.newCardsPerDay)
@@ -22,10 +22,13 @@ const ChangeUserSettings = ({userProfile, setUserProfile, onClickBack}) => {
               e.preventDefault()
           
               const clickYes = () => {
-                setUserProfile({
+                const userId = userProfile.userId
+                  const updatedUser = { userId,
                     displayName, defaultDeckId, newCardsPerDay, graduatingInterval, easyInterval, startingEase, steps, reviewsPerDay, easyBonus, intervalModifier,
                     maximumInterval
-                })
+                }
+                console.log(updatedUser)
+                setUpdatedUserProfile(updatedUser)
               }
           
               const clickNo = () => {
@@ -61,13 +64,13 @@ const ChangeUserSettings = ({userProfile, setUserProfile, onClickBack}) => {
                       <input
                         type='text'
                         placeholder={displayName ? displayName : ''}
-                        value={displayName}
+                        value={displayName ? displayName : ''}
                         onChange={(e) => setDisplayName(e.target.value)}
                       />
                     </div>
                     <div className='form-control form-control-check default-deck'>
                         <label className="center">Default deck</label>
-                        <select value={defaultDeckId} onChange={(e) => setDefaultDeckId(e.target.value)}>
+                        <select value={defaultDeckId ? defaultDeckId : undefined} onChange={(e) => setDefaultDeckId(e.target.value)}>
                             {userProfile.decks.map((deck,key) => (
                                 <option key={key} value={deck.deckId}>{deck.name}</option>
                             ))}

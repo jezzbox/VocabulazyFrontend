@@ -15,7 +15,8 @@ import ChangeUserSettings from './components/ChangeUserSettings';
 
 function App() {
   const { isAuthenticated, isLoading } = useAuth0();
-  const { data:userProfile, isPending, error } = useFetch(`users?authIdentifier=`)
+  const[updatedUserProfile, setUpdatedUserProfile] = useState(null)
+  const { data:userProfile, isPending, error } = useFetch(`users?authIdentifier=`,updatedUserProfile,"user")
   const [showFlashcards, setShowFlashcards] = useState(false)
   const [isFinished, setIsFinished] = useState(false)
   const [showAddFlashcards, setShowAddFlashcards] = useState(false)
@@ -25,39 +26,14 @@ function App() {
   const [showChangeDeck, setShowChangeDeck] = useState(false)
   const [showAddDeck, setShowAddDeck] = useState(false)
   const [showChangeUserProfile, setShowChangeUserProfile] = useState(false)
+  const [showCurrentDeck, setShowCurrentDeck] = useState(true)
 
- useEffect(() => {
-   if(showAddDeck) {
-     setShowChangeDeck(false)
-     setShowEditDeck(false)
-     setShowAddFlashcards(false)
-   }
- },[showAddDeck])
+  useEffect(() => {
+    if(userProfile) {
+      setUpdatedUserProfile(null)
+    }
+  },[userProfile])
 
- useEffect(() => {
-  if(showChangeDeck) {
-    setShowAddDeck(false)
-    setShowEditDeck(false)
-    setShowAddFlashcards(false)
-  }
-},[showChangeDeck])
-
-useEffect(() => {
-  if(showAddFlashcards) {
-    setShowAddDeck(false)
-    setShowChangeDeck(false)
-    setShowEditDeck(false)
-  }
-},[showAddFlashcards])
-
-useEffect(() => {
-  if(showEditDeck) {
-    setShowAddDeck(false)
-    setShowChangeDeck(false)
-    setShowAddFlashcards(false)
-    
-  }
-},[showEditDeck])
 
   // //change current deck if decks changes
   // useEffect(() => {
@@ -71,11 +47,15 @@ useEffect(() => {
   //google-oauth2|109641767784145272988
   // fetch decks
 
-  const onClickHome = () => {
-    setShowEditDeck(false)
-    setShowAddDeck(false)
-    setShowChangeDeck(false)
-    setShowAddFlashcards(false)
+  const onClickNavbarItem = ({changeUserProfile=false,currentDeck=false,addDeck=false, changeDeck=false,addFlashcards=false,editDeck=false, startButton=false  }) => {
+    console.log("do we make it herE?")
+    setShowStartButton(startButton)
+    setShowChangeUserProfile(changeUserProfile)
+    setShowCurrentDeck(currentDeck)
+    setShowAddDeck(addDeck)
+    setShowChangeDeck(changeDeck)
+    setShowAddFlashcards(addFlashcards)
+    setShowEditDeck(editDeck)
 
   }
 
@@ -84,10 +64,10 @@ useEffect(() => {
       <Header isAuthenticated={userProfile ? true:false} />
       {!isPending && <nav className="deck-Navbar">
         <ul className = "deck-menu">
-          <li onClick={() => onClickHome()}>Home</li>
-          <li onClick={() => setShowAddDeck(true)}>Create new deck</li>
-          <li onClick={() => setShowChangeDeck(true)}>Change deck</li>
-          <li onClick={() => setShowChangeUserProfile(true)}>User settings</li>
+          <li onClick={() => onClickNavbarItem({currentDeck:true, startButton:true})}>Home</li>
+          <li onClick={() => onClickNavbarItem({currentDeck:true,addDeck:true})}>Create new deck</li>
+          <li onClick={() => onClickNavbarItem({currentDeck:true,changeDeck:true})}>Change deck</li>
+          <li onClick={() => onClickNavbarItem({changeUserProfile:true})}>User settings</li>
         </ul>
       </nav>}
 
@@ -96,13 +76,13 @@ useEffect(() => {
       <main className='main'>
         <article>
           {/* Welcome Screen if not logged in */}
-          {!isLoading && <Welcome isAuthenticated={isAuthenticated} userProfile={userProfile} />}
+          {showCurrentDeck && !isLoading && <Welcome isAuthenticated={isAuthenticated} userProfile={userProfile} />}
 
           {/* Deck section */}
-          {userProfile && userProfile.decks && <DeckSection userProfile={userProfile} showEditDeck={showEditDeck} showAddFlashcards={showAddFlashcards} setShowEditDeck={setShowEditDeck} setShowAddFlashcards={setShowAddFlashcards} setShowChangeDeck={setShowChangeDeck} showChangeDeck={showChangeDeck} showAddDeck={showAddDeck} setShowAddDeck={setShowAddDeck}/>}
+          {showCurrentDeck && userProfile && userProfile.decks && <DeckSection userProfile={userProfile} showEditDeck={showEditDeck} showAddFlashcards={showAddFlashcards} setShowEditDeck={setShowEditDeck} setShowAddFlashcards={setShowAddFlashcards} setShowChangeDeck={setShowChangeDeck} showChangeDeck={showChangeDeck} showAddDeck={showAddDeck} setShowAddDeck={setShowAddDeck}/>}
 
           {/*change user settings form */}
-          {userProfile && userProfile.decks && showChangeUserProfile && <ChangeUserSettings userProfile={userProfile}/>}
+          {userProfile && userProfile.decks && showChangeUserProfile && <ChangeUserSettings userProfile={userProfile} setUpdatedUserProfile={setUpdatedUserProfile}/>}
 
           {isAuthenticated &&
           <div className="container">

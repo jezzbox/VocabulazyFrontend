@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useAuth0 } from "@auth0/auth0-react";
 import fetchData from './FetchData'
 
-const useFetch = (url) => {
+const useFetch = (url,updatedData,resource) => {
     const [isPending, setIsPending] = useState(true)
     const [data, setData] = useState([])
     const [error, setError] = useState(null)
@@ -10,7 +10,24 @@ const useFetch = (url) => {
 
     useEffect(() => {
         if (isAuthenticated) {
+            if(updatedData) {
+                const updateData = async () => {
+                    setIsPending(true)
+                    const patchData = []
+                    for (const [key, value] of Object.entries(updatedData)) {
+                        patchData.push({ "op": "replace", "path": "/" + key, "value": value })
+                    }
+                    console.log(`${resource}s/`)
+                    const { dataFromServer, error } = await fetchData(`${resource}s/${updatedData[`${resource}Id`]}`, 'PATCH', patchData)
+                        setError(error)
+                        setData(dataFromServer)
+                        setIsPending(false)
+                    }
+                    updateData()
+                }
 
+            
+            else {
             const getData = async () => {
                 setIsPending(true)
                 if (url === `users?authIdentifier=`) {
@@ -18,7 +35,6 @@ const useFetch = (url) => {
                     console.log("here")
                     const { dataFromServer, error } = await fetchData(url + authIdentifier);
                         setError(error)
-                        console.log(dataFromServer)
                         setData(dataFromServer)
                         setIsPending(false)
 
@@ -32,7 +48,8 @@ const useFetch = (url) => {
             }
             getData()
         }
-    }, [url, user, isAuthenticated]);
+        }
+    }, [url, user, isAuthenticated, updatedData]);
 
     return { data, isPending, error };
 }
