@@ -98,9 +98,14 @@
   }
 
   .deck-table th, td {
-    padding-right: 2rem;
-    padding-left: 2rem;
+    padding-right: 1.5rem;
+    padding-left: 1.5rem;
     padding-top: 0.5rem;
     border:1px solid black;
     text-align:center;
+  }
+
+  .td-click {
+    cursor:pointer;
+    width:60%;
   }

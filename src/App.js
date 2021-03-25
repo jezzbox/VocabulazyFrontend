@@ -11,6 +11,7 @@ import WordTypes from './components/WordTypes'
 import Word from './components/Decks/Word';
 import useFetch from './UseFetch';
 import processFlashcards from './ProcessFlashcards'
+import ChangeUserSettings from './components/ChangeUserSettings';
 
 function App() {
   const { isAuthenticated, isLoading } = useAuth0();
@@ -23,6 +24,7 @@ function App() {
   const [showStartButton, setShowStartButton] = useState(true)
   const [showChangeDeck, setShowChangeDeck] = useState(false)
   const [showAddDeck, setShowAddDeck] = useState(false)
+  const [showChangeUserProfile, setShowChangeUserProfile] = useState(false)
 
  useEffect(() => {
    if(showAddDeck) {
@@ -85,19 +87,22 @@ useEffect(() => {
           <li onClick={() => onClickHome()}>Home</li>
           <li onClick={() => setShowAddDeck(true)}>Create new deck</li>
           <li onClick={() => setShowChangeDeck(true)}>Change deck</li>
-          <li>User settings</li>
+          <li onClick={() => setShowChangeUserProfile(true)}>User settings</li>
         </ul>
       </nav>}
 
-      {isLoading && <div className="center"><h1>Loading ... </h1></div>}
+      {isLoading || isPending ? <div className="center"><h1>Loading ... </h1></div> : null}
 
       <main className='main'>
         <article>
           {/* Welcome Screen if not logged in */}
-          {!isLoading && <Welcome isAuthenticated={isAuthenticated} />}
+          {!isLoading && <Welcome isAuthenticated={isAuthenticated} userProfile={userProfile} />}
 
           {/* Deck section */}
           {userProfile && userProfile.decks && <DeckSection userProfile={userProfile} showEditDeck={showEditDeck} showAddFlashcards={showAddFlashcards} setShowEditDeck={setShowEditDeck} setShowAddFlashcards={setShowAddFlashcards} setShowChangeDeck={setShowChangeDeck} showChangeDeck={showChangeDeck} showAddDeck={showAddDeck} setShowAddDeck={setShowAddDeck}/>}
+
+          {/*change user settings form */}
+          {userProfile && userProfile.decks && showChangeUserProfile && <ChangeUserSettings userProfile={userProfile}/>}
 
           {isAuthenticated &&
           <div className="container">

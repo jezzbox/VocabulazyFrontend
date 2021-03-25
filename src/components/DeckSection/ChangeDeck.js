@@ -2,7 +2,7 @@
 import Button from '../Button'
 import Deck from './Deck'
 
-const ChangeDeck = ({ decks, setCurrentDeck, currentDeck, onClickBack }) => {
+const ChangeDeck = ({ decks, setCurrentDeck, currentDeck, onClickBack, setDeckToDelete}) => {
 
 return (
     <>
@@ -19,7 +19,7 @@ return (
                     <th>Due</th>
                   </tr>
             {decks.map((deck, key) => (
-              <Deck key={key} deck={deck} currentDeck={currentDeck} setCurrentDeck={setCurrentDeck}/>
+              <Deck key={key} deck={deck} currentDeck={currentDeck} setCurrentDeck={setCurrentDeck} setDeckToDelete={setDeckToDelete}/>
               
               ))}
             </tbody>

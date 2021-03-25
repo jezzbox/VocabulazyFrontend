@@ -4,7 +4,7 @@ import WordTypes from '../WordTypes'
 const updateFlashcards = async (currentDeck, updatedFlashcards) => {
 
     const addFlashcards = async (flashcardsToAdd, flashcardsToRemove, deckId) => {
-
+        var i = 0;
         for (i = 0; i < flashcardsToRemove.length; i++) {
             const flashcard = flashcardsToRemove[i]
             const id = WordTypes[flashcard.wordType]["id"]
@@ -13,10 +13,10 @@ const updateFlashcards = async (currentDeck, updatedFlashcards) => {
         }
 
         const patchData = []
-        var i = 0;
+        var j = 0;
         console.log(flashcardsToAdd.length)
-        for (i = 0; i < flashcardsToAdd.length; i++) {
-            const flashcard = flashcardsToAdd[i]
+        for (j = 0; j < flashcardsToAdd.length; j++) {
+            const flashcard = flashcardsToAdd[j]
             console.log(flashcard)
             const wordType = flashcard["wordType"]
             console.log(wordType)

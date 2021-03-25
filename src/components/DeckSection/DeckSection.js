@@ -14,13 +14,17 @@ const DeckSection = ({ userProfile, setShowAddFlashcards, setShowEditDeck, showA
     const [updatedDeck, setUpdatedDeck] = useState(null)
     const [deckToAdd, setDeckToAdd] = useState(null)
     const [deckId, setDeckId] = useState(null)
+    const [deckToDelete, setDeckToDelete] = useState(null)
+    const [defaultDeckId, setDefaultDeckId] = useState(userProfile.defaultDeckId)
 
     useEffect(() => {
         console.log(currentDeck)
     },[currentDeck])
+
     useEffect(() => {
         if (userProfile.defaultDeckId) {
             const currentDeck = userProfile.decks.filter((deck) => deck.deckId === userProfile.defaultDeckId)[0]
+
             currentDeck.flashcards = processFlashcards(currentDeck)
             setCurrentDeck(currentDeck)
             setDeckId(currentDeck.deckId)
@@ -81,6 +85,36 @@ const DeckSection = ({ userProfile, setShowAddFlashcards, setShowEditDeck, showA
         }
     }, [deckToAdd, decks, userProfile.userId])
 
+    useEffect(() => {
+        if (deckToDelete) {
+            const deleteDeck = async () => {
+                if(deckToDelete.deckId === currentDeck.deckId) {
+                    setCurrentDeck([])
+                    }
+
+                if(deckToDelete.deckId === userProfile.defaultDeckId) {
+                    await fetchData(`users/${deckToDelete.deckId}`, 'PATCH', { "op": "replace", "path": `/defaultDeckId`, "value": null })
+                    setDefaultDeckId(null)
+                    }
+
+                const { dataFromServer, error } = await fetchData(`decks/${deckToDelete.deckId}`, 'DELETE')
+
+                if (error) {
+                    console.log(error)
+                    }
+                else {
+                    dataFromServer.flashcards = []
+                    const updatedDecks = decks.filter((deck) => deck.deckId !== deckToDelete.deckId)
+                    setDecks(updatedDecks)
+                    setCurrentDeck(updatedDecks[0])
+                    setDeckToDelete(null)
+
+                    }
+                }
+            deleteDeck()
+        }
+    }, [deckToDelete, decks, userProfile.userId, currentDeck.deckId])
+
     return (
         <>
             {currentDeck &&
@@ -92,7 +126,7 @@ const DeckSection = ({ userProfile, setShowAddFlashcards, setShowEditDeck, showA
                         <h4>Current deck:</h4>
                     </header>}
 
-                    {showChangeDeck && <ChangeDeck decks={decks} currentDeck={currentDeck} setCurrentDeck={setCurrentDeck} onClickBack={() => setShowChangeDeck(false)} />}
+                    {showChangeDeck && <ChangeDeck decks={decks} currentDeck={currentDeck} setCurrentDeck={setCurrentDeck} onClickBack={() => setShowChangeDeck(false)} setDeckToDelete={setDeckToDelete} />}
 
                     {!showChangeDeck && !showAddDeck && <div className="center">
                         <CurrentDeck currentDeck={currentDeck}/>
