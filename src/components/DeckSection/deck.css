@@ -92,3 +92,15 @@
     font-family: inherit;
     min-width:45%;
   }
+
+  .deck-table {
+    border-collapse:collapse;
+  }
+
+  .deck-table th, td {
+    padding-right: 2rem;
+    padding-left: 2rem;
+    padding-top: 0.5rem;
+    border:1px solid black;
+    text-align:center;
+  }

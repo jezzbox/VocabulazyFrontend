@@ -2,7 +2,8 @@ const CurrentDeck = ({ currentDeck }) => {
 
     return (
         <>
-            {currentDeck.flashcards && <div className="current-deck">
+            {currentDeck.flashcards &&
+            <div className="current-deck">
                 <h2>{currentDeck.name}</h2>
                 <div>
                     <h4>Words</h4>

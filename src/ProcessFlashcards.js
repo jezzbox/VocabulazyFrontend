@@ -6,6 +6,9 @@ const processFlashcards = (deck) => {
       var h;
       const flashcardType = WordTypes[wordType]["flashcard"]
       const id = WordTypes[wordType]['id']
+      if(deck[flashcardType] === null) {
+        deck[flashcardType] = []
+      }
       for (h = 0; h < deck[flashcardType].length; h++) {
         const flashcard = deck[flashcardType][h]
         const flashcardId = flashcard["flashcardId"]

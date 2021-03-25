@@ -6,12 +6,18 @@ import processFlashcards from '../../ProcessFlashcards'
 import fetchData from '../../FetchData'
 import { useState, useEffect } from 'react'
 import './deck.css'
+import ChangeDeck from './ChangeDeck'
 
-const DeckSection = ({ userProfile, setShowAddFlashcards, setShowEditDeck, showAddFlashcards, showEditDeck }) => {
+const DeckSection = ({ userProfile, setShowAddFlashcards, setShowEditDeck, showAddFlashcards, showEditDeck, showChangeDeck, setShowChangeDeck, showAddDeck, setShowAddDeck }) => {
+    const [decks, setDecks] = useState([])
     const [currentDeck, setCurrentDeck] = useState([])
     const [updatedDeck, setUpdatedDeck] = useState(null)
+    const [deckToAdd, setDeckToAdd] = useState(null)
     const [deckId, setDeckId] = useState(null)
 
+    useEffect(() => {
+        console.log(currentDeck)
+    },[currentDeck])
     useEffect(() => {
         if (userProfile.defaultDeckId) {
             const currentDeck = userProfile.decks.filter((deck) => deck.deckId === userProfile.defaultDeckId)[0]
@@ -25,6 +31,7 @@ const DeckSection = ({ userProfile, setShowAddFlashcards, setShowEditDeck, showA
             setCurrentDeck(currentDeck)
             setDeckId(currentDeck.deckId)
         }
+        setDecks(userProfile.decks)
     }, [userProfile.defaultDeckId, userProfile.decks])
 
 
@@ -32,7 +39,6 @@ const DeckSection = ({ userProfile, setShowAddFlashcards, setShowEditDeck, showA
         if (updatedDeck) {
             const updateDeck = async () => {
                 const patchData = []
-                console.log(updatedDeck)
                 for (const [key, value] of Object.entries(updatedDeck)) {
                     patchData.push({ "op": "replace", "path": "/" + key, "value": value })
                 }
@@ -53,31 +59,67 @@ const DeckSection = ({ userProfile, setShowAddFlashcards, setShowEditDeck, showA
         }
     }, [updatedDeck, deckId])
 
+    useEffect(() => {
+        if (deckToAdd) {
+            const addDeck = async () => {
+                deckToAdd.userId = userProfile.userId
+                const { dataFromServer, error } = await fetchData(`decks/`, 'POST', deckToAdd)
+                if (error) {
+                    console.log(error)
+                }
+                else {
+                    dataFromServer.flashcards = []
+                    setDecks([...decks,dataFromServer])
+                    setCurrentDeck(dataFromServer)
+                    setShowAddDeck(false)
+                    setShowAddFlashcards(true)
+                    setDeckToAdd(null)
+                }
+
+            }
+            addDeck()
+        }
+    }, [deckToAdd, decks, userProfile.userId])
+
     return (
         <>
             {currentDeck &&
 
                 <section className="deck-section">
+                    {!showAddFlashcards && !showEditDeck && !showChangeDeck && !showAddDeck &&
+                    
                     <header>
-                        <h4>{showAddFlashcards? "Editing deck:" :showEditDeck ? "Editing deck settings:" : "Current deck:"}</h4>
-                    </header>
+                        <h4>Current deck:</h4>
+                    </header>}
 
-                    <div className="center">
+                    {showChangeDeck && <ChangeDeck decks={decks} currentDeck={currentDeck} setCurrentDeck={setCurrentDeck} onClickBack={() => setShowChangeDeck(false)} />}
+
+                    {!showChangeDeck && !showAddDeck && <div className="center">
                         <CurrentDeck currentDeck={currentDeck}/>
-                    </div>
+                    </div>}
 
-                    {!showAddFlashcards && !showEditDeck && 
+                    {!showAddFlashcards && !showEditDeck && !showChangeDeck && !showAddDeck &&
 
                         <div className="current-deck deck-options">
                             <Button className="deck-options-btn" color="steelblue" text="Add/Remove Words" onClick={() => setShowAddFlashcards(true)} />
                             <Button className="deck-options-btn" text="Edit settings" color="steelblue" onClick={() => setShowEditDeck(true)} />
                         </div>}
 
-                    {showAddFlashcards && currentDeck.flashcards && <AddFlashcards currentDeck={currentDeck} setCurrentDeck={setCurrentDeck} onClickAddFlashcards={() => setShowAddFlashcards(!showAddFlashcards)} />}
+                    {showAddFlashcards && currentDeck.flashcards && <AddFlashcards currentDeck={currentDeck} setCurrentDeck={setCurrentDeck} onClickAddFlashcards={() => setShowAddFlashcards(!showAddFlashcards)} decks={decks} setDecks={setDecks} />}
+                    
+                    {showAddDeck &&
+                        <div className="container blue-border">
+                            <DeckForm deck={
+        {name:'', isDefault:false, useSubjunctive:true, useInfinitive:true, useIndicative:true, useImperative:true, useParticiple:true, usePreterite:true, useImperfect:true, useFuture:true, usePresent:true,
+        useYo:true, useTu:true, useEl:true, useVos:false, useEllos:true, useNosotros:true, useVosotros:true
+                            }} setDeck={setDeckToAdd} onClickBack={() => setShowAddDeck(false)} headerText="Create new deck:" />
+                        </div>
+}
+
 
                     {showEditDeck &&
                         <div className="container blue-border">
-                            <DeckForm deck={currentDeck} setDeck={setUpdatedDeck} onClickBack={() => setShowEditDeck(false)} />
+                            <DeckForm deck={currentDeck} setDeck={setUpdatedDeck} onClickBack={() => setShowEditDeck(false)} headerText="Edit deck:" />
                         </div>
                     }
 

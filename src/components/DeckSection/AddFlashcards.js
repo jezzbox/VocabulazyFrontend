@@ -8,7 +8,7 @@ import processFlashcards from '../../ProcessFlashcards'
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css';
 
-const AddFlashcards = ({ currentDeck, onClickAddFlashcards, setCurrentDeck }) => {
+const AddFlashcards = ({ currentDeck, onClickAddFlashcards, setCurrentDeck, decks, setDecks }) => {
     const [searchString, setSearchString] = useState('');
     const [searchResult, setSearchResult] = useState([]);
     const [showResult, setShowResult] = useState(false);
@@ -55,7 +55,10 @@ const AddFlashcards = ({ currentDeck, onClickAddFlashcards, setCurrentDeck }) =>
                 console.log(error)
             }
             else {
+
                 dataFromServer.flashcards = processFlashcards(dataFromServer)
+                const newDecks = decks.filter((deck) => deck.deckId !== currentDeck.deckId)
+                setDecks([...newDecks,dataFromServer])
                 setCurrentDeck(dataFromServer)
             }
         }
@@ -63,6 +66,7 @@ const AddFlashcards = ({ currentDeck, onClickAddFlashcards, setCurrentDeck }) =>
         const clickNo = () => {
             return
         }
+    
 
 
         confirmAlert({

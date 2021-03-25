@@ -6,6 +6,9 @@
   padding: 0;
 }
 
+html {
+  font-size:18px;
+}
 html, body {
   height:100%;
 }
@@ -132,6 +135,12 @@ footer {
   text-decoration: none;
   font-size: 20px;
   font-family: inherit;
+}
+
+.btn .minimal {
+  padding: 5px 10px;
+  margin: 3px;
+  font-size: 10px;
 }
 
 .start {
@@ -431,6 +440,7 @@ article header {
   border: 3px solid white;
   display:flex;
   color:white;
+  cursor: pointer;
   background:steelblue;
   border-radius:10px;
   justify-content:center;

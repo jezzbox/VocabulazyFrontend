@@ -2,7 +2,7 @@ import React from "react";
 import LoginButton from './LoginButton'
 import Button from './Button'
 
-const Welcome = ({ isAuthenticated, isLoading }) => {
+const Welcome = ({ isAuthenticated }) => {
 
 
     return (
