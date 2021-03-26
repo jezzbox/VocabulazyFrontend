@@ -1,5 +1,4 @@
 import Button from '../Button'
-import WordTypes from '../WordTypes'
 const Word = ({ word, flashcards, setFlashcards, isCurrent }) => {
 
     const wordInDeck = flashcards ? flashcards.length === 0 ? false : flashcards.some(x => x.word === word.word && x.wordType === word.wordType) ? true : false : false

@@ -1,8 +1,7 @@
-
-import Button from '../Button'
 import Deck from './Deck'
+import { Link } from 'react-router-dom'
 
-const ChangeDeck = ({ decks, setCurrentDeck, currentDeck, onClickBack, setDeckToDelete}) => {
+const ChangeDeck = ({ decks, setCurrentDeck, currentDeck, deleteDeck}) => {
 
 return (
     <>
@@ -18,15 +17,15 @@ return (
                     <th>Words</th>
                     <th>Due</th>
                   </tr>
-            {decks.map((deck, key) => (
-              <Deck key={key} deck={deck} currentDeck={currentDeck} setCurrentDeck={setCurrentDeck} setDeckToDelete={setDeckToDelete}/>
+            {decks.map((deck) => (
+              <Deck key={deck.deckId} deck={deck} currentDeck={currentDeck} setCurrentDeck={setCurrentDeck} deleteDeck={deleteDeck}/>
               
               ))}
             </tbody>
          </table> 
         : <h3>No decks yet, create deck to get started</h3>}
         <div className="center">
-        <Button className="btn" text="Back" onClick={onClickBack} />
+        <Link className="back-link" to ="/home">Back</Link>
         </div>
         </div>
         </>

@@ -10,6 +10,7 @@ const useFetch = (url,updatedData,resource) => {
 
     useEffect(() => {
         if (isAuthenticated) {
+            console.log("are we fetching ?")
             if(updatedData) {
                 const updateData = async () => {
                     setIsPending(true)
@@ -49,7 +50,7 @@ const useFetch = (url,updatedData,resource) => {
             getData()
         }
         }
-    }, [url, user, isAuthenticated, updatedData]);
+    }, [url, user, isAuthenticated, updatedData, resource]);
 
     return { data, isPending, error };
 }

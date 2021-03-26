@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types'
-import LogoutButton from '../LogoutButton'
 import SecondaryNavbar from './SecondaryNavbar'
 import logo from './logo.png'
 

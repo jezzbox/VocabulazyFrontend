@@ -1,14 +1,15 @@
 import './navbar.css'
+import { Link }from 'react-router-dom'
 const SecondaryNavbar = () => {
     return (
 
      <nav className="NavbarItems">
         <ul className="nav-menu">
             <li>
-                <a className="nav-links" href="#">About</a>
+            <Link to="\">About</Link>
             </li>
             <li>
-                <a className="nav-links" href="#">Log out</a>
+            <Link to="\">Logout</Link>
             </li>
         </ul>
      </nav>

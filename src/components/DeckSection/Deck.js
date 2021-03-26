@@ -3,7 +3,7 @@ import Button from '../Button'
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css';
 
-const Deck = ( {deck, key, currentDeck, setCurrentDeck, setDeckToDelete} ) => {
+const Deck = ( {deck, key, currentDeck, setCurrentDeck, deleteDeck} ) => {
     deck.flashcards = processFlashcards(deck)
 
     const onClickDelete =  () => {
@@ -13,7 +13,7 @@ const Deck = ( {deck, key, currentDeck, setCurrentDeck, setDeckToDelete} ) => {
           buttons: [
             {
               label: 'Yes',
-              onClick: () => setDeckToDelete(deck)
+              onClick: () => deleteDeck(deck.deckId)
             },
             {
               label: 'No',

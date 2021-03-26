@@ -7,8 +7,9 @@ import fetchData from '../../FetchData'
 import processFlashcards from '../../ProcessFlashcards'
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css';
+import { Link } from 'react-router-dom'
 
-const AddFlashcards = ({ currentDeck, onClickAddFlashcards, setCurrentDeck, decks, setDecks }) => {
+const AddFlashcards = ({ currentDeck, setCurrentDeck, decks, setDecks }) => {
     const [searchString, setSearchString] = useState('');
     const [searchResult, setSearchResult] = useState([]);
     const [showResult, setShowResult] = useState(false);
@@ -118,7 +119,7 @@ const AddFlashcards = ({ currentDeck, onClickAddFlashcards, setCurrentDeck, deck
             </div>
         </div>
             <div className="center">
-                <Button className="btn" text="Back" color="steelblue" onClick={onClickAddFlashcards}/>
+                <Link className="back-link" to = "/home">Back</Link>
                 <Button text="Submit" color="black" onClick={() => onClickSubmit()} />
             </div>
         </div>

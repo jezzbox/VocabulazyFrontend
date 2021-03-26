@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css';
-import Button from './Button'
+import { Link } from 'react-router-dom'
 
-const ChangeUserSettings = ({userProfile, setUpdatedUserProfile, onClickBack}) => {
+const ChangeUserSettings = ({userProfile, setUpdatedUserProfile}) => {
             const [displayName, setDisplayName] = useState(userProfile.displayName)
-            const [defaultDeckId, setDefaultDeckId] = useState(userProfile.defaultDeckId)
+            const [defaultDeckId, setDefaultDeckId] = useState(userProfile.defaultDeckId ? userProfile.defaultDeckId : undefined)
             const [newCardsPerDay, setNewCardsPerDay] = useState(userProfile.newCardsPerDay)
             const [graduatingInterval, setGraduatingInterval] = useState(userProfile.graduatingInterval)
             const [easyInterval, setEasyInterval] = useState(userProfile.easyInterval)
@@ -15,8 +15,6 @@ const ChangeUserSettings = ({userProfile, setUpdatedUserProfile, onClickBack}) =
             const [easyBonus, setEasyBonus] = useState(userProfile.easyBonus)
             const [intervalModifier, setIntervalModifier] = useState(userProfile.intervalModifier);
             const [maximumInterval, setMaximumInterval] = useState(userProfile.maximumInterval);
-
-            console.log(userProfile)
 
             const onSubmit = (e) => {
               e.preventDefault()
@@ -70,9 +68,9 @@ const ChangeUserSettings = ({userProfile, setUpdatedUserProfile, onClickBack}) =
                     </div>
                     <div className='form-control form-control-check default-deck'>
                         <label className="center">Default deck</label>
-                        <select value={defaultDeckId ? defaultDeckId : undefined} onChange={(e) => setDefaultDeckId(e.target.value)}>
-                            {userProfile.decks.map((deck,key) => (
-                                <option key={key} value={deck.deckId}>{deck.name}</option>
+                        <select value={defaultDeckId} onChange={(e) => setDefaultDeckId(e.target.value)}>
+                            {userProfile.decks.map((deck) => (
+                                <option key={deck.deckId} value={deck.deckId}>{deck.name}</option>
                             ))}
                         </select>
                       </div>
@@ -175,8 +173,8 @@ const ChangeUserSettings = ({userProfile, setUpdatedUserProfile, onClickBack}) =
         </div>
 
                   <div className="center">
-                  <Button className="btn" text="Back" onClick={onClickBack} />
-                    <input type='submit' value='Save Deck' className='btn btn-block' />
+                    <Link to="/home" className="back-link">Back</Link>
+                    <input type='submit' value='Save settings' className='btn btn-block' />
                   </div>
                 </form>
               </>
