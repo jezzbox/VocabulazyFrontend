@@ -1,9 +1,8 @@
 import { useState, useEffect, useCallback } from 'react'
-import { BrowserRouter as Router, Route, NavLink, Redirect } from 'react-router-dom'
+import { BrowserRouter as Router, Route, NavLink, Redirect, Link } from 'react-router-dom'
 import Header from './components/Header/Header'
 import { useAuth0 } from "@auth0/auth0-react";
 import Welcome from './components/Welcome'
-import Button from './components/Button'
 import Flashcards from './components/Flashcards'
 import DeckSection from './components/DeckSection/DeckSection'
 import useFetch from './Actions/UseFetch';
@@ -11,7 +10,8 @@ import processFlashcards from './Actions/ProcessFlashcards'
 import ChangeUserSettings from './components/ChangeUserSettings';
 import DeckForm from './components/DeckSection/DeckForm'
 import fetchData from './Actions/FetchData'
-import ChangeDeck from './components/DeckSection/ChangeDeck'
+import Table from './components/Table'
+import getDecksData from './Actions/GetDecksData'
 
 function App() {
   const { isAuthenticated, isLoading } = useAuth0();
@@ -19,8 +19,6 @@ function App() {
   const { data: userProfile, isPending, error } = useFetch(`users?authIdentifier=`, updatedUserProfile, "user")
   const [decks, setDecks] = useState(null)
   const [currentDeck, setCurrentDeck] = useState(null)
-  const [showFlashcards, setShowFlashcards] = useState(false)
-  const [isFinished, setIsFinished] = useState(false)
 
 
   const getDefaultDeck = useCallback((decks) => {
@@ -37,14 +35,6 @@ function App() {
         }
   },[userProfile.defaultDeckId])
 
-
-  useEffect(() => {
-    console.log(userProfile)
-  },[userProfile])
-
-  useEffect(() => {
-    console.log(isAuthenticated)
-  },[isAuthenticated])
   // sets the decks after userProfile is loaded
   useEffect(() => {
     if (userProfile && !isPending && userProfile.decks) {
@@ -70,7 +60,6 @@ function App() {
       setUpdatedUserProfile(null)
     }
   }, [userProfile])
-
 
 // add new deck
   const addDeck = async (deckToAdd) => {
@@ -105,8 +94,6 @@ function App() {
 
   }
 
-
-
   //google-oauth2|109641767784145272988
   // fetch decks
 
@@ -114,7 +101,6 @@ function App() {
     <Router>
       <>
       {console.log(error)}
-      {isAuthenticated ? <h1>authenticated</h1> : <h1>not authenticated</h1>}
         <Header isAuthenticated={userProfile ? true : false} />
         {!isPending && <nav className="deck-Navbar">
           <ul className="deck-menu">
@@ -150,7 +136,7 @@ function App() {
                 {
                   <div>
                     <div className="center">
-                      <Button className="btn start" text="Start" color="green" onClick={() => setShowFlashcards(true)} />
+                      <Link className="back-link" to ="/flashcards">Start</Link>
                     </div>
                   </div>}
               </>: isAuthenticated ? <h1>No decks, create one to get started</h1> : null}
@@ -173,7 +159,20 @@ function App() {
 
             {/* Manage decks */}
             <Route path="/decks/change">
-              {decks ? <ChangeDeck decks={decks} currentDeck={currentDeck} setCurrentDeck={setCurrentDeck} deleteDeck={deleteDeck} />: null}
+              {decks && currentDeck ? 
+              <>
+              <header>
+                    <h4>Change deck:</h4>
+              </header>
+              <div className="container blue-border">
+              {decks.length > 0 ? 
+                   <Table className="deck-table" tableData={getDecksData(decks,currentDeck,setCurrentDeck,deleteDeck)} headers={[{ columnName: 'Name', objectProperty: 'select' }, { columnName: "Words", objectProperty: "wordCount" },{ columnName: "Due", objectProperty: "dueCount" }, { objectProperty: "deleteButton" }]} />
+                  : <h3>No decks yet, create deck to get started</h3>}
+                  <div className="center">
+                  <Link className="back-link" to ="/home">Back</Link>
+                  </div>
+                  </div>
+                  </> : null}
             </Route>
 
 
@@ -181,9 +180,9 @@ function App() {
             <Route path="/Flashcards">
               {isAuthenticated &&
                 <div className="container">
-                  {showFlashcards &&
+                  {currentDeck &&
                     <>
-                      <Flashcards isFinished={isFinished} setIsFinished={setIsFinished} hideFlashcards={() => setShowFlashcards(false)}/>
+                      <Flashcards userProfile={userProfile} currentDeck={currentDeck} setCurrentDeck={setCurrentDeck}/>
                     </>
                   }
                 </div>}

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css';
-import initialDeckSettings from './InitialDeckSettings'
+import initialDeckSettings from '../../Constants/DEFAULT_DECK_SETTINGS'
 import { Link } from 'react-router-dom'
 
 const DeckForm = ({ deck=initialDeckSettings

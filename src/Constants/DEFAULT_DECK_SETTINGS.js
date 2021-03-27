@@ -1,4 +1,4 @@
-const initialDeckSettings = {
+const DEFAULT_DECK_SETTINGS = {
     name: ''
     , useSubjunctive: true
     , useInfinitive: true
@@ -18,4 +18,4 @@ const initialDeckSettings = {
     , useVosotros: true
 }
 
-export default initialDeckSettings
+export default DEFAULT_DECK_SETTINGS

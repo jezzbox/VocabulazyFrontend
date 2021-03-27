@@ -8,7 +8,7 @@ import processFlashcards from '../../Actions/ProcessFlashcards'
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import { Link } from 'react-router-dom'
-import Table from './Table'
+import Table from '../Table'
 import GenerateButtons from '../../Actions/GenerateButtons'
 
 

@@ -9,8 +9,7 @@ const Table = ({ tableData, className , headers, showHeaders }) => {
                     {showHeaders && headers.length > 0 && 
                         <tr>
                         {headers.map((header, index) => (
-                            <th key={index}>{header.columnName}</th>
-
+                            header.columnName && <th key={index}>{header.columnName}</th>
                         ))}
                         </tr>}
 

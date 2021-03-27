@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
-import Table from './Table'
-import processFlashcards from '../../Actions/ProcessFlashcards'
-import Button from '../Button'
+import Table from '../components/Table'
+import processFlashcards from '../Actions/ProcessFlashcards'
+import Button from '../components/Button'
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css';
 
@@ -62,7 +62,7 @@ return (
     </header>
     <div className="container blue-border">
     {decks.length > 0 ? 
-         <Table tableData={getDecksData(decks)} headers={[{ columnName: 'Name', objectProperty: 'select' }, { columnName: "Words", objectProperty: "wordCount" },{ columnName: "Due", objectProperty: "dueCount" }, { columnName: "delete", objectProperty: "deleteButton" }]} />
+         <Table className="deck-table" tableData={getDecksData(decks)} headers={[{ columnName: 'Name', objectProperty: 'select' }, { columnName: "Words", objectProperty: "wordCount" },{ columnName: "Due", objectProperty: "dueCount" }, { objectProperty: "deleteButton" }]} />
         : <h3>No decks yet, create deck to get started</h3>}
         <div className="center">
         <Link className="back-link" to ="/home">Back</Link>
