@@ -1,24 +1,28 @@
 import Button from '../Button'
 import { useState, useEffect } from 'react'
-import Words from '../Decks/Words'
-import CurrentFlashcards from '../Decks/CurrentFlashcards'
+// import Words from './Words'
+// import CurrentFlashcards from './CurrentFlashcards'
 import updateFlashcards from './UpdateFlashcards'
 import fetchData from '../../FetchData'
 import processFlashcards from '../../ProcessFlashcards'
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import { Link } from 'react-router-dom'
+import Table from './Table'
 
 const AddFlashcards = ({ currentDeck, setCurrentDeck, decks, setDecks }) => {
     const [searchString, setSearchString] = useState('');
     const [searchResult, setSearchResult] = useState([]);
     const [showResult, setShowResult] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [flashcards, setFlashcards] = useState(currentDeck.flashcards)
+    const [flashcards, setFlashcards] = useState(null)
     const [filterString, setFilterString] = useState('')
 
     useEffect(() => {
-        setFlashcards(currentDeck.flashcards)
+        if(currentDeck.flashcards) {
+            setFlashcards(currentDeck.flashcards)
+        }
+        
     },[currentDeck.flashcards])
 
     useEffect(() => {
@@ -27,6 +31,74 @@ const AddFlashcards = ({ currentDeck, setCurrentDeck, decks, setDecks }) => {
             setShowResult(true)
         }
     }, [searchResult])
+
+    const onClickFlashcard = (flashcard,currentFlashcards,action) => {
+        if(action === "Add") {
+            setFlashcards([...currentFlashcards,flashcard])
+        }
+        else if(action === "Remove") {
+            setFlashcards(currentFlashcards.filter(x => !(x.word === flashcard.word && x.wordType === flashcard.wordType)))
+        }
+        }
+
+    const generateRemoveButtons = (data) => {
+
+        var i;
+        const processedData = []
+        for(i=0;i<data.length;i++) {
+            const flashcard = data[i]
+            flashcard.button = 
+                <Button 
+                text="Remove"
+                color="#85144b"
+                onClick={() => onClickFlashcard(flashcard,data,"Remove")}/>
+                processedData.push(flashcard)
+                    }
+                return processedData
+      }
+
+      const generateAddButtons = (data, currentFlashcards) => {
+
+        var i;
+        const processedData = []
+        for(i=0;i<data.length;i++) {
+            const result = data[i]
+            const wordInDeck = currentFlashcards.some(x => x.word === result.word && x.wordType === result.wordType) ? true : false
+            result.button = 
+                <Button 
+                text={wordInDeck ? "Added" :"Add"}
+                color={wordInDeck ? "#85144b" : "Green"}
+                onClick={wordInDeck ? null : () => onClickFlashcard(result,currentFlashcards,"Add")}/>
+                processedData.push(result)
+                    }
+                return processedData
+            }
+
+    // const onClickFlashcard = async (flashcard,action, wordInDeck) => {
+    //     if(action === "Add") {
+    //         if (!wordInDeck){
+    //             setFlashcards([...flashcards,flashcard])
+    //             }
+    //     }
+    //     else if(action === "Remove") {
+    //         setFlashcards(flashcards.filter(x => !(x.word === flashcard.word && x.wordType === flashcard.wordType)))
+    //     }
+    //     }
+
+
+    // const addButton = (data) => {
+    //     var i;
+    //     const processedData = []
+
+    //     for(i=0;i<data.length;i++) {
+    //         const flashcard = data[i]
+    //         const wordInDeck = flashcards.some(x => x.word === flashcard.word && x.wordType === flashcard.wordType) ? true : false
+    //         flashcard.button = <Button text={wordInDeck ? "Added" :"Add"} color="#85144b" onClick={() => onClickFlashcard(flashcard, "Add",wordInDeck)}/>
+    //         processedData.push(flashcard)
+    //             }
+    //     return processedData
+
+    // }
 
     const onSubmitSearch = async (e) => {
         e.preventDefault()
@@ -104,7 +176,7 @@ const AddFlashcards = ({ currentDeck, setCurrentDeck, decks, setDecks }) => {
                         <input type='submit' value='Search' className='btn btn-block' />
                     </form>
                     {isLoading && <h1>Loading....</h1>}
-                    {showResult && <Words words={searchResult} flashcards={flashcards} setFlashcards={setFlashcards} currentFlashcards={currentDeck.verbFlashcards} />}
+                    {showResult && <Table tableData={generateAddButtons(searchResult, flashcards)} headers={[{columnName:'word', objectProperty:'word'},{columnName:"Type", objectProperty:"wordType"}, {columnName:"delete", objectProperty:"button"}]}/>}
                 </div>
             
             <div className="search-words-container">
@@ -115,7 +187,9 @@ const AddFlashcards = ({ currentDeck, setCurrentDeck, decks, setDecks }) => {
                     </div>
                     <input type='submit' value='Search' className='btn btn-block' />
                     {currentDeck.flashcards.length === 0 && <h3>Deck is empty</h3>}
-                    <CurrentFlashcards flashcards={flashcards} setFlashcards={setFlashcards} currentFlashcards={currentDeck.flashcards} />
+                    <div className="scroll table-container">
+                        {flashcards && <Table tableData={generateRemoveButtons(flashcards)} headers={[{columnName:'word', objectProperty:'word'},{columnName:"Type", objectProperty:"wordType"}, {columnName:"delete", objectProperty:"button"}]}/>}
+                    </div>
             </div>
         </div>
             <div className="center">

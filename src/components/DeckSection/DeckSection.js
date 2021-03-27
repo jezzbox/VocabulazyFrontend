@@ -7,7 +7,7 @@ import { useEffect } from 'react'
 import './deck.css'
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
 
-const DeckSection = ({ currentDeck, decks, setCurrentDeck, setDecks, userProfile }) => {
+const DeckSection = ({ currentDeck, decks, setCurrentDeck, setDecks }) => {
 
     useEffect(() => {
         console.log(currentDeck)

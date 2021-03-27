@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { BrowserRouter as Router, Route, NavLink, Redirect } from 'react-router-dom'
 import Header from './components/Header/Header'
 import { useAuth0 } from "@auth0/auth0-react";
@@ -7,7 +7,7 @@ import Welcome from './components/Welcome'
 import Button from './components/Button'
 import Flashcards from './components/Flashcards'
 import DeckSection from './components/DeckSection/DeckSection'
-import WordTypes from './components/WordTypes'
+// import WordTypes from './components/WordTypes'
 import useFetch from './UseFetch';
 import processFlashcards from './ProcessFlashcards'
 import ChangeUserSettings from './components/ChangeUserSettings';
@@ -23,6 +23,21 @@ function App() {
   const [currentDeck, setCurrentDeck] = useState(null)
   const [showFlashcards, setShowFlashcards] = useState(false)
   const [isFinished, setIsFinished] = useState(false)
+
+
+  const getDefaultDeck = useCallback((decks) => {
+    const defaultDeck = decks.find(deck => deck.deckId === userProfile.defaultDeckId)
+
+        if(defaultDeck === undefined) {
+          const newestDeck = decks.reduce((l,d) => l.dueDate > d.dueDate ? l : d)
+          newestDeck.flashcards = processFlashcards(newestDeck)
+          return newestDeck;
+        }
+        else {
+           defaultDeck.flashcards = processFlashcards(defaultDeck)
+           return defaultDeck;
+        }
+  },[userProfile.defaultDeckId])
 
 
   useEffect(() => {
@@ -44,22 +59,11 @@ function App() {
     if (userProfile && !isPending && decks) {
       if (!currentDeck && decks.length > 0) {
 
-        const defaultDeck = decks.find(deck => deck.deckId === userProfile.defaultDeckId)
-
-        if(defaultDeck === undefined) {
-            const latestDeck = decks.reduce((l,d) => l.dueDate > d.dueDate ? l : d)
-            latestDeck.flashcards = processFlashcards(latestDeck)
-            setCurrentDeck(latestDeck)
-        }
-        else {
-           defaultDeck.flashcards = processFlashcards(defaultDeck)
-           setCurrentDeck(defaultDeck)
-        }
-
-
+        const newCurrentDeck = getDefaultDeck(decks)
+        setCurrentDeck(newCurrentDeck)
     }
 }
-}, [decks, currentDeck, isPending, userProfile])
+}, [decks, currentDeck, isPending, userProfile, getDefaultDeck])
 
 
   useEffect(() => {
@@ -92,7 +96,13 @@ function App() {
       console.log(error)
     }
     else {
-      setDecks(decks.filter((deck) => deck.deckId !== deckId))
+      const newDecks = decks.filter((deck) => deck.deckId !== deckId)
+      setDecks(newDecks)
+
+      if(deckId === currentDeck.deckId) {
+        const newCurrentDeck = getDefaultDeck(newDecks)
+        setCurrentDeck(newCurrentDeck)
+      }
     }
 
   }
@@ -175,7 +185,7 @@ function App() {
                 <div className="container">
                   {showFlashcards &&
                     <>
-                      <Flashcards wordTypes={WordTypes} isFinished={isFinished} setIsFinished={setIsFinished} hideFlashcards={() => setShowFlashcards(false)}/>
+                      <Flashcards isFinished={isFinished} setIsFinished={setIsFinished} hideFlashcards={() => setShowFlashcards(false)}/>
                     </>
                   }
                 </div>}

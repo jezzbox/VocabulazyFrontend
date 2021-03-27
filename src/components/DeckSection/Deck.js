@@ -3,7 +3,7 @@ import Button from '../Button'
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css';
 
-const Deck = ( {deck, key, currentDeck, setCurrentDeck, deleteDeck} ) => {
+const Deck = ( {deck, currentDeck, setCurrentDeck, deleteDeck} ) => {
     deck.flashcards = processFlashcards(deck)
 
     const onClickDelete =  () => {
@@ -24,7 +24,7 @@ const Deck = ( {deck, key, currentDeck, setCurrentDeck, deleteDeck} ) => {
   }
 
     return (
-                    <tr key={key}>
+                    <tr>
                       <td className="td-click" onClick={currentDeck === deck ? null : () => setCurrentDeck(deck)}>{currentDeck === deck ? <>{deck.name}<em> (Selected)</em></>: <>{deck.name}</>  } </td>
                       <td>{deck.flashcards.length}</td>
                       <td>{deck.flashcards.filter((flashcard) => flashcard.dueDate <= new Date().toJSON()).length}</td>
