@@ -6,6 +6,7 @@ import WORD_TYPES from '../Constants/WORD_TYPES'
 import { Link } from 'react-router-dom'
 import fetchData from '../Actions/FetchData'
 import processFlashcards from '../Actions/ProcessFlashcards'
+import generateParameterUrl from '../Actions/GenerateParameterUrl'
 
 const Flashcards = ({ currentDeck, setCurrentDeck, userProfile }) => {
     const [isFinished, setIsFinished] = useState(false)
@@ -17,11 +18,6 @@ const Flashcards = ({ currentDeck, setCurrentDeck, userProfile }) => {
     const [learningSteps, setLearningSteps] = useState([])
     const [learnAheadTime, setLearnAheadTime] = useState(null)
 
-
-    useEffect(() => {
-        console.log("user profile")
-        console.log(userProfile)
-    }, [userProfile])
     //set flashcards from current deck
     useEffect(() => {
         setFlashcards(currentDeck.flashcards)
@@ -92,30 +88,39 @@ const Flashcards = ({ currentDeck, setCurrentDeck, userProfile }) => {
             const getFlashcard = async (currentFlashcard) => {
                 console.log("getting phrases")
                 const flashcard = Object.assign({}, currentFlashcard)
-                const verbTypeString = `&useSubjunctive=${currentDeck.useSubjunctive}
-                    &useIndicative=${currentDeck.useIndicative}
-                    &useImperative=${currentDeck.useImperative}
-                    &useInfinitive=${currentDeck.useInfinitive}
-                    &useParticiple=${currentDeck.useParticiple}
-                    &usePreterite=${currentDeck.usePreterite}
-                    &useImperfect=${currentDeck.useImperfect}
-                    &usePresent=${currentDeck.usePresent}
-                    &useFuture=${currentDeck.usePresent}`
-
-                console.log(verbTypeString)
 
                 flashcard.flashcardId = flashcard[WORD_TYPES[flashcard.wordType]["id"]]
-                const phraseFromServer = await fetchPhrase(flashcard.flashcardId, flashcard.wordType, verbTypeString)
-                if (phraseFromServer == null) {
-                    flashcard.phrase = "no phrase for this word yet"
-                    flashcard.phraseId = null
+
+                const parameters = generateParameterUrl(currentDeck)
+
+                const url = `Vocabulazy/${flashcard.wordType}s/${flashcard.flashcardId}/phrases` + parameters
+                console.log(url)
+                const { dataFromServer, error } = await fetchData(url)
+                if(error) {
+                    console.log(error)
                 }
                 else {
-                    flashcard.phrase = phraseFromServer.phrase
-                    flashcard.phraseId = phraseFromServer.phraseId
+                const phraseFromServer = dataFromServer[Math.floor(Math.random() * dataFromServer.length)];
+                console.log(phraseFromServer)
+                if (phraseFromServer == null) {
+                    flashcard.phrase = "no phrase for this word yet"
+                    flashcard.phraseNumber = null
+                }
+                else {
+                    flashcard.spanishPhrase = phraseFromServer.spanishPhrase
+                    flashcard.englishPhrase = phraseFromServer.englishPhrase
+                    flashcard.phraseNumber = phraseFromServer.phraseNumber
+                    flashcard.word = phraseFromServer.word
+                    flashcard.startTime = phraseFromServer.startTime
+                    flashcard.endTime = phraseFromServer.endTime
+                    flashcard.subtitleId = phraseFromServer.subtitleId
+                    flashcard.conjugationForm = phraseFromServer.conjugationForm
+                    flashcard.conjugationTense = phraseFromServer.conjugationTense
+                    flashcard.conjugationType = phraseFromServer.conjugationType
                 }
                 console.log(flashcard)
                 setFlashcard(flashcard)
+            }
             }
             getFlashcard(todaysCards[flashcardNumber])
 
@@ -139,14 +144,13 @@ const Flashcards = ({ currentDeck, setCurrentDeck, userProfile }) => {
         }
     }
 
-    const fetchPhrase = async (flashcardId, wordType, verbTypeString) => {
+    const getPatchData = (updateData) => {
+        const patchData = []
+        for (let [key, value] of Object.entries(updateData)) {
+            patchData.push({ "op": "replace", "path": `/${key}`, "value": value })
+                    }
+        return patchData;
 
-        const url = `https://localhost:44386/api/Vocabulazy/phrases?${wordType}Id=${flashcardId}` + verbTypeString
-        const res = await fetch(url)
-        const data = await res.json()
-        const phrase = data[Math.floor(Math.random() * data.length)];
-
-        return phrase
     }
 
     const onClickAgain = async () => {
@@ -156,9 +160,10 @@ const Flashcards = ({ currentDeck, setCurrentDeck, userProfile }) => {
             const newEase = flashcard.ease - 20
             const newDueDate = getNewDueDate(newLearningStep)
             const updateData = { learningStep: newLearningStep, interval: 1 * 24 * 60, phase: "Learning", ease: newEase, dueDate: newDueDate }
+            const patchData = getPatchData(updateData)
 
             const url = `flashcards/${flashcard.wordType}s?id=${flashcard.flashcardId}&deckId=${currentDeck.deckId}`
-            const { dataFromServer: updatedCard, error } = await fetchData(url, 'PATCH', updateData)
+            const { dataFromServer: updatedCard, error } = await fetchData(url, 'PATCH', patchData)
             if (error) {
                 console.log(error)
 
@@ -178,9 +183,9 @@ const Flashcards = ({ currentDeck, setCurrentDeck, userProfile }) => {
             if (flashcard.phase === "New") {
                 updateData.phase = "Learning"
             }
-
+            const patchData = getPatchData(updateData)
             const url = `flashcards/${flashcard.wordType}s?id=${flashcard.flashcardId}&deckId=${currentDeck.deckId}`
-            const { dataFromServer: updatedCard, error } = await fetchData(url, 'PATCH', updateData)
+            const { dataFromServer: updatedCard, error } = await fetchData(url, 'PATCH', patchData)
             if (error) {
                 console.log(error)
 
@@ -199,9 +204,10 @@ const Flashcards = ({ currentDeck, setCurrentDeck, userProfile }) => {
             const newEase = flashcard.ease - 15
             const newDueDate = getNewDueDate(newInterval)
             const updateData = { interval: newInterval, ease: newEase, dueDate: newDueDate }
+            const patchData = getPatchData(updateData)
 
             const url = `flashcards/${flashcard.wordType}s?id=${flashcard.flashcardId}&deckId=${currentDeck.deckId}`
-                const { error } = await fetchData(url, 'PATCH', updateData)
+                const { error } = await fetchData(url, 'PATCH', patchData)
                 if (error) {
                     console.log(error)
                 }
@@ -218,9 +224,10 @@ const Flashcards = ({ currentDeck, setCurrentDeck, userProfile }) => {
             const newInterval = (userProfile.intervalModifier / 100) * flashcard.interval * flashcard.ease
             const newDueDate = getNewDueDate(newInterval)
             const updateData = { interval: newInterval, dueDate: newDueDate }
+            const patchData = getPatchData(updateData)
 
             const url = `flashcards/${flashcard.wordType}s?id=${flashcard.flashcardId}&deckId=${currentDeck.deckId}`
-                const { error } = await fetchData(url, 'PATCH', updateData)
+                const { error } = await fetchData(url, 'PATCH', patchData)
                 if (error) {
                     console.log(error)
                 }
@@ -238,9 +245,10 @@ const Flashcards = ({ currentDeck, setCurrentDeck, userProfile }) => {
                 const newDueDate = getNewDueDate(newLearningStep)
                 const newPhase = "Learning"
                 const updateData = { phase: newPhase, learningStep: newLearningStep, interval: newInterval, dueDate: newDueDate }
+                const patchData = getPatchData(updateData)
 
                 const url = `flashcards/${flashcard.wordType}s?id=${flashcard.flashcardId}&deckId=${currentDeck.deckId}`
-                const { dataFromServer: updatedCard, error } = await fetchData(url, 'PATCH', updateData)
+                const { dataFromServer: updatedCard, error } = await fetchData(url, 'PATCH', patchData)
                 if (error) {
                     console.log(error)
 
@@ -258,9 +266,10 @@ const Flashcards = ({ currentDeck, setCurrentDeck, userProfile }) => {
                 const newInterval = userProfile.graduatingInterval * 24 * 60
                 const newDueDate = getNewDueDate(newInterval)
                 const updateData = { learningStep: null, interval: newInterval, phase: newPhase, dueDate: newDueDate }
+                const patchData = getPatchData(updateData)
 
                 const url = `flashcards/${flashcard.wordType}s?id=${flashcard.flashcardId}&deckId=${currentDeck.deckId}`
-                const { error } = await fetchData(url, 'PATCH', updateData)
+                const { error } = await fetchData(url, 'PATCH', patchData)
                 if (error) {
                     console.log(error)
                 }
@@ -280,9 +289,10 @@ const Flashcards = ({ currentDeck, setCurrentDeck, userProfile }) => {
             const newInterval = (userProfile.intervalModifier / 100) * flashcard.interval * (flashcard.ease / 100) * (userProfile.easyBonus / 100)
             const newDueDate = getNewDueDate(newInterval)
             const updateData = { interval: newInterval, ease: newEase, dueDate: newDueDate }
+            const patchData = getPatchData(updateData)
 
             const url = `flashcards/${flashcard.wordType}s?id=${flashcard.flashcardId}&deckId=${currentDeck.deckId}`
-            const { error } = await fetchData(url, 'PATCH', updateData)
+            const { error } = await fetchData(url, 'PATCH', patchData)
             if (error) {
                 console.log(error)
             }
@@ -301,9 +311,10 @@ const Flashcards = ({ currentDeck, setCurrentDeck, userProfile }) => {
                 const newInterval = newLearningStep
                 const newDueDate = getNewDueDate(newLearningStep)
                 const updateData = { learningStep: newLearningStep, interval: newInterval, phase: newPhase, dueDate: newDueDate }
+                const patchData = getPatchData(updateData)
 
                 const url = `flashcards/${flashcard.wordType}s?id=${flashcard.flashcardId}&deckId=${currentDeck.deckId}`
-                const { dataFromServer: updatedCard, error } = await fetchData(url, 'PATCH', updateData)
+                const { dataFromServer: updatedCard, error } = await fetchData(url, 'PATCH', patchData)
                 if (error) {
                     console.log(error)
 
@@ -321,9 +332,10 @@ const Flashcards = ({ currentDeck, setCurrentDeck, userProfile }) => {
                 const newInterval = (userProfile.intervalModifier / 100) * (userProfile.easyInterval * 24 * 60)
                 const newDueDate = getNewDueDate(newInterval)
                 const updateData = { learningStep: null, interval: newInterval, phase: newPhase, dueDate: newDueDate }
-
+                const patchData = getPatchData(updateData)
                 const url = `flashcards/${flashcard.wordType}s?id=${flashcard.flashcardId}&deckId=${currentDeck.deckId}`
-                const { error } = await fetchData(url, 'PATCH', updateData)
+                
+                const { error } = await fetchData(url, 'PATCH', patchData)
                 if (error) {
                     console.log(error)
                 }
@@ -368,9 +380,9 @@ const Flashcards = ({ currentDeck, setCurrentDeck, userProfile }) => {
                 <h1>No cards left for today, come back tomorrow</h1>
             </>}
 
-            {!isFinished && flashcard && todaysCards.length > 0 &&
+            {!isFinished && flashcard && todaysCards.length > 0 && flashcard.spanishPhrase &&
                 <>
-                    {<Flashcard key={flashcard.verbId} flashcard={flashcard} showVerb={showVerb} />}
+                    {<Flashcard key={flashcard.phraseNumber} flashcard={flashcard} showVerb={showVerb} />}
                     {!showVerb && <Button text="Show" onClick={() => setShowVerb(true)} />}
                     {showVerb &&
                         <div>
