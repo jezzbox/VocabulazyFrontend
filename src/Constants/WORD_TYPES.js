@@ -1,4 +1,4 @@
-const WordTypes = {
+const WORD_TYPES = {
     verb: { id: "verbId", flashcard: "verbFlashcards" , wordType:"verb" },
     adjective: { id: "adjectiveId", flashcard: "adjectiveFlashcards",wordType:"adjective" },
     adverb: { id: "adverbId", flashcard: "adverbFlashcards",wordType:"adverb" },
@@ -9,4 +9,4 @@ const WordTypes = {
     article: { id: "articleId", flashcard: "articleFlashcards",wordType:"article" }
 }
 
-export default WordTypes
+export default WORD_TYPES

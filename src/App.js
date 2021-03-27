@@ -3,16 +3,14 @@ import { BrowserRouter as Router, Route, NavLink, Redirect } from 'react-router-
 import Header from './components/Header/Header'
 import { useAuth0 } from "@auth0/auth0-react";
 import Welcome from './components/Welcome'
-//import AddVerbs from './components/Decks/AddVerbs'
 import Button from './components/Button'
 import Flashcards from './components/Flashcards'
 import DeckSection from './components/DeckSection/DeckSection'
-// import WordTypes from './components/WordTypes'
-import useFetch from './UseFetch';
-import processFlashcards from './ProcessFlashcards'
+import useFetch from './Actions/UseFetch';
+import processFlashcards from './Actions/ProcessFlashcards'
 import ChangeUserSettings from './components/ChangeUserSettings';
 import DeckForm from './components/DeckSection/DeckForm'
-import fetchData from './FetchData'
+import fetchData from './Actions/FetchData'
 import ChangeDeck from './components/DeckSection/ChangeDeck'
 
 function App() {

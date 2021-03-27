@@ -1,5 +1,5 @@
-import fetchData from '../../FetchData'
-import WordTypes from '../WordTypes'
+import fetchData from './FetchData'
+import WORD_TYPES from '../Constants/WORD_TYPES'
 
 const updateFlashcards = async (currentDeck, updatedFlashcards) => {
 
@@ -7,7 +7,7 @@ const updateFlashcards = async (currentDeck, updatedFlashcards) => {
         var i = 0;
         for (i = 0; i < flashcardsToRemove.length; i++) {
             const flashcard = flashcardsToRemove[i]
-            const id = WordTypes[flashcard.wordType]["id"]
+            const id = WORD_TYPES[flashcard.wordType]["id"]
 
             await fetchData(`Flashcards/${flashcard.wordType}s?id=${flashcard[id]}&deckId=${deckId}`, 'DELETE')
         }
@@ -20,8 +20,8 @@ const updateFlashcards = async (currentDeck, updatedFlashcards) => {
             console.log(flashcard)
             const wordType = flashcard["wordType"]
             console.log(wordType)
-            const id = [WordTypes[wordType]["id"]]
-            console.log(WordTypes[wordType])
+            const id = [WORD_TYPES[wordType]["id"]]
+            console.log(WORD_TYPES[wordType])
             const event = new Date();
             const jsonDate = event.toJSON();
             const addData = { deckId, Phase: "New", ease: 250, learningStep: 1, interval: 0, dueDate: jsonDate }

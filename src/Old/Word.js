@@ -1,5 +1,5 @@
-import Button from '../Button'
-const FlashcardItem = ({ word, flashcards, setFlashcards, isCurrent }) => {
+import Button from '../components/Button'
+const Word = ({ word, flashcards, setFlashcards, isCurrent }) => {
 
     const wordInDeck = flashcards ? flashcards.length === 0 ? false : flashcards.some(x => x.word === word.word && x.wordType === word.wordType) ? true : false : false
 
@@ -47,4 +47,4 @@ const FlashcardItem = ({ word, flashcards, setFlashcards, isCurrent }) => {
         // </div>
     )
 }
-export default FlashcardItem
+export default Word

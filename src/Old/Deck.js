@@ -1,5 +1,5 @@
-import processFlashcards from '../../ProcessFlashcards'
-import Button from '../Button'
+import processFlashcards from '../Actions/ProcessFlashcards'
+import Button from '../components/Button'
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css';
 

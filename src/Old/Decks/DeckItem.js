@@ -1,4 +1,4 @@
-import Button from '../Button'
+import Button from '../../components/Button'
 
 const DeckItem = ( {deck,setDecks,decks, setCurrentDeck, currentDeck, deleteDeck} ) => {
 

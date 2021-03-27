@@ -1,11 +1,11 @@
-import WordTypes from './components/WordTypes'
+import WORD_TYPES from '../Constants/WORD_TYPES'
 
 const processFlashcards = (deck) => {
     const flashcards = []
-    for (const wordType in WordTypes) {
+    for (const wordType in WORD_TYPES) {
       var h;
-      const flashcardType = WordTypes[wordType]["flashcard"]
-      const id = WordTypes[wordType]['id']
+      const flashcardType = WORD_TYPES[wordType]["flashcard"]
+      const id = WORD_TYPES[wordType]['id']
       if(deck[flashcardType] === null) {
         deck[flashcardType] = []
       }
