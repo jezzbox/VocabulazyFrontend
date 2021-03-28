@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom'
 import fetchData from '../Actions/FetchData'
 import processFlashcards from '../Actions/ProcessFlashcards'
 import generateParameterUrl from '../Actions/GenerateParameterUrl'
+import processCard from '../Actions/ProcessCard'
 
 const Flashcards = ({ currentDeck, setCurrentDeck, userProfile }) => {
     const [isFinished, setIsFinished] = useState(false)
@@ -50,10 +51,10 @@ const Flashcards = ({ currentDeck, setCurrentDeck, userProfile }) => {
         if (flashcards) {
             console.log("effect is being trigged to get todays cards")
             const getTodaysCards = async () => {
-
-                const reviewCards = flashcards.filter((flashcard) => flashcard.phase === "Graduated" && flashcard.dueDate <= getCutoff("Graduated", 4)).slice(0, userProfile.reviewsPerDay)
-                const learningCards = flashcards.filter((flashcard) => flashcard.phase === "Learning" && flashcard.dueDate <= getCutoff("Learning", 20))
-
+                const reviewCards = flashcards.filter((flashcard) => flashcard.phase === "Graduated" && flashcard.dueDate <= getCutoff("Graduated", 4) && flashcard.isSuspended === false).slice(0, userProfile.reviewsPerDay)
+                const learningCards = flashcards.filter((flashcard) => flashcard.phase === "Learning" && flashcard.dueDate <= getCutoff("Learning", 20) && flashcard.isSuspended === false)
+                console.log("review cards")
+                console.log(reviewCards)
                 const getNewCards = async (existsReviewCard) => {
                     if (existsReviewCard) {
 
@@ -96,31 +97,31 @@ const Flashcards = ({ currentDeck, setCurrentDeck, userProfile }) => {
                 const url = `Vocabulazy/${flashcard.wordType}s/${flashcard.flashcardId}/phrases` + parameters
                 console.log(url)
                 const { dataFromServer, error } = await fetchData(url)
-                if(error) {
+                if (error) {
                     console.log(error)
                 }
                 else {
-                const phraseFromServer = dataFromServer[Math.floor(Math.random() * dataFromServer.length)];
-                console.log(phraseFromServer)
-                if (phraseFromServer == null) {
-                    flashcard.phrase = "no phrase for this word yet"
-                    flashcard.phraseNumber = null
+                    const phraseFromServer = dataFromServer[Math.floor(Math.random() * dataFromServer.length)];
+                    console.log(phraseFromServer)
+                    if (phraseFromServer == null) {
+                        flashcard.phrase = "no phrase for this word yet"
+                        flashcard.phraseNumber = null
+                    }
+                    else {
+                        flashcard.spanishPhrase = phraseFromServer.spanishPhrase
+                        flashcard.englishPhrase = phraseFromServer.englishPhrase
+                        flashcard.phraseNumber = phraseFromServer.phraseNumber
+                        flashcard.word = phraseFromServer.word
+                        flashcard.startTime = phraseFromServer.startTime
+                        flashcard.endTime = phraseFromServer.endTime
+                        flashcard.subtitleId = phraseFromServer.subtitleId
+                        flashcard.conjugationForm = phraseFromServer.conjugationForm
+                        flashcard.conjugationTense = phraseFromServer.conjugationTense
+                        flashcard.conjugationType = phraseFromServer.conjugationType
+                    }
+                    console.log(flashcard)
+                    setFlashcard(flashcard)
                 }
-                else {
-                    flashcard.spanishPhrase = phraseFromServer.spanishPhrase
-                    flashcard.englishPhrase = phraseFromServer.englishPhrase
-                    flashcard.phraseNumber = phraseFromServer.phraseNumber
-                    flashcard.word = phraseFromServer.word
-                    flashcard.startTime = phraseFromServer.startTime
-                    flashcard.endTime = phraseFromServer.endTime
-                    flashcard.subtitleId = phraseFromServer.subtitleId
-                    flashcard.conjugationForm = phraseFromServer.conjugationForm
-                    flashcard.conjugationTense = phraseFromServer.conjugationTense
-                    flashcard.conjugationType = phraseFromServer.conjugationType
-                }
-                console.log(flashcard)
-                setFlashcard(flashcard)
-            }
             }
             getFlashcard(todaysCards[flashcardNumber])
 
@@ -129,6 +130,7 @@ const Flashcards = ({ currentDeck, setCurrentDeck, userProfile }) => {
 
     const getCutoff = (phase, customTime) => {
         const currentTime = new Date()
+
         if (phase === "New") {
             const learningCutoff = (new Date(currentTime.setMinutes(currentTime.getMinutes() + customTime))).toJSON()
             return learningCutoff
@@ -138,212 +140,54 @@ const Flashcards = ({ currentDeck, setCurrentDeck, userProfile }) => {
             return newCutoff
         }
         if (phase === "Graduated") {
-            const setHours = new Date(currentTime.setHours(customTime))
-            const setMinutes = new Date(setHours.setMinutes(0))
-            return (new Date(setMinutes)).toJSON()
+            console.log("we are here!")
+            var cutoffDate = new Date(currentTime.setHours(customTime))
+            if(currentTime.getHours() >= customTime) {
+                cutoffDate = new Date(cutoffDate.setDate(cutoffDate.getDate() + 1))
+            }
+            cutoffDate = new Date(cutoffDate.setMinutes(0))
+            return cutoffDate.toJSON()
         }
     }
 
     const getPatchData = (updateData) => {
         const patchData = []
         for (let [key, value] of Object.entries(updateData)) {
-            patchData.push({ "op": "replace", "path": `/${key}`, "value": value })
-                    }
+            if (value) {
+                patchData.push({ "op": "replace", "path": `/${key}`, "value": value })
+            }
+        }
         return patchData;
 
     }
 
-    const onClickAgain = async () => {
-        console.log("again was clicked")
-        if (flashcard.phase === "Graduated") {
-            const newLearningStep = learningSteps.find((step) => step.stepNumber === 2).stepInterval
-            const newEase = flashcard.ease - 20
-            const newDueDate = getNewDueDate(newLearningStep)
-            const updateData = { learningStep: newLearningStep, interval: 1 * 24 * 60, phase: "Learning", ease: newEase, dueDate: newDueDate }
-            const patchData = getPatchData(updateData)
+    const onClickButton = async (buttonClicked) => {
 
-            const url = `flashcards/${flashcard.wordType}s?id=${flashcard.flashcardId}&deckId=${currentDeck.deckId}`
-            const { dataFromServer: updatedCard, error } = await fetchData(url, 'PATCH', patchData)
-            if (error) {
-                console.log(error)
+        const options = {
+            learningSteps: learningSteps
+            , intervalModifier: userProfile.intervalModifier
+            , graduatingInterval: userProfile.graduatingInterval
+            , easyInterval: userProfile.easyInterval
+            , easyBonus: userProfile.easyBonus
+        }
+        console.log(options)
 
-            }
-            else {
-                if (newDueDate < learnAheadTime) {
-                    todaysCards.push(updatedCard)
-                }
-                await onClick()
-            }
+        const { newEase, newPhase, newInterval, newLearningStep, newDueDate, newLapseCount, newIsSuspended } = processCard(buttonClicked, flashcard, options)
+        const updateData = { learningStep: newLearningStep, interval: newInterval, phase: newPhase, ease: newEase, dueDate: newDueDate, lapseCount: newLapseCount, isSuspended:newIsSuspended }
+        const patchData = getPatchData(updateData)
 
+        const url = `flashcards/${flashcard.wordType}s?id=${flashcard.flashcardId}&deckId=${currentDeck.deckId}`
+        const { dataFromServer: updatedCard, error } = await fetchData(url, 'PATCH', patchData)
+        if (error) {
+            console.log(error)
         }
         else {
-            const newLearningStep = learningSteps.find((step) => step.stepNumber === 1).stepInterval
-            const newDueDate = getNewDueDate(newLearningStep)
-            const updateData = { learningStep: newLearningStep, dueDate: newDueDate }
-            if (flashcard.phase === "New") {
-                updateData.phase = "Learning"
+            const currentPhase = newPhase ? newPhase : flashcard.phase
+
+            if (currentPhase === "Learning" && newDueDate < learnAheadTime) {
+                todaysCards.push(updatedCard)
             }
-            const patchData = getPatchData(updateData)
-            const url = `flashcards/${flashcard.wordType}s?id=${flashcard.flashcardId}&deckId=${currentDeck.deckId}`
-            const { dataFromServer: updatedCard, error } = await fetchData(url, 'PATCH', patchData)
-            if (error) {
-                console.log(error)
-
-            }
-            else {
-                if (newDueDate < learnAheadTime) {
-                    todaysCards.push(updatedCard)
-                }
-                await onClick()
-            }
-        }
-    }
-    const onClickHard = async () => {
-        if (flashcard.phase === "Graduated") {
-            const newInterval = (userProfile.intervalModifier / 100) * flashcard.interval * 1.2
-            const newEase = flashcard.ease - 15
-            const newDueDate = getNewDueDate(newInterval)
-            const updateData = { interval: newInterval, ease: newEase, dueDate: newDueDate }
-            const patchData = getPatchData(updateData)
-
-            const url = `flashcards/${flashcard.wordType}s?id=${flashcard.flashcardId}&deckId=${currentDeck.deckId}`
-                const { error } = await fetchData(url, 'PATCH', patchData)
-                if (error) {
-                    console.log(error)
-                }
-                else {
-                    await onClick()
-                }
-        }
-    }
-
-    const onClickGood = async () => {
-        console.log("clicked good")
-        console.log(flashcard)
-        if (flashcard.phase === "Graduated") {
-            const newInterval = (userProfile.intervalModifier / 100) * flashcard.interval * flashcard.ease
-            const newDueDate = getNewDueDate(newInterval)
-            const updateData = { interval: newInterval, dueDate: newDueDate }
-            const patchData = getPatchData(updateData)
-
-            const url = `flashcards/${flashcard.wordType}s?id=${flashcard.flashcardId}&deckId=${currentDeck.deckId}`
-                const { error } = await fetchData(url, 'PATCH', patchData)
-                if (error) {
-                    console.log(error)
-                }
-                else {
-                    await onClick()
-                }
-        }
-
-        else {
-            const currentStepNumber = learningSteps.find((step) => step.stepInterval === flashcard.learningStep).stepNumber
-            if (learningSteps.length > currentStepNumber) {
-                console.log("learning step: 1")
-                const newLearningStep = learningSteps.find((step) => step.stepNumber === currentStepNumber + 1).stepInterval
-                const newInterval = newLearningStep
-                const newDueDate = getNewDueDate(newLearningStep)
-                const newPhase = "Learning"
-                const updateData = { phase: newPhase, learningStep: newLearningStep, interval: newInterval, dueDate: newDueDate }
-                const patchData = getPatchData(updateData)
-
-                const url = `flashcards/${flashcard.wordType}s?id=${flashcard.flashcardId}&deckId=${currentDeck.deckId}`
-                const { dataFromServer: updatedCard, error } = await fetchData(url, 'PATCH', patchData)
-                if (error) {
-                    console.log(error)
-
-                }
-                else {
-                    if (newDueDate < learnAheadTime) {
-                        todaysCards.push(updatedCard)
-                    }
-                    await onClick()
-                }
-            }
-
-            else {
-                const newPhase = "Graduated"
-                const newInterval = userProfile.graduatingInterval * 24 * 60
-                const newDueDate = getNewDueDate(newInterval)
-                const updateData = { learningStep: null, interval: newInterval, phase: newPhase, dueDate: newDueDate }
-                const patchData = getPatchData(updateData)
-
-                const url = `flashcards/${flashcard.wordType}s?id=${flashcard.flashcardId}&deckId=${currentDeck.deckId}`
-                const { error } = await fetchData(url, 'PATCH', patchData)
-                if (error) {
-                    console.log(error)
-                }
-                else {
-                    await onClick()
-                }
-
-            }
-        }
-        onClick()
-    }
-
-    const onClickEasy = async () => {
-        console.log("easy was clicked")
-        if (flashcard.phase === "Graduated") {
-            const newEase = flashcard.ease + 15
-            const newInterval = (userProfile.intervalModifier / 100) * flashcard.interval * (flashcard.ease / 100) * (userProfile.easyBonus / 100)
-            const newDueDate = getNewDueDate(newInterval)
-            const updateData = { interval: newInterval, ease: newEase, dueDate: newDueDate }
-            const patchData = getPatchData(updateData)
-
-            const url = `flashcards/${flashcard.wordType}s?id=${flashcard.flashcardId}&deckId=${currentDeck.deckId}`
-            const { error } = await fetchData(url, 'PATCH', patchData)
-            if (error) {
-                console.log(error)
-            }
-            else {
-                await onClick()
-            }
-
-        }
-        else {
-            const currentStepNumber = learningSteps.find((step) => step.stepInterval === flashcard.learningStep).stepNumber
-
-            if (learningSteps.length > currentStepNumber + 1) {
-                console.log("learning step: 1")
-                const newLearningStep = learningSteps.find((step) => step.stepNumber === currentStepNumber + 2).stepInterval
-                const newPhase = "Learning"
-                const newInterval = newLearningStep
-                const newDueDate = getNewDueDate(newLearningStep)
-                const updateData = { learningStep: newLearningStep, interval: newInterval, phase: newPhase, dueDate: newDueDate }
-                const patchData = getPatchData(updateData)
-
-                const url = `flashcards/${flashcard.wordType}s?id=${flashcard.flashcardId}&deckId=${currentDeck.deckId}`
-                const { dataFromServer: updatedCard, error } = await fetchData(url, 'PATCH', patchData)
-                if (error) {
-                    console.log(error)
-
-                }
-                else {
-                    if (newDueDate < learnAheadTime) {
-                        todaysCards.push(updatedCard)
-                    }
-                    await onClick()
-                }
-
-            }
-            else {
-                const newPhase = "Graduated"
-                const newInterval = (userProfile.intervalModifier / 100) * (userProfile.easyInterval * 24 * 60)
-                const newDueDate = getNewDueDate(newInterval)
-                const updateData = { learningStep: null, interval: newInterval, phase: newPhase, dueDate: newDueDate }
-                const patchData = getPatchData(updateData)
-                const url = `flashcards/${flashcard.wordType}s?id=${flashcard.flashcardId}&deckId=${currentDeck.deckId}`
-                
-                const { error } = await fetchData(url, 'PATCH', patchData)
-                if (error) {
-                    console.log(error)
-                }
-                else {
-                    await onClick()
-                }
-
-            }
+            await onClick()
         }
     }
 
@@ -368,12 +212,6 @@ const Flashcards = ({ currentDeck, setCurrentDeck, userProfile }) => {
         }
     }
 
-    const getNewDueDate = (interval) => {
-        const currentTime = new Date()
-        const dueDate = (new Date(currentTime.setMinutes(currentTime.getMinutes() + interval))).toJSON()
-        return dueDate;
-    }
-
     return (
         <div>
             {!isFinished && todaysCards.length === 0 && <>
@@ -386,10 +224,10 @@ const Flashcards = ({ currentDeck, setCurrentDeck, userProfile }) => {
                     {!showVerb && <Button text="Show" onClick={() => setShowVerb(true)} />}
                     {showVerb &&
                         <div>
-                            <Button text="Again" onClick={() => onClickAgain()} />
-                            {flashcard.phase === "Graduated" && <Button text="Hard" onClick={() => onClickHard()} />}
-                            <Button text="Good" onClick={() => onClickGood()} />
-                            <Button text="Easy" onClick={() => onClickEasy()} />
+                            <Button text="Again" onClick={() => onClickButton("Again")} />
+                            {flashcard.phase === "Graduated" && <Button text="Hard" onClick={() => onClickButton("Hard")} />}
+                            <Button text="Good" onClick={() => onClickButton("Good")} />
+                            <Button text="Easy" onClick={() => onClickButton("Easy")} />
                         </div>}
                 </>}
             {isFinished &&

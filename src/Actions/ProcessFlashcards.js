@@ -15,8 +15,10 @@ const processFlashcards = (deck) => {
         const phase = flashcard["phase"]
         const learningStep = flashcard["learningStep"]
         const dueDate = flashcard["dueDate"]
+        const lapseCount = flashcard["lapseCount"]
+        const isSuspended = flashcard["isSuspended"]
 
-        const processedCard = { word: flashcard[wordType], wordType: wordType, flashcardId, phase, learningStep, dueDate }
+        const processedCard = { word: flashcard[wordType], wordType: wordType, flashcardId, phase, learningStep, dueDate, lapseCount, isSuspended }
         processedCard[id] = flashcard[id]
         flashcards.push(processedCard)
       }
