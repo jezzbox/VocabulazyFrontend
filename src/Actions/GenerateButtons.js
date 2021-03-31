@@ -11,7 +11,7 @@ const generateButtons = (data, currentFlashcards=null,onClickButon ) => {
             <Button 
             text={!currentFlashcards ? "Remove" : flashcardInDeck ? "Added" : "Add"}
             color={currentFlashcards && !flashcardInDeck ? "Green" : "#85144b"}
-            onClick={() => onClickButon(dataItem,currentFlashcards ? currentFlashcards: data,currentFlashcards ? "Add" : "Remove")}/>
+            onClick={!flashcardInDeck ? () => onClickButon(dataItem,currentFlashcards ? currentFlashcards: data,currentFlashcards ? "Add" : "Remove"):null}/>
             processedData.push(dataItem)
                 }
             return processedData

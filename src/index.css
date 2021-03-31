@@ -36,7 +36,7 @@ footer {
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 95%;
   margin: 10px auto;
   overflow: auto;
   min-height: 100px;
@@ -135,6 +135,10 @@ footer {
   text-decoration: none;
   font-size: 20px;
   font-family: inherit;
+}
+
+.red {
+  background:rgb(187, 53, 75)
 }
 
 .btn .minimal {
@@ -346,7 +350,7 @@ footer {
 }
 
 .search-words-container {
-  width:45%;
+  width:50%;
   max-width: 1200px;
   margin: 15px auto;
   overflow: auto;

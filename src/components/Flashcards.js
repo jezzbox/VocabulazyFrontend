@@ -35,74 +35,76 @@ const Flashcards = ({ currentDeck, setCurrentDeck, userProfile }) => {
     //get learning steps
     useEffect(() => {
         const learningStepsString = userProfile.steps.split(" ")
-        console.log("stringed")
-        console.log(learningStepsString)
         var i;
         const learningSteps = []
         for (i = 0; i < learningStepsString.length; i++) {
             const learningStep = { stepNumber: i + 1, stepInterval: parseInt(learningStepsString[i]) }
             learningSteps.push(learningStep)
         }
-        console.log(learningSteps)
         setLearningSteps(learningSteps)
     }, [userProfile.steps])
 
+    // get  todays flashcards
     useEffect(() => {
         if (flashcards) {
-            console.log("effect is being trigged to get todays cards")
-            const getTodaysCards = async () => {
-                const reviewCards = flashcards.filter((flashcard) => flashcard.phase === "Graduated" && flashcard.dueDate <= getCutoff("Graduated", 4) && flashcard.isSuspended === false).slice(0, userProfile.reviewsPerDay)
-                const learningCards = flashcards.filter((flashcard) => flashcard.phase === "Learning" && flashcard.dueDate <= getCutoff("Learning", 20) && flashcard.isSuspended === false)
-                console.log("review cards")
-                console.log(reviewCards)
-                const getNewCards = async (existsReviewCard) => {
-                    if (existsReviewCard) {
+            const currentTime = new Date()
 
-                        const newCards = flashcards.filter((flashcard) => flashcard.phase === "New" && flashcard.dueDate <= getCutoff("New", 20))
-                        const slicedCards = newCards.slice(0, userProfile.newCardsPerDay)
-
-                        return slicedCards
+            const getCutoff = (phase, customTime) => {
+                var dateTo = new Date(currentTime.setMinutes(currentTime.getMinutes() + customTime))
+        
+                if (phase === "Graduated") {
+                    dateTo = new Date(currentTime.setHours(customTime))
+                    if(currentTime.getHours() >= customTime) {
+                        dateTo = new Date(dateTo.setDate(dateTo.getDate() + 1))
                     }
-                    else {
-                        const newCards = flashcards.filter((flashcard) => flashcard.phase === "New")
-                        const slicedCards = newCards.slice(0, userProfile.newCardsPerDay)
-                        return slicedCards
-                    }
+                    dateTo = new Date(dateTo.setMinutes(0))
                 }
-
-                const newCards = await getNewCards(reviewCards.length > 0)
-                const todaysCardsFromServer = [...reviewCards, ...learningCards, ...newCards]
-
-                setTodaysCards(todaysCardsFromServer)
-                console.log("todayscards are: ")
-                console.log(todaysCardsFromServer)
+                return dateTo.toJSON()
             }
-            getTodaysCards(currentDeck.deckId)
+
+            const filterCards = (cards, cardType,customTime, cardLimit=-1) => {
+                const dateTo = customTime ? getCutoff(cardType, customTime) : null
+                const filteredCards = cards.filter((card) =>
+                card.phase === cardType
+                && (card.dueDate <= dateTo || dateTo === null)
+                && card.isSuspended === false)
+                .slice(0, cardLimit)
+                return filteredCards
+
+            }
+            const reviewCards = filterCards(flashcards, "Graduated", 4,userProfile.reviewsPerDay)
+            const learningCards = filterCards(flashcards, "Learning", 20)
+            const newCards = filterCards(flashcards, "New",reviewCards.length > 0 ? 20: null,userProfile.newCardsPerDay)
+
+            const todaysCardsFromServer = [...reviewCards, ...learningCards, ...newCards]
+
+            setTodaysCards(todaysCardsFromServer)
+            console.log("todayscards are: ")
+            console.log(todaysCardsFromServer)
+            
+            
         }
     }, [userProfile.newCardsPerDay, userProfile.reviewsPerDay, currentDeck.deckId, flashcards, isFinished])
 
+    //get next flashcard
     useEffect(() => {
         if (!isFinished && todaysCards.length > 0) {
             console.log("effect was triggered to get flashcard")
             console.log(todaysCards)
 
             const getFlashcard = async (currentFlashcard) => {
-                console.log("getting phrases")
                 const flashcard = Object.assign({}, currentFlashcard)
-
                 flashcard.flashcardId = flashcard[WORD_TYPES[flashcard.wordType]["id"]]
 
                 const parameters = generateParameterUrl(currentDeck)
 
                 const url = `Vocabulazy/${flashcard.wordType}s/${flashcard.flashcardId}/phrases` + parameters
-                console.log(url)
                 const { dataFromServer, error } = await fetchData(url)
                 if (error) {
                     console.log(error)
                 }
                 else {
                     const phraseFromServer = dataFromServer[Math.floor(Math.random() * dataFromServer.length)];
-                    console.log(phraseFromServer)
                     if (phraseFromServer == null) {
                         flashcard.phrase = "no phrase for this word yet"
                         flashcard.phraseNumber = null
@@ -119,7 +121,6 @@ const Flashcards = ({ currentDeck, setCurrentDeck, userProfile }) => {
                         flashcard.conjugationTense = phraseFromServer.conjugationTense
                         flashcard.conjugationType = phraseFromServer.conjugationType
                     }
-                    console.log(flashcard)
                     setFlashcard(flashcard)
                 }
             }
@@ -127,28 +128,6 @@ const Flashcards = ({ currentDeck, setCurrentDeck, userProfile }) => {
 
         }
     }, [currentDeck, todaysCards, flashcardNumber, isFinished])
-
-    const getCutoff = (phase, customTime) => {
-        const currentTime = new Date()
-
-        if (phase === "New") {
-            const learningCutoff = (new Date(currentTime.setMinutes(currentTime.getMinutes() + customTime))).toJSON()
-            return learningCutoff
-        }
-        if (phase === "Learning") {
-            const newCutoff = (new Date(currentTime.setMinutes(currentTime.getMinutes() + customTime))).toJSON()
-            return newCutoff
-        }
-        if (phase === "Graduated") {
-            console.log("we are here!")
-            var cutoffDate = new Date(currentTime.setHours(customTime))
-            if(currentTime.getHours() >= customTime) {
-                cutoffDate = new Date(cutoffDate.setDate(cutoffDate.getDate() + 1))
-            }
-            cutoffDate = new Date(cutoffDate.setMinutes(0))
-            return cutoffDate.toJSON()
-        }
-    }
 
     const getPatchData = (updateData) => {
         const patchData = []
