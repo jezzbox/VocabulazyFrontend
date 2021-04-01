@@ -119,17 +119,47 @@ const AddFlashcards = ({ currentDeck, setCurrentDeck, decks, setDecks }) => {
         });
     }
 
-    const checkifInDeck = (cardId,wordtype,deck) => {
-        const isInDeck = deck.some(card => card[`${wordtype}Id`] === cardId)
-        return isInDeck
 
-    }
 
-    const onClickSuspend = (suspended) => {
-        const objIndex = flashcardsInDeck.findIndex((card => card.word === suspended.word && card.wordType === suspended.wordType));
-        flashcardsInDeck[objIndex].isSuspended = !flashcardsInDeck[objIndex].isSuspended
-        console.log(flashcardsInDeck)
-        setFlashcardsInDeck([...flashcardsInDeck])
+    const onClickSuspend = async (flashcard) => {
+        
+
+        const changeCardSuspension = async (flashcard) => {
+            const flashcardId = flashcard[`${flashcard.wordType}Id`]
+            const url = `flashcards/${flashcard.wordType}s?id=${flashcardId}&deckId=${currentDeck.deckId}`
+            const patchData = [{ "op": "replace", "path": `/isSuspended`, "value": !flashcard.isSuspended }]
+            const { error } = await fetchData(url,'PATCH',patchData)
+            
+            return { error }
+            }
+        
+
+        const clickYes = async () => {
+            changeCardSuspension(flashcard)
+            const objIndex = flashcardsInDeck.findIndex((card => card.word === flashcard.word && card.wordType === flashcard.wordType));
+            flashcardsInDeck[objIndex].isSuspended = !flashcardsInDeck[objIndex].isSuspended
+            console.log(flashcardsInDeck)
+            setFlashcardsInDeck([...flashcardsInDeck])
+            }
+
+        const clickNo = () => {
+            return
+        }
+
+        confirmAlert({
+            title: 'Confirm',
+            message: flashcard.isSuspended ? 'Unsuspend card?' : 'Are you sure you want to suspend this card? you can unsuspend it at any time.',
+            buttons: [
+                {
+                    label: 'Yes',
+                    onClick: () => clickYes()
+                },
+                {
+                    label: 'No',
+                    onClick: () => clickNo()
+                }
+            ]
+        });
     }
 
     const onClickAdd = (flashcard) => {
@@ -171,8 +201,8 @@ const AddFlashcards = ({ currentDeck, setCurrentDeck, decks, setDecks }) => {
             {
                 id: 'suspend',
                 accessor: 'isSuspended',
-                Cell: ({row}) => (<button className="btn" onClick={() => onClickSuspend(row.original)}>
-                    {flashcardsInDeck.find(card => card.word === row.original.word && card.wordType === row.original.wordType).isSuspended ? "Suspended" : "Suspend"}</button>)
+                Cell: ({row}) => (<button className="btn" onClick={!row.original.phase ? null :() => onClickSuspend(row.original)}>
+                    {!row.original.phase ? "Can't suspend new card" : flashcardsInDeck.find(card => card.word === row.original.word && card.wordType === row.original.wordType).isSuspended ? "Suspended" : "Suspend"}</button>)
               },
             {
               id: `flashcardId`,

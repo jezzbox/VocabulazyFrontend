@@ -51,10 +51,10 @@ const Flashcards = ({ currentDeck, setCurrentDeck, userProfile }) => {
 
             const getCutoff = (phase, customTime) => {
                 var dateTo = new Date(currentTime.setMinutes(currentTime.getMinutes() + customTime))
-        
+
                 if (phase === "Graduated") {
                     dateTo = new Date(currentTime.setHours(customTime))
-                    if(currentTime.getHours() >= customTime) {
+                    if (currentTime.getHours() >= customTime) {
                         dateTo = new Date(dateTo.setDate(dateTo.getDate() + 1))
                     }
                     dateTo = new Date(dateTo.setMinutes(0))
@@ -62,27 +62,27 @@ const Flashcards = ({ currentDeck, setCurrentDeck, userProfile }) => {
                 return dateTo.toJSON()
             }
 
-            const filterCards = (cards, cardType,customTime, cardLimit=-1) => {
+            const filterCards = (cards, cardType, customTime, cardLimit = -1) => {
                 const dateTo = customTime ? getCutoff(cardType, customTime) : null
                 const filteredCards = cards.filter((card) =>
-                card.phase === cardType
-                && (card.dueDate <= dateTo || dateTo === null)
-                && card.isSuspended === false)
-                .slice(0, cardLimit)
+                    card.phase === cardType
+                    && (card.dueDate <= dateTo || dateTo === null)
+                    && card.isSuspended === false)
+                    .slice(0, cardLimit)
                 return filteredCards
 
             }
-            const reviewCards = filterCards(flashcards, "Graduated", 4,userProfile.reviewsPerDay)
+            const reviewCards = filterCards(flashcards, "Graduated", 4, userProfile.reviewsPerDay)
             const learningCards = filterCards(flashcards, "Learning", 20)
-            const newCards = filterCards(flashcards, "New",reviewCards.length > 0 ? 20: null,userProfile.newCardsPerDay)
+            const newCards = filterCards(flashcards, "New", reviewCards.length > 0 ? 20 : null, userProfile.newCardsPerDay)
 
             const todaysCardsFromServer = [...reviewCards, ...learningCards, ...newCards]
 
             setTodaysCards(todaysCardsFromServer)
             console.log("todayscards are: ")
             console.log(todaysCardsFromServer)
-            
-            
+
+
         }
     }, [userProfile.newCardsPerDay, userProfile.reviewsPerDay, currentDeck.deckId, flashcards, isFinished])
 
@@ -120,6 +120,9 @@ const Flashcards = ({ currentDeck, setCurrentDeck, userProfile }) => {
                         flashcard.conjugationForm = phraseFromServer.conjugationForm
                         flashcard.conjugationTense = phraseFromServer.conjugationTense
                         flashcard.conjugationType = phraseFromServer.conjugationType
+                        flashcard.showTitle = phraseFromServer.showTitle
+                        flashcard.seasonNumber = phraseFromServer.seasonNumber
+                        flashcard.episodeNumber = phraseFromServer.episodeNumber
                     }
                     setFlashcard(flashcard)
                 }
@@ -152,7 +155,7 @@ const Flashcards = ({ currentDeck, setCurrentDeck, userProfile }) => {
         console.log(options)
 
         const { newEase, newPhase, newInterval, newLearningStep, newDueDate, newLapseCount, newIsSuspended } = processCard(buttonClicked, flashcard, options)
-        const updateData = { learningStep: newLearningStep, interval: newInterval, phase: newPhase, ease: newEase, dueDate: newDueDate, lapseCount: newLapseCount, isSuspended:newIsSuspended }
+        const updateData = { learningStep: newLearningStep, interval: newInterval, phase: newPhase, ease: newEase, dueDate: newDueDate, lapseCount: newLapseCount, isSuspended: newIsSuspended }
         const patchData = getPatchData(updateData)
 
         const url = `flashcards/${flashcard.wordType}s?id=${flashcard.flashcardId}&deckId=${currentDeck.deckId}`

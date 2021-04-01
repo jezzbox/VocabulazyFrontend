@@ -1,6 +1,6 @@
 const fetchData = async (url,method='GET',bodyData=[]) => {
     try {
-        const baseUrl = `https://localhost:44386/api/`
+        const baseUrl = `https://www.api.vocabulazy.co.uk/api/`
 
         if(method==='GET') {
         const res = await fetch(baseUrl + url)
