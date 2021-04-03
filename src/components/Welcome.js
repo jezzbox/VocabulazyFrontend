@@ -6,21 +6,21 @@ const Welcome = () => {
 
 
     return (
-        <section>
-          <header>
-            <h1>Welcome to Vocabulazy!</h1>
+        <article >
+          <header className="flex justify-center p-6">
+            <h1 className="text-center text-5xl">Welcome to VocabuLazy!</h1>
           </header>
           <>
-          <div className="center">
-            <p>VocabuLazy is a flashcard app for Spanish vocabulary that automatically finds phrases based on the words you choose.</p>
+          <div className="flex justify-center p-6">
+            <p className="text-xl">VocabuLazy is a flashcard app based on Anki specifically for Spanish vocabulary.</p>
           </div>
           
-          <div className="center">
-            <LoginButton />
-            <Button text="Try it out" />
+          <div className="flex justify-center">
+            <LoginButton className="btn border-2 shadow-md border-terraCotta-500 hover:bg-terraCotta-400 hover:shadow-inner ml-2" />
+            <Button className="btn border-2 shadow-md border-terraCotta-500 hover:bg-terraCotta-400 hover:shadow-inner ml-2" text="Try it out" />
           </div>
           </>
-        </section>
+        </article>
         );
 };
 

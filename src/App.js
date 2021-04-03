@@ -101,18 +101,23 @@ function App() {
     <Router>
       <>
       {console.log(error)}
-        <Header isAuthenticated={userProfile ? true : false} />
-        {!isPending && <nav className="deck-Navbar">
-          <ul className="deck-menu">
-            <li><NavLink activeClassName="nav-link active" className="nav-link" to="/home">Home</NavLink></li>
-            <li><NavLink activeClassName="nav-link active" className="nav-link"to="/decks/add">Create new deck</NavLink></li>
-            <li><NavLink activeClassName="nav-link active" className="nav-link"to="/decks/change">Change deck</NavLink></li>
-            <li><NavLink activeClassName="nav-link active" className="nav-link"to="/User/Settings">User settings</NavLink></li>
-          </ul>
+        <Header isAuthenticated={isAuthenticated} isLoading={isLoading}/>
+        {!isPending && <nav className="border-2 border-bookBlue flex justify-evenly p-2 bg-white   text-2xl ">
+            <NavLink className="hover:text-viola-600" activeClassName="font-semibold" to="/home"><svg className="w-6 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+</svg>Home</NavLink>
+            <NavLink className="hover:text-viola-600" activeClassName="font-semibold" to="/decks/add"><svg className="w-6 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+</svg>Create new deck</NavLink>
+            <NavLink className="hover:text-viola-600" activeClassName="font-semibold" to="/decks/change"><svg className="w-6 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+</svg>Change deck</NavLink>
+            <NavLink className="hover:text-viola-600" activeClassName="font-semibold" to="/User/Settings"><svg className="w-6 inline-block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+  <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+</svg>User settings</NavLink>
         </nav>}
 
-        <main className='main'>
-          <article>
+        <main className='px-16 py-6 bg-gray-100'>
 
           {/* Initial redirects */}
           {!isLoading ?
@@ -120,9 +125,9 @@ function App() {
               <>
                 {!isAuthenticated ? <Redirect to="/welcome" />
                   : !isPending ? <Redirect to="/home" />
-                  : <h1>Loading ... </h1>}
+                  : <button type="button" class="bg-rose-600" disabled><svg class="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24"></svg>Loading ... </button>}
               </>
-              </Route>: <h1>Loading ... </h1>}
+              </Route>: <button type="button" class="bg-rose-600" disabled><svg class="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24"></svg>jesus Loading</button>}
 
             {/* Welcome page */}
             <Route path="/welcome">
@@ -134,9 +139,9 @@ function App() {
               {currentDeck ? <>
                 <DeckSection currentDeck={currentDeck} decks={decks} setDecks={setDecks} setCurrentDeck={setCurrentDeck} userProfile={userProfile}/>
                 {
-                  <div>
-                    <div className="center">
-                      <Link className="back-link" to ="/flashcards">Start</Link>
+                  <div className="flex justify-center text-4xl">
+                    <div className=" p-4 w-1/2 flex justify-center text-center">
+                      <Link className="h-12 w-40 btn text-8xl transition-colors duration-150 bg-puertoRico-300 border focus:shadow-outline hover:bg-puertoRico-100" to ="/flashcards">Start</Link>
                     </div>
                   </div>}
               </>: isAuthenticated ? <h1>No decks, create one to get started</h1> : null}
@@ -188,9 +193,8 @@ function App() {
                 </div>}
             </Route>
 
-          </article>
         </main>
-        <footer>This is the footer</footer>
+        <footer className="border-t-4 border-white bg-bookBlue">This is the footer</footer>
       </>
     </Router>
   );

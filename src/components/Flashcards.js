@@ -98,7 +98,7 @@ const Flashcards = ({ currentDeck, setCurrentDeck, userProfile }) => {
 
                 const parameters = generateParameterUrl(currentDeck)
 
-                const url = `Vocabulazy/${flashcard.wordType}s/${flashcard.flashcardId}/phrases` + parameters
+                const url = `${flashcard.wordType}s/${flashcard.flashcardId}/phrases` + parameters
                 const { dataFromServer, error } = await fetchData(url)
                 if (error) {
                     console.log(error)

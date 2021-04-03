@@ -1,5 +1,5 @@
 import Button from '../Button'
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 // import Words from './Words'
 // import CurrentFlashcards from './CurrentFlashcards'
 import updateFlashcards from '../../Actions/UpdateFlashcards'
@@ -8,10 +8,8 @@ import processFlashcards from '../../Actions/ProcessFlashcards'
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import { Link } from 'react-router-dom'
-import Table from '../Table'
 import GenerateButtons from '../../Actions/GenerateButtons'
 import TestTable from '../TestTable'
-import WORD_TYPES from '../../Constants/WORD_TYPES'
 
 
 const AddFlashcards = ({ currentDeck, setCurrentDeck, decks, setDecks }) => {
@@ -38,33 +36,17 @@ const AddFlashcards = ({ currentDeck, setCurrentDeck, decks, setDecks }) => {
         }
     }, [searchResult])
 
-    const getTableButtons = (data, currentData = null) => {
-
-        const onClickFlashcard = (flashcard, currentFlashcards, action) => {
-            if (action === "Add") {
-                const newFlashcard = Object.create(flashcard)
-                setFlashcardsInDeck([...currentFlashcards, newFlashcard])
-            }
-            else if (action === "Remove") {
-                console.log("can you see me?")
-                setFlashcardsInDeck(currentFlashcards.filter(x => !(x.word === flashcard.word && x.wordType === flashcard.wordType)))
-            }
-        }
-        return GenerateButtons(data, currentData, onClickFlashcard)
-
-
-    }
 
     const onSubmitSearch = async (e) => {
         e.preventDefault()
 
         setSearchResult([])
-        setIsLoading(true)
         if (searchString === null | searchString.length === 0) {
             alert("please add a search value")
             return
         }
-        const { dataFromServer, error } = await fetchData(`Vocabulazy/words?word=${searchString}`)
+        setIsLoading(true)
+        const { dataFromServer, error } = await fetchData(`words?word=${searchString}`)
         if (error) {
             console.log(error)
         }
@@ -173,10 +155,12 @@ const AddFlashcards = ({ currentDeck, setCurrentDeck, decks, setDecks }) => {
           {
             Header: 'Word',
             accessor: 'word', // accessor is the "key" in the data
+            Cell: ({value}) => (<span className="text-center font-semibold text-2xl p-2">{value}</span>)
           },
           {
             Header: 'Type',
             accessor: 'wordType',
+            Cell: ({value}) => (<span className="text-center text-xl p-2">{value}</span>)
           },
           {
             id: `flashcardId`,
@@ -193,10 +177,12 @@ const AddFlashcards = ({ currentDeck, setCurrentDeck, decks, setDecks }) => {
             {
               Header: 'Word',
               accessor: 'word', // accessor is the "key" in the data
+              Cell: ({row, value}) => (<span className={row.original.isSuspended ? "text-red-700 text-center font-semibold text-2xl p-2" : "text-center font-semibold text-2xl p-2"}>{value}</span>)
             },
             {
               Header: 'Type',
               accessor: 'wordType',
+              Cell: ({row, value}) => (<span className='text-center text-xl p-2'>{value}</span>)
             },
             {
                 id: 'suspend',
@@ -207,7 +193,7 @@ const AddFlashcards = ({ currentDeck, setCurrentDeck, decks, setDecks }) => {
             {
               id: `flashcardId`,
               accessor:'flashcardId',
-              Cell: ({row}) => (<button className="btn btn-block" onClick={
+              Cell: ({row}) => (<button className="btn" onClick={
                   () => setFlashcardsInDeck(flashcardsInDeck.filter(x => !(x.word === row.values.word && x.wordType === row.values.wordType)))}>
               Remove</button>)
             },
@@ -215,47 +201,56 @@ const AddFlashcards = ({ currentDeck, setCurrentDeck, decks, setDecks }) => {
 
     return (
         <>
-            <div className="container blue-border">
-                <div className="container horizontal-align">
-                    <div className="search-words-container">
-                        <h2>Add: </h2>
-                        <form className='add-form' onSubmit={onSubmitSearch}>
-                            <div className='form-control'>
+            <section className="px-32 py-6">
+            <header>
+                <h4 className="p-2 border-b-2 border-bookBlue text-bold text-5xl">Editing: {currentDeck.name}</h4>
+            </header>
+                <div className="flex justify-evenly shadow-md">
+                    <div className="w-1/2 bg-gray-100 shadow-md p-4">
+                        <h2 className="text-4xl p-4" >Add cards</h2>
+                        
+                        <form className='p-4' onSubmit={onSubmitSearch}>
+                            <div className='flex justify-center bg-gray-100'>
                                 <input
                                     type='text'
-                                    placeholder='Search words'
+                                    placeholder='Search'
                                     value={searchString}
                                     onChange={(e) => setSearchString(e.target.value)}
                                 />
                             </div>
-                            <input type='submit' value='Search' className='btn btn-block' />
+                            <div className="p-2 flex justify-center">
+                            <input type='submit' value='Search' className='btn' />
+                            </div>
+                            
                         </form>
                         {isLoading && <h1>Loading....</h1>}
-                        <div className="scroll table-container">
-                        {flashcardsInDeck && <TestTable columns={searchResultsColumns} data={searchResult} />}
+                        <div className="h-80 flex justify-center bg-white overflow-scroll">
+                        {showResult && <TestTable columns={searchResultsColumns} data={searchResult} />}
                         </div>
                         {/* {showResult && <Table tableData={getTableButtons(searchResult, flashcardsInDeck)} headers={[{ columnName: 'word', objectProperty: 'word' }, { columnName: "Type", objectProperty: "wordType" }, { columnName: "delete", objectProperty: "button" }]} />} */}
                     </div>
 
-                    <div className="search-words-container">
-                        <h2>Current: </h2>
-                        <div className='form-control'>
+                    <div className="w-1/2 bg-gray-100 shadow-md p-4">
+                        <h2 className="text-4xl p-4">Current cards</h2>
+                        <div className='flex justify-center bg-gray-100'>
                             <input type="text" id="myInput" onChange={(e) => setFilterString(e.target.value.toLowerCase())} value={filterString} placeholder="Search deck...">
                             </input>
                         </div>
+                        <div className='p-6 flex justify-center'>
                         <input type='submit' value='Search' className='btn btn-block' />
+                        </div>
                         {currentDeck.flashcards.length === 0 && <h3>Deck is empty</h3>}
-                        <div className="scroll table-container">
+                        <div className="flex justify-center bg-white overflow-scroll h-80">
                             {flashcardsInDeck && cardsToSuspend && <TestTable columns={CurrentFlashcardsColumns} data={flashcardsInDeck} />}
                             {/* {flashcardsInDeck && <Table tableData={getTableButtons(flashcardsInDeck)} headers={[{ columnName: 'word', objectProperty: 'word' }, { columnName: "Type", objectProperty: "wordType" }, { columnName: "delete", objectProperty: "button" }]} />} */}
                         </div>
                     </div>
                 </div>
-                <div className="center">
-                    <Link className="back-link" to="/home">Back</Link>
-                    <Button text="Submit" color="black" onClick={() => onClickSubmit()} />
+                <div className="flex justify-center p-4">
+                    <Link className="btn" to="/home">Back</Link>
+                    <Button className="btn border-2 border-terraCotta-500" text="Submit" color="black" onClick={() => onClickSubmit()} />
                 </div>
-            </div>
+            </section>
         </>
     )
 }

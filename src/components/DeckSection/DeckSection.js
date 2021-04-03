@@ -32,21 +32,22 @@ const DeckSection = ({ currentDeck, decks, setCurrentDeck, setDecks }) => {
 
     return (
         <Router>
-        <>
-                <section className="deck-section">
-                    <header>
-                        <h4>Current deck:</h4>
-                    </header>
 
-                    <div className="center">
-                        <CurrentDeck currentDeck={currentDeck}/>
-                    </div>
-
+            <article className="px-16 py-2">
+                    
                     
                     <Route path="/home" exact>
-                        <div className="current-deck deck-options">
-                            <Link className="back-link" to="/deck/addFlashcards">Add/remove flashcards</Link>
-                            <Link className="back-link" to="/deck/edit">Edit settings</Link>
+                    <header>
+                        <h4 className="p-2 border-b-2 border-bookBlue text-bold text-3xl">Current deck</h4>
+                    </header>
+                    <div className= "flex justify-center">
+                        <CurrentDeck currentDeck={currentDeck}/>
+                    </div>
+                        <div className="flex justify-center text-center text-2xl">
+                            <div  className="w-1/3  flex justify-center text-center">
+                            <Link className="btn border-2 shadow-md transition-colors duration-75 border-terraCotta-500 hover:text-white hover:bg-terraCotta-500 hover:shadow-inner" to="/deck/addFlashcards">Add/remove cards</Link>
+                            <Link className="btn border-2 shadow-md transition-colors duration-75 border-terraCotta-500 hover:text-white hover:bg-terraCotta-500 hover:shadow-inner ml-2" to="/deck/edit">Edit settings</Link>
+                            </div>
                         </div>
                     </Route>
                     
@@ -62,8 +63,7 @@ const DeckSection = ({ currentDeck, decks, setCurrentDeck, setDecks }) => {
                         </div>
                     </Route>
 
-                </section>
-        </>
+            </article>
         </Router>
     )
 }

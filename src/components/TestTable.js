@@ -1,5 +1,4 @@
 import { useTable } from 'react-table'
-import { useMemo } from 'react'
 
 const TestTable = ({columns, data}) => {
 

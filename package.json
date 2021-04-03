@@ -9,6 +9,7 @@
     "@testing-library/react": "^11.2.5",
     "@testing-library/user-event": "^12.7.3",
     "bootstrap": "^4.6.0",
+    "node-sass": "^5.0.0",
     "react": "^17.0.1",
     "react-bootstrap": "^1.5.2",
     "react-confirm-alert": "^2.7.0",
@@ -17,9 +18,11 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
     "react-table": "^7.6.3",
+    "tailwindcss": "^2.0.4",
     "web-vitals": "^1.1.0"
   },
   "scripts": {
+    "build-css": "tailwindcss build src/styles.css -o public/styles.css",
     "start": "export HTTPS=true&&SSL_CRT_FILE=cert.pem&&SSL_KEY_FILE=key.pem react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
