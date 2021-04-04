@@ -12,6 +12,8 @@ import DeckForm from './components/DeckSection/DeckForm'
 import fetchData from './Actions/FetchData'
 import Table from './components/Table'
 import getDecksData from './Actions/GetDecksData'
+import TestTable from './components/TestTable'
+import { confirmAlert } from 'react-confirm-alert'; // Import
 
 function App() {
   const { isAuthenticated, isLoading } = useAuth0();
@@ -94,6 +96,83 @@ function App() {
 
   }
 
+  const changeCurrentDeck = async (deck) => {
+    deck.flashcards = processFlashcards(deck)
+    setCurrentDeck(deck)
+
+  }
+
+  const onClickDeleteDeck = async (deckId) => {
+
+
+    const clickYes = async () => {
+      deleteDeck(deckId)
+      
+    }
+
+    const clickNo = () => {
+      return
+    }
+
+  confirmAlert({
+      title: 'Confirm',
+      message: 'Are you sure you want to delete this deck? all progress will be lost. this cannot be undone.',
+      buttons: [
+          {
+              label: 'Yes',
+              onClick: () => clickYes()
+          },
+          {
+              label: 'No',
+              onClick: () => clickNo()
+          }
+      ]
+  });
+
+}
+
+
+  const decksColumns =  [
+    {
+      id: `currentDeck`,
+      accessor:'deckId',
+      Cell: ({value}) => (<div className="w-16 flex justify-left"> {userProfile.defaultDeckId === value ?
+        <svg className="w-6 inline-block" xmlns="http://www.w3.org/2000/svg" fill="yellow" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+        </svg> : null }
+        {currentDeck.deckId === value ? <svg className="w-6 inline-block" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clipRule="evenodd" />
+        </svg> : null}
+        </div>)
+    },
+    {
+      Header: 'Name',
+      id:'name',
+      Cell: ({row}) => (<button className={currentDeck.deckId === row.original.deckId ? "font-bold" : ""} onClick={() => changeCurrentDeck(row.original)}>{row.original.name}</button>)
+    },
+
+
+    {
+      Header: 'Cards',
+      id:'cards',
+      accessor: 'flashcards', // accessor is the "key" in the data
+      Cell: ({row}) => (<span className="text-xl p-2">{processFlashcards(row.original).length}</span>)
+    },
+    {
+      Header: 'Due',
+      id:'cardsDue',
+      accessor: 'flashcards', // accessor is the "key" in the data
+      Cell: ({row}) => (<span onClick={() => console.log(row.original)} className="text-xl p-2">{(processFlashcards(row.original).filter((flashcard) => flashcard.dueDate <= new Date().toJSON())).length}</span>)
+    },
+    
+    {
+      id: 'deleteDeck',
+      accessor:'deckId',
+      Cell: ({value}) => (<button className="w-32 uppercase text-lg font-semibold" onClick={
+        () => onClickDeleteDeck(value)}>
+      Delete</button>)
+    },
+  ]
   //google-oauth2|109641767784145272988
   // fetch decks
 
@@ -102,7 +181,7 @@ function App() {
       <>
       {console.log(error)}
         <Header isAuthenticated={isAuthenticated} isLoading={isLoading}/>
-        {!isPending && <nav className="border-2 border-bookBlue flex justify-evenly p-2 bg-white   text-2xl ">
+        {!isPending && <nav className="border-b-2 border-bookBlue flex justify-evenly p-2 bg-white   text-2xl ">
             <NavLink className="hover:text-viola-600" activeClassName="font-semibold" to="/home"><svg className="w-6 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
 </svg>Home</NavLink>
@@ -155,42 +234,51 @@ function App() {
             {/* Add deck */}
               {isAuthenticated && userProfile ?
                 <Route path="/decks/add">
-                  <div className="container blue-border">
-                    <DeckForm processDeck={addDeck} headerText="Create new deck:" />
+                  <>
+                  <div className="m-6 w-full flex justify-center bg-white border-2 border-bookBlue shadow-xl rounded-md">
+                  <div className="border m-4 rounded-md shadow-xl">
+                    <div className="flex justify-between px-6 pt-4 bg-bookBlue rounded-t-lg">
+                      <h1 className="text-center text-2xl text-white">New</h1>
+                    </div>
+                    <div className="border border-bookBlue">
+                      <DeckForm processDeck={addDeck}/>
+                    </div>
                   </div>
+                  </div>
+                  </>
                 </Route>
                 : null
               }
 
             {/* Manage decks */}
             <Route path="/decks/change">
-              {decks && currentDeck ? 
-              <>
-              <header>
-                    <h4>Change deck:</h4>
-              </header>
-              <div className="container blue-border">
-              {decks.length > 0 ? 
-                   <Table className="deck-table" tableData={getDecksData(decks,currentDeck,setCurrentDeck,deleteDeck)} headers={[{ columnName: 'Name', objectProperty: 'select' }, { columnName: "Words", objectProperty: "wordCount" },{ columnName: "Due", objectProperty: "dueCount" }, { objectProperty: "deleteButton" }]} />
-                  : <h3>No decks yet, create deck to get started</h3>}
-                  <div className="center">
-                  <Link className="back-link" to ="/home">Back</Link>
+              {decks && currentDeck &&
+              <section className="border-2 border-bookBlue rounded-md bg-white mx-80">
+                <header className="flex justify-between p-2 mx-8">
+                    <Link className="btn border-2 border-terraCotta-500 bg-gray-100" to="/home">Back</Link>
+                </header>
+                <div className="flex justify-center">
+                  <div className="m-6 w-3/4 bg-bookBlue shadow-xl rounded-md">
+                    <div className="flex justify-between px-6 pt-4">
+                        <h2 className="text-2xl text-white">Change deck</h2>
+                    </div>
+                  <div className="flex justify-center bg-white overflow-scrollborder border-2 border-bookBlue scrollbar-thin scrollbar-thumb-bookBlue scrollbar-track-gray-100 overflow-y-scroll">
+                    <TestTable columns={decksColumns} data={decks} />
                   </div>
                   </div>
-                  </> : null}
+                  </div>
+                  </section>}
             </Route>
 
 
 
             <Route path="/Flashcards">
-              {isAuthenticated &&
-                <div className="container">
                   {currentDeck &&
                     <>
                       <Flashcards userProfile={userProfile} currentDeck={currentDeck} setCurrentDeck={setCurrentDeck}/>
                     </>
                   }
-                </div>}
+
             </Route>
 
         </main>

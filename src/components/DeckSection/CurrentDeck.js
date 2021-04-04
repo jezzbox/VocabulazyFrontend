@@ -14,7 +14,7 @@ const CurrentDeck = ({ currentDeck }) => {
                 </div>
                 <div>
                     <h4 className="text-3xl">Due</h4>
-                    <h4 className="text-xl text-terraCotta-500 text-center">{currentDeck.flashcards.filter((flashcard) => flashcard.dueDate <= new Date().toJSON()).length}</h4>
+                    <h4 className="text-xl text-terraCotta-500 text-center">{currentDeck.flashcards.filter((flashcard) => flashcard.dueDate < new Date().toJSON() && flashcard.isSuspended === true).length}</h4>
                 </div>
                 </div>
             </div>

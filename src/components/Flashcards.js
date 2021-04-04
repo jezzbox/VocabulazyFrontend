@@ -113,7 +113,7 @@ const Flashcards = ({ currentDeck, setCurrentDeck, userProfile }) => {
                         flashcard.spanishPhrase = phraseFromServer.spanishPhrase
                         flashcard.englishPhrase = phraseFromServer.englishPhrase
                         flashcard.phraseNumber = phraseFromServer.phraseNumber
-                        flashcard.word = phraseFromServer.word
+                        flashcard.wordFromPhrase = phraseFromServer.word
                         flashcard.startTime = phraseFromServer.startTime
                         flashcard.endTime = phraseFromServer.endTime
                         flashcard.subtitleId = phraseFromServer.subtitleId
@@ -153,8 +153,11 @@ const Flashcards = ({ currentDeck, setCurrentDeck, userProfile }) => {
             , easyBonus: userProfile.easyBonus
         }
         console.log(options)
-
+        console.log("flashcard is")
+        console.log(flashcard)
         const { newEase, newPhase, newInterval, newLearningStep, newDueDate, newLapseCount, newIsSuspended } = processCard(buttonClicked, flashcard, options)
+        console.log("processed card is:")
+        console.log({ newEase, newPhase, newInterval, newLearningStep, newDueDate, newLapseCount, newIsSuspended })
         const updateData = { learningStep: newLearningStep, interval: newInterval, phase: newPhase, ease: newEase, dueDate: newDueDate, lapseCount: newLapseCount, isSuspended: newIsSuspended }
         const patchData = getPatchData(updateData)
 
@@ -195,30 +198,32 @@ const Flashcards = ({ currentDeck, setCurrentDeck, userProfile }) => {
     }
 
     return (
-        <div>
+        <section className="border-2 border-bookBlue rounded-md bg-white mx-60 flex flex-col items-center">
             {!isFinished && todaysCards.length === 0 && <>
-                <h1>No cards left for today, come back tomorrow</h1>
+                <h1 className="text-2xl">No cards left for today, come back tomorrow</h1>
             </>}
 
             {!isFinished && flashcard && todaysCards.length > 0 && flashcard.spanishPhrase &&
-                <>
-                    {<Flashcard key={flashcard.phraseNumber} flashcard={flashcard} showVerb={showVerb} />}
-                    {!showVerb && <Button text="Show" onClick={() => setShowVerb(true)} />}
+                <div>
+                    {<Flashcard flashcard={flashcard} showVerb={showVerb} setShowVerb={setShowVerb} />}
                     {showVerb &&
-                        <div>
+                        <div className="m-16 border-2 border-terraCotta-500 bg-white rounded-full flex justify-center p-2 shadow-md">
                             <Button text="Again" onClick={() => onClickButton("Again")} />
-                            {flashcard.phase === "Graduated" && <Button text="Hard" onClick={() => onClickButton("Hard")} />}
-                            <Button text="Good" onClick={() => onClickButton("Good")} />
-                            <Button text="Easy" onClick={() => onClickButton("Easy")} />
+                            {flashcard.phase === "Graduated" && <Button text="Hard" className="btn ml-8" onClick={() => onClickButton("Hard")} />}
+                            <Button text="Good" className="btn ml-8" onClick={() => onClickButton("Good")} />
+                            <Button text="Easy" className="btn ml-8" onClick={() => onClickButton("Easy")} />
                         </div>}
-                </>}
+                </div>}
             {isFinished &&
-                <>
-                    <h1>Deck finished!</h1>
-                    <h2>Come back tomorrow for more flashcards</h2>
-                </>}
-            <Link to="/home" className="back-link">Back</Link>
-        </div>
+                <div>
+                    <h1 className="text-4xl">Deck finished!</h1>
+                    <h2 className="text-2xl">Come back tomorrow for more flashcards</h2>
+                </div>}
+                <div>
+                    <Link to="/home" className="btn">Back</Link>
+                </div>
+            
+        </section>
     )
 }
 

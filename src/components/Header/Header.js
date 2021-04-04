@@ -6,12 +6,12 @@ const Header = ({isAuthenticated, isLoading}) => {
 
 
     return (
-        <header className="flex flex-wrap justify-center sm:justify-between h-78 md:h-20 ">
+        <header className="flex flex-wrap justify-center sm:justify-between h-78 md:h-20 border-b-2 border-bookBlue ">
             <div className="flex items-center h-20">
                 <div>
                     <img className="object-contain p-2 h-20" src={logo} alt = "logo"/>
                 </div>
-                <h1 className="text-center text-viola-600 text-5xl p-2">VocabuLazy</h1>
+                <h1 className="text-center text-terraCotta-600 text-5xl p-2">VocabuLazy</h1>
             </div>
             <SecondaryNavbar isAuthenticated={isAuthenticated} isLoading = {isLoading} />
         </header>

@@ -1,5 +1,5 @@
 import CurrentDeck from './CurrentDeck'
-import AddFlashcards from './AddFlashcards'
+import DeckSettings from './DeckSettings'
 import DeckForm from './DeckForm'
 import processFlashcards from '../../Actions/ProcessFlashcards'
 import fetchData from '../../Actions/FetchData'
@@ -45,15 +45,14 @@ const DeckSection = ({ currentDeck, decks, setCurrentDeck, setDecks }) => {
                     </div>
                         <div className="flex justify-center text-center text-2xl">
                             <div  className="w-1/3  flex justify-center text-center">
-                            <Link className="btn border-2 shadow-md transition-colors duration-75 border-terraCotta-500 hover:text-white hover:bg-terraCotta-500 hover:shadow-inner" to="/deck/addFlashcards">Add/remove cards</Link>
-                            <Link className="btn border-2 shadow-md transition-colors duration-75 border-terraCotta-500 hover:text-white hover:bg-terraCotta-500 hover:shadow-inner ml-2" to="/deck/edit">Edit settings</Link>
+                            <Link className="btn border-2 shadow-md transition-colors duration-75 border-terraCotta-500 hover:text-white hover:bg-terraCotta-500 hover:shadow-inner" to="/deck/addFlashcards">Deck settings</Link>
                             </div>
                         </div>
                     </Route>
                     
 
                     <Route path="/deck/addFlashcards" exact>
-                        {currentDeck.flashcards && <AddFlashcards currentDeck={currentDeck} setCurrentDeck={setCurrentDeck} decks={decks} setDecks={setDecks} />}
+                        {currentDeck.flashcards && <DeckSettings updateDeck={updateDeck} currentDeck={currentDeck} setCurrentDeck={setCurrentDeck} decks={decks} setDecks={setDecks} />}
                     </Route>
 
 

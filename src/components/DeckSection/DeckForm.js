@@ -59,23 +59,20 @@ const DeckForm = ({ deck=initialDeckSettings
 
   return (
     <>
-    <header>
-          <h4>{headerText}</h4>
-    </header>
-      <form className='add-form' onSubmit={onSubmit}>
-        <fieldset className="fieldset-container default-deck">
-          <div className='form-control'>
-            <label>Deck name</label>
-            <input
+      <form className='bg-gray-100' onSubmit={onSubmit}>
+        <fieldset className="flex justify-evenly bg-white border-b border-bookBlue pt-2 ">
+          <div className='flex flex-col mb-4'>
+            <label className="mb-2 font-semibold text-2xl">Deck name</label>
+            <input className="border py-2 px-3"
               type='text'
               placeholder={deck.name ? deck.name : 'My first deck'}
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
           </div>
-          <div className='form-control form-control-check default-deck'>
-              <label className="center">Default deck</label>
-              <input
+          <div className='flex flex-col mb-4'>
+              <label className="mb-4 font-semibold text-2xl">Default deck</label>
+              <input className="form-check-input"
                 type='checkbox'
                 checked={isDefault}
                 value={isDefault}
@@ -83,53 +80,53 @@ const DeckForm = ({ deck=initialDeckSettings
               />
             </div>
         </fieldset>
-        <div className="center">
-          <h4>Verb settings</h4>
+        <div className="flex justify-center">
+          <h4 className="text-3xl p-2">Verb settings</h4>
         </div>
-        <p>You can customise the type of verb conjugations you will see below. Make sure that the forms and tenses are compatible (for example if you only tick subjunctive and preterite, nothing will come up as subjunctive has no preterite form).</p>
-        <div className="fieldset-container">
-          <fieldset className="deck-fieldset">
-            <legend>Forms:</legend>
+        <p className="text-xl p-4">You can customise the type of verb conjugations you will see below. Make sure that the forms and tenses are compatible (for example if you only tick subjunctive and preterite, nothing will come up as subjunctive has no preterite form).</p>
+        <div className="flex justify-around py-4">
+          <fieldset className="form-fieldset w-1/4 shadow-md">
+            <h1 className="font-bold text-2xl  pb-2 text-center">Forms</h1>
             <div>
-              <div className='form-control form-control-check'>
-                <label>Infinitive</label>
-                <input
+              <div className='form-check'>
+                <label className="form-check-label">Infinitive</label>
+                <input className="form-check-input"
                   type='checkbox'
                   checked={useInfinitive}
                   value={useInfinitive}
                   onChange={(e) => setUseInfinitive(e.currentTarget.checked)}
                 />
               </div>
-              <div className='form-control form-control-check'>
-                <label>Subjunctive</label>
-                <input
+              <div className='form-check'>
+                <label className="form-check-label">Subjunctive</label>
+                <input className="form-check-input"
                   type='checkbox'
                   checked={useSubjunctive}
                   value={useSubjunctive}
                   onChange={(e) => setUseSubjunctive(e.currentTarget.checked)}
                 />
               </div>
-              <div className='form-control form-control-check'>
-                <label>Indicative</label>
-                <input
+              <div className='form-check'>
+                <label className="form-check-label">Indicative</label>
+                <input className="form-check-input"
                   type='checkbox'
                   checked={useIndicative}
                   value={useIndicative}
                   onChange={(e) => setUseIndicative(e.currentTarget.checked)}
                 />
               </div>
-              <div className='form-control form-control-check'>
-                <label>Imperative</label>
-                <input
+              <div className='form-check'>
+                <label className="form-check-label">Imperative</label>
+                <input className="form-check-input"
                   type='checkbox'
                   checked={useImperative}
                   value={useImperative}
                   onChange={(e) => setUseImperative(e.currentTarget.checked)}
                 />
               </div>
-              <div className='form-control form-control-check'>
-                <label>Participle</label>
-                <input
+              <div className='form-check'>
+                <label className="form-check-label">Participle</label>
+                <input className="form-check-input"
                   type='checkbox'
                   checked={useParticiple}
                   value={useParticiple}
@@ -138,39 +135,39 @@ const DeckForm = ({ deck=initialDeckSettings
               </div>
             </div>
           </fieldset>
-          <fieldset className="deck-fieldset">
-            <legend>Tenses:</legend>
+          <fieldset className="form-fieldset w-1/4">
+            <h1 className="font-bold text-2xl pb-2 text-center">Tenses</h1>
             <div>
-              <div className='form-control form-control-check'>
-                <label>Preterite</label>
-                <input
+              <div className='form-check'>
+                <label className="form-check-label">Preterite</label>
+                <input className="form-check-input"
                   type='checkbox'
                   checked={usePreterite}
                   value={usePreterite}
                   onChange={(e) => setUsePreterite(e.currentTarget.checked)}
                 />
               </div>
-              <div className='form-control form-control-check'>
-                <label>Imperfect</label>
-                <input
+              <div className='form-check'>
+                <label className="form-check-label">Imperfect</label>
+                <input className="form-check-input"
                   type='checkbox'
                   checked={useImperfect}
                   value={useImperfect}
                   onChange={(e) => setUseImperfect(e.currentTarget.checked)}
                 />
               </div>
-              <div className='form-control form-control-check'>
-                <label>Future</label>
-                <input
+              <div className='form-check'>
+                <label className="form-check-label">Future</label>
+                <input className="form-check-input"
                   type='checkbox'
                   checked={useFuture}
                   value={useFuture}
                   onChange={(e) => setUseFuture(e.currentTarget.checked)}
                 />
               </div>
-              <div className='form-control form-control-check'>
-                <label>Present</label>
-                <input
+              <div className='form-check'>
+                <label className="form-check-label">Present</label>
+                <input className="form-check-input"
                   type='checkbox'
                   checked={usePresent}
                   value={usePresent}
@@ -179,66 +176,66 @@ const DeckForm = ({ deck=initialDeckSettings
               </div>
             </div>
           </fieldset>
-          <fieldset className="deck-fieldset">
-            <legend>Conjugations:</legend>
+          <fieldset className="form-fieldset w-1/4">
+            <h1 className="font-bold text-2xl pb-2 text-center">Conjugations</h1>
             <div>
-              <div className='form-control form-control-check'>
-                <label>Yo</label>
-                <input
+              <div className='form-check'>
+                <label className="form-check-label">Yo</label>
+                <input className="form-check-input"
                   type='checkbox'
                   checked={useYo}
                   value={useYo}
                   onChange={(e) => setUseYo(e.currentTarget.checked)}
                 />
               </div>
-              <div className='form-control form-control-check'>
-                <label>Tú</label>
-                <input
+              <div className='form-check'>
+                <label className="form-check-label">Tú</label>
+                <input className="form-check-input"
                   type='checkbox'
                   checked={useTu}
                   value={useTu}
                   onChange={(e) => setUseTu(e.currentTarget.checked)}
                 />
               </div>
-              <div className='form-control form-control-check'>
-                <label>Vos</label>
-                <input
+              <div className='form-check'>
+                <label className="form-check-label">Vos</label>
+                <input className="form-check-input"
                   type='checkbox'
                   checked={useVos}
                   value={useVos}
                   onChange={(e) => setUseVos(e.currentTarget.checked)}
                 />
               </div>
-              <div className='form-control form-control-check'>
-                <label>Él/Ella/Usted</label>
-                <input
+              <div className='form-check'>
+                <label className="form-check-label">Él/Ella/Usted</label>
+                <input className="form-check-input"
                   type='checkbox'
                   checked={useEl}
                   value={useEl}
                   onChange={(e) => setUseEl(e.currentTarget.checked)}
                 />
               </div>
-              <div className='form-control form-control-check'>
-                <label>Ellos/Ellas/Ustedes</label>
-                <input
+              <div className='form-check'>
+                <label className="form-check-label">Ellos/Ellas/Ustedes</label>
+                <input className="form-check-input"
                   type='checkbox'
                   checked={useEllos}
                   value={useEllos}
                   onChange={(e) => setUseEllos(e.currentTarget.checked)}
                 />
               </div>
-              <div className='form-control form-control-check'>
-                <label>Nosotros/Nosotras</label>
-                <input
+              <div className='form-check'>
+                <label className="form-check-label">Nosotros/Nosotras</label>
+                <input className="form-check-input"
                   type='checkbox'
                   checked={useNosotros}
                   value={useNosotros}
                   onChange={(e) => setUseNosotros(e.currentTarget.checked)}
                 />
               </div>
-              <div className='form-control form-control-check'>
-                <label>Vosotros/Vosotras</label>
-                <input
+              <div className='form-check'>
+                <label className="form-check-label">Vosotros/Vosotras</label>
+                <input className="form-check-input"
                   type='checkbox'
                   checked={useVosotros}
                   value={useVosotros}
@@ -249,9 +246,8 @@ const DeckForm = ({ deck=initialDeckSettings
             </div>
           </fieldset>
         </div>
-        <div className="center">
-          <Link to="/home" className="back-link">Back</Link>
-          <input type='submit' value='Save Deck' className='btn btn-block' />
+        <div className="mt-4 flex justify-center p-2 bg-white border-t border-bookBlue">
+          <input type='submit' value='Save changes' className='btn border-2 border-terraCotta-500' />
         </div>
       </form>
     </>
