@@ -1,112 +1,117 @@
 import { useTable } from 'react-table'
 
-const TestTable = ({columns, data}) => {
+import MaUTable from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
 
-      const tableInstance = useTable({ columns, data })
+const TestTable = ({ columns, data }) => {
 
-      const {
+  const tableInstance = useTable({ columns, data })
 
-        getTableProps,
-     
-        getTableBodyProps,
-     
-        headerGroups,
-     
-        rows,
-     
-        prepareRow,
-     
-      } = tableInstance
+  const {
+
+    getTableProps,
+
+    getTableBodyProps,
+
+    headerGroups,
+
+    rows,
+
+    prepareRow,
+
+  } = tableInstance
 
 
 
-    return (
-        <table {...getTableProps()}>
+  return (
+    <MaUTable {...getTableProps()}>
 
-     <thead>
+      <TableHead>
 
-       {// Loop over the header rows
+        {// Loop over the header rows
 
-       headerGroups.map(headerGroup => (
+          headerGroups.map(headerGroup => (
 
-         // Apply the header row props
+            // Apply the header row props
 
-         <tr {...headerGroup.getHeaderGroupProps()}>
+            <TableRow {...headerGroup.getHeaderGroupProps()}>
 
-           {// Loop over the headers in each row
+              {// Loop over the headers in each row
 
-           headerGroup.headers.map(column => (
+                headerGroup.headers.map(column => (
 
-             // Apply the header cell props
+                  // Apply the header cell props
 
-             <th {...column.getHeaderProps()}>
+                  <TableCell {...column.getHeaderProps()}>
 
-               {// Render the header
+                    {// Render the header
 
-               column.render('Header')}
+                      column.render('Header')}
 
-             </th>
+                  </TableCell>
 
-           ))}
+                ))}
 
-         </tr>
+            </TableRow>
 
-       ))}
+          ))}
 
-     </thead>
+      </TableHead>
 
-     {/* Apply the table body props */}
+      {/* Apply the table body props */}
 
-     <tbody {...getTableBodyProps()}>
+      <TableBody {...getTableBodyProps()}>
 
-       {// Loop over the table rows
+        {// Loop over the table rows
 
-       rows.map(row => {
+          rows.map(row => {
 
-         // Prepare the row for display
+            // Prepare the row for display
 
-         prepareRow(row)
+            prepareRow(row)
 
-         return (
+            return (
 
-           // Apply the row props
+              // Apply the row props
 
-           <tr {...row.getRowProps()}>
+              <TableRow {...row.getRowProps()}>
 
-             {// Loop over the rows cells
+                {// Loop over the rows cells
 
-             row.cells.map(cell => {
+                  row.cells.map(cell => {
 
-               // Apply the cell props
+                    // Apply the cell props
 
-               return (
+                    return (
 
-                 <td {...cell.getCellProps()}>
+                      <TableCell {...cell.getCellProps()}>
 
-                   {// Render the cell contents
+                        {// Render the cell contents
 
-                   cell.render('Cell')}
+                          cell.render('Cell')}
 
-                 </td>
+                      </TableCell>
 
-               )
+                    )
 
-             })}
+                  })}
 
-           </tr>
+              </TableRow>
 
-         )
+            )
 
-       })}
+          })}
 
-     </tbody>
+      </TableBody>
 
-   </table>
-    )
+    </MaUTable>
+  )
 }
 
 export default TestTable
 
 
 
-  

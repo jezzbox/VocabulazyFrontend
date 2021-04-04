@@ -33,7 +33,7 @@ const DeckSection = ({ currentDeck, decks, setCurrentDeck, setDecks }) => {
     return (
         <Router>
 
-            <article className="px-16 py-2">
+            <article>
                     
                     
                     <Route path="/home" exact>

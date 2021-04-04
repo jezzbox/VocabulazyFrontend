@@ -155,45 +155,57 @@ const AddFlashcards = ({ currentDeck, setCurrentDeck, decks, setDecks }) => {
           {
             Header: 'Word',
             accessor: 'word', // accessor is the "key" in the data
-            Cell: ({value}) => (<span className="text-center font-semibold text-2xl p-2">{value}</span>)
           },
           {
             Header: 'Type',
             accessor: 'wordType',
-            Cell: ({value}) => (<span className="text-center text-xl p-2">{value}</span>)
           },
           {
             id: `flashcardId`,
             accessor:'flashcardId',
-            Cell: ({row}) => (<button className="btn" onClick={
+            Cell: ({row}) => (<button className="w-32 uppercase text-lg font-semibold" onClick={
                 flashcardsInDeck.some(card => card[`${card.wordType}Id`] === row.values.flashcardId) ? null :
                 () => onClickAdd({flashcardId:row.values.flashcardId, wordType:row.values.wordType,word:row.values.word})}>
                 {flashcardsInDeck.some(card => card[`${card.wordType}Id`] === row.values.flashcardId) ? "Added" : "Add"}
             </button>)
           },
         ]
+
+        const parseDate = (date) => {
+            const newDate = new Date(date)
+            return newDate.toDateString()
+
+        }
     
         const CurrentFlashcardsColumns =  [
             {
               Header: 'Word',
               accessor: 'word', // accessor is the "key" in the data
-              Cell: ({row, value}) => (<span className={row.original.isSuspended ? "text-red-700 text-center font-semibold text-2xl p-2" : "text-center font-semibold text-2xl p-2"}>{value}</span>)
+              Cell: ({row, value}) => (<span className={row.original.isSuspended ? "line-through text-center text-xl p-2" : "text-center text-xl p-2"}>{value}</span>)
             },
             {
               Header: 'Type',
               accessor: 'wordType',
-              Cell: ({row, value}) => (<span className='text-center text-xl p-2'>{value}</span>)
             },
+            {
+                Header: 'Phase',
+                accessor: 'phase',
+              },
+              {
+                Header: 'Due',
+                accessor: 'dueDate',
+                Cell: ({value}) => (parseDate(value) < parseDate(new Date()) ? parseDate(value): "Now")
+              },
             {
                 id: 'suspend',
                 accessor: 'isSuspended',
-                Cell: ({row}) => (<button className="btn" onClick={!row.original.phase ? null :() => onClickSuspend(row.original)}>
-                    {!row.original.phase ? "Can't suspend new card" : flashcardsInDeck.find(card => card.word === row.original.word && card.wordType === row.original.wordType).isSuspended ? "Suspended" : "Suspend"}</button>)
+                Cell: ({row}) => (<button className={row.original.isSuspended ? "text-red-700 w-32 uppercase text-lg font-semibold" : "w-32 uppercase text-lg font-semibold"} onClick={!row.original.phase ? null :() => onClickSuspend(row.original)}>
+                    {!row.original.phase ? "-" : flashcardsInDeck.find(card => card.word === row.original.word && card.wordType === row.original.wordType).isSuspended ? "Suspended" : "Suspend"}</button>)
               },
             {
               id: `flashcardId`,
               accessor:'flashcardId',
-              Cell: ({row}) => (<button className="btn" onClick={
+              Cell: ({row}) => (<button className="w-32 uppercase text-lg font-semibold" onClick={
                   () => setFlashcardsInDeck(flashcardsInDeck.filter(x => !(x.word === row.values.word && x.wordType === row.values.wordType)))}>
               Remove</button>)
             },
@@ -201,17 +213,17 @@ const AddFlashcards = ({ currentDeck, setCurrentDeck, decks, setDecks }) => {
 
     return (
         <>
-            <section className="px-32 py-6">
+            <section className="py-6">
             <header>
                 <h4 className="p-2 border-b-2 border-bookBlue text-bold text-5xl">Editing: {currentDeck.name}</h4>
             </header>
                 <div className="flex justify-evenly shadow-md">
-                    <div className="w-1/2 bg-gray-100 shadow-md p-4">
-                        <h2 className="text-4xl p-4" >Add cards</h2>
+                    <div className="w-1/3 shadow-md p-4 bg-white">
+                        <h2 className="text-xl p-4 text-white" >Add cards</h2>
                         
                         <form className='p-4' onSubmit={onSubmitSearch}>
                             <div className='flex justify-center bg-gray-100'>
-                                <input
+                                <input className="h-8 text-lg w-full"
                                     type='text'
                                     placeholder='Search'
                                     value={searchString}
@@ -219,28 +231,26 @@ const AddFlashcards = ({ currentDeck, setCurrentDeck, decks, setDecks }) => {
                                 />
                             </div>
                             <div className="p-2 flex justify-center">
-                            <input type='submit' value='Search' className='btn' />
+                            <input type='submit' value='Search' className='btn border border-terraCotta-500' />
                             </div>
                             
                         </form>
                         {isLoading && <h1>Loading....</h1>}
-                        <div className="h-80 flex justify-center bg-white overflow-scroll">
+                        <div className="h-80 flex justify-center bg-white overflow-scroll border">
                         {showResult && <TestTable columns={searchResultsColumns} data={searchResult} />}
                         </div>
                         {/* {showResult && <Table tableData={getTableButtons(searchResult, flashcardsInDeck)} headers={[{ columnName: 'word', objectProperty: 'word' }, { columnName: "Type", objectProperty: "wordType" }, { columnName: "delete", objectProperty: "button" }]} />} */}
                     </div>
 
-                    <div className="w-1/2 bg-gray-100 shadow-md p-4">
-                        <h2 className="text-4xl p-4">Current cards</h2>
-                        <div className='flex justify-center bg-gray-100'>
+                    <div className="w-1/2 bg-bookBlue shadow-md p-4">
+                        <h2 className="text-2xl text-white">Current cards</h2>
+                        <div className='flex justify-center'>
                             <input type="text" id="myInput" onChange={(e) => setFilterString(e.target.value.toLowerCase())} value={filterString} placeholder="Search deck...">
                             </input>
-                        </div>
-                        <div className='p-6 flex justify-center'>
                         <input type='submit' value='Search' className='btn btn-block' />
                         </div>
                         {currentDeck.flashcards.length === 0 && <h3>Deck is empty</h3>}
-                        <div className="flex justify-center bg-white overflow-scroll h-80">
+                        <div className="flex justify-center bg-white overflow-scrollborder">
                             {flashcardsInDeck && cardsToSuspend && <TestTable columns={CurrentFlashcardsColumns} data={flashcardsInDeck} />}
                             {/* {flashcardsInDeck && <Table tableData={getTableButtons(flashcardsInDeck)} headers={[{ columnName: 'word', objectProperty: 'word' }, { columnName: "Type", objectProperty: "wordType" }, { columnName: "delete", objectProperty: "button" }]} />} */}
                         </div>
