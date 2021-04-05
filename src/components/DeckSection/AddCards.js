@@ -137,7 +137,7 @@ const AddCards = ({currentDeck, setCurrentDeck, setShowAddCards, startingEase, n
     return (
         <div className="bg-opacity-60 bg-gray-500 fixed inset-0">
 
-        <div className="opacity-100 mx-96 my-32 shadow-xl p-4 border-4 rounded-xl border-bookBlue bg-gray-100">
+        <div className="h-5/6 opacity-100 mx-32 lg:mx-60 md:my-8 lg:my-16 shadow-xl p-2 border-4 rounded-xl border-bookBlue bg-gray-100 overflow-y-scroll">
 
             <div className="flex justify-between p-4">
                 <h2 className="text-2xl text-terraCotta-600 px-4 border-b border-bookBlue" >Add cards</h2>
@@ -170,7 +170,7 @@ const AddCards = ({currentDeck, setCurrentDeck, setShowAddCards, startingEase, n
             <Table columns={searchResultsColumns} data={searchResult} />
         </div>
     </div>
-    <div className="mx-16 bg-terraCotta-600 rounded-t-lg mt-12">
+    <div className="mx-16 bg-terraCotta-600 rounded-t-lg mt-6 md:mt-12">
         <h1 className="py-2 px-4 text-white text-xl">Selected</h1>
         <div className="h-48 flex justify-center items-start bg-white scrollbar-thin scrollbar-thumb-terraCotta-600 scrollbar-track-gray-100 overflow-y-scroll border border-terraCotta-600">
             <Table columns={cardsToAddColumns} data={cardsToAdd} />
