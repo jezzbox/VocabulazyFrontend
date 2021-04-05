@@ -1,2 +1,0 @@
-@import url(https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100;200;300;400;500;600;700;800;900&display=swap);@tailwind base;@tailwind components;@tailwind utilities;.btn{@apply rounded-full;@apply py-2;@apply px-3;@apply uppercase;@apply text-lg;@apply font-bold;@apply cursor-pointer;@apply tracking-wider}
-/*# sourceMappingURL=main.261315a7.chunk.css.map */
