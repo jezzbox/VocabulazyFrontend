@@ -182,9 +182,8 @@ function App() {
   return (
     <Router>
       <>
-      {error && <h1 className="text-red-500">Your login was successful, but there was problem fetching your data. please log out and try again later.</h1>}
         <Header isAuthenticated={isAuthenticated} isLoading={isLoading}/>
-        {!isPending && <nav className="border-b-2 border-bookBlue flex justify-evenly p-2 bg-white   text-2xl ">
+        {!isPending && !error && <nav className="border-b-2 border-bookBlue flex justify-evenly p-2 bg-white   text-2xl ">
             <NavLink className="hover:text-viola-600" activeClassName="font-semibold" to="/home"><svg className="w-6 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
 </svg>Home</NavLink>
@@ -202,14 +201,15 @@ function App() {
         <main className='flex-grow px-16 py-6 bg-gray-100'>
 
           {/* Initial redirects */}
-          {!isLoading ?
+          {error ? <h1 className="text-red-500">There was problem fetching your data. please log out and try again later.</h1>
+           :!isLoading ?
              <Route path="/" exact>
               <>
                 {!isAuthenticated ? <Redirect to="/welcome" />
                   : !isPending ? <Redirect to="/home" />
                   : <button type="button" className="bg-rose-600" disabled><svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24"></svg>Loading ... </button>}
               </>
-              </Route>: <button type="button" className="bg-rose-600" disabled><svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24"></svg>jesus Loading</button>}
+              </Route>: <button type="button" className="bg-rose-600" disabled><svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24"></svg>Loading ...</button>}
 
             {/* Welcome page */}
             <Route path="/welcome">

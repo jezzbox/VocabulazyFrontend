@@ -2,7 +2,6 @@ import CurrentDeck from './CurrentDeck'
 import DeckSettings from './DeckSettings'
 import processFlashcards from '../../Actions/ProcessFlashcards'
 import fetchData from '../../Actions/FetchData'
-import './deck.css'
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
 
 const DeckSection = ({ currentDeck, decks, setCurrentDeck, setDecks, startingEase, defaultDeckId, setUpdatedUserProfile, userId }) => {
