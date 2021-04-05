@@ -1,12 +1,12 @@
 
-import TestTable from '../TestTable'
+import Table from '../Table'
 import { useState, useEffect } from 'react'
 import fetchData from '../../Actions/FetchData'
 import Button from '../Button'
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import addFlashcards from '../../Actions/AddFlashcards'
 import processFlashcards from '../../Actions/ProcessFlashcards'
-const AddCards = ({currentDeck, setCurrentDeck, setShowAddCards}) => {
+const AddCards = ({currentDeck, setCurrentDeck, setShowAddCards, startingEase, newDeck=false}) => {
     const [searchString, setSearchString] = useState('');
     const [searchResult, setSearchResult] = useState([]);
     const [cardsToAdd, setCardsToAdd] = useState([]);
@@ -55,7 +55,7 @@ const AddCards = ({currentDeck, setCurrentDeck, setShowAddCards}) => {
         const clickYes = async () => {
             console.log(currentCards)
             console.log("clicked yes")
-            const { dataFromServer, error } = await addFlashcards(currentDeck.deckId, cardsToAdd)
+            const { dataFromServer, error } = await addFlashcards(currentDeck.deckId, cardsToAdd, startingEase)
             if (error) {
                 console.log(error)
                 }
@@ -170,13 +170,13 @@ const AddCards = ({currentDeck, setCurrentDeck, setShowAddCards}) => {
             
 
         <div className="h-48 flex justify-center items-start bg-white scrollbar-thin scrollbar-thumb-bookBlue scrollbar-track-gray-100 overflow-y-scroll border-2 border-bookBlue">
-            <TestTable columns={searchResultsColumns} data={searchResult} />
+            <Table columns={searchResultsColumns} data={searchResult} />
         </div>
     </div>
     <div className="mx-16 bg-terraCotta-600 rounded-t-lg mt-12">
         <h1 className="py-2 px-4 text-white text-xl">Selected</h1>
         <div className="h-48 flex justify-center items-start bg-white scrollbar-thin scrollbar-thumb-terraCotta-600 scrollbar-track-gray-100 overflow-y-scroll border border-terraCotta-600">
-            <TestTable columns={cardsToAddColumns} data={cardsToAdd} />
+            <Table columns={cardsToAddColumns} data={cardsToAdd} />
         </div>
         
     </div>

@@ -1,6 +1,6 @@
 import React from "react";
 import LoginButton from './LoginButton'
-import Button from './Button'
+import { Link } from 'react-router-dom'
 
 const Welcome = () => {
 
@@ -17,7 +17,7 @@ const Welcome = () => {
           
           <div className="flex justify-center">
             <LoginButton className="btn border-2 shadow-md border-terraCotta-500 hover:bg-terraCotta-400 hover:shadow-inner ml-2" />
-            <Button className="btn border-2 shadow-md border-terraCotta-500 hover:bg-terraCotta-400 hover:shadow-inner ml-2" text="Try it out" />
+            <Link className="btn border-2 shadow-md border-terraCotta-500 hover:bg-terraCotta-400 hover:shadow-inner ml-2" to="/About">About</Link>
           </div>
           </>
         </article>

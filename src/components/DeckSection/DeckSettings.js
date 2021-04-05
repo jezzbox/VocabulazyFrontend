@@ -1,24 +1,17 @@
-import Button from '../Button'
 import { useState, useEffect } from 'react'
-// import Words from './Words'
-// import CurrentFlashcards from './CurrentFlashcards'
-import updateFlashcards from '../../Actions/UpdateFlashcards'
 import fetchData from '../../Actions/FetchData'
-import processFlashcards from '../../Actions/ProcessFlashcards'
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import { Link } from 'react-router-dom'
-import GenerateButtons from '../../Actions/GenerateButtons'
-import TestTable from '../TestTable'
+import Table from '../Table'
 import AddCards from './AddCards'
 import deleteCard from '../../Actions/DeleteCard'
 import DeckForm from './DeckForm'
 
 
-const DeckSettings = ({ currentDeck, setCurrentDeck, decks, setDecks, updateDeck }) => {
+const DeckSettings = ({ currentDeck, setCurrentDeck, updateDeck, startingEase, defaultDeckId }) => {
     const [cardsInDeck, setCardsInDeck] = useState(null)
     const [filterString, setFilterString] = useState('')
-    const [cardsToSuspend, setCardsToSuspend] = useState([])
     const [showAddCards, setShowAddCards] = useState(false)
 
     useEffect(() => {
@@ -123,7 +116,7 @@ const DeckSettings = ({ currentDeck, setCurrentDeck, decks, setDecks, updateDeck
               {
                 Header: 'Due',
                 accessor: 'dueDate',
-                Cell: ({value}) => (parseDate(value) > parseDate(new Date()) ? parseDate(value): "Now")
+                Cell: ({value}) => (parseDate(value))
               },
             {
                 id: 'suspend',
@@ -143,7 +136,7 @@ const DeckSettings = ({ currentDeck, setCurrentDeck, decks, setDecks, updateDeck
     return (
         <>
         <section className="border-2 border-bookBlue rounded-md bg-white mx-60">
-            {showAddCards && <AddCards cardsInDeck={cardsInDeck} currentDeck={currentDeck} setCurrentDeck={setCurrentDeck} setShowAddCards={setShowAddCards}/>}
+            {showAddCards && <AddCards startingEase={startingEase} cardsInDeck={cardsInDeck} currentDeck={currentDeck} setCurrentDeck={setCurrentDeck} setShowAddCards={setShowAddCards}/>}
             <header className="flex justify-between p-2 mx-8">
                 <Link className="btn border-2 border-terraCotta-500 bg-gray-100" to="/home">Back</Link>
                 <h4 className="p-2 border-b-2 border-bookBlue text-bold text-center text-xl">Deck: {currentDeck.name}</h4>
@@ -169,7 +162,7 @@ const DeckSettings = ({ currentDeck, setCurrentDeck, decks, setDecks, updateDeck
                         </div>
                         {currentDeck.flashcards.length === 0 && <h3>Deck is empty</h3>}
                         <div className="h-96 flex justify-center bg-white overflow-scrollborder border-2 border-bookBlue scrollbar-thin scrollbar-thumb-bookBlue scrollbar-track-gray-100 overflow-y-scroll">
-                            {cardsInDeck && cardsToSuspend && <TestTable columns={CurrentFlashcardsColumns} data={cardsInDeck} />}
+                            {cardsInDeck && <Table columns={CurrentFlashcardsColumns} data={cardsInDeck} />}
                             {/* {cardsInDeck && <Table tableData={getTableButtons(cardsInDeck)} headers={[{ columnName: 'word', objectProperty: 'word' }, { columnName: "Type", objectProperty: "wordType" }, { columnName: "delete", objectProperty: "button" }]} />} */}
                         </div>
                     </div>
@@ -181,7 +174,8 @@ const DeckSettings = ({ currentDeck, setCurrentDeck, decks, setDecks, updateDeck
                             <h2 className="text-2xl text-white">Deck settings</h2>
                         </div>
                         <div className="bg-white border-2 border-bookBlue rounded-b-md">
-                            <DeckForm deck={currentDeck} processDeck={updateDeck} headerText="Edit deck:"/>
+                            {console.log(defaultDeckId,currentDeck.deckId)}
+                            <DeckForm deck={currentDeck} processDeck={updateDeck} isDefault={defaultDeckId === currentDeck.deckId ? true : false} headerText="Edit deck:"/>
                         </div>
                     </div>
                     </div>

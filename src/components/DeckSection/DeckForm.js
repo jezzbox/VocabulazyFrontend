@@ -2,10 +2,9 @@ import { useState } from 'react'
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css';
 import initialDeckSettings from '../../Constants/DEFAULT_DECK_SETTINGS'
-import { Link } from 'react-router-dom'
 
 const DeckForm = ({ deck=initialDeckSettings
-, processDeck, onClickBack , headerText}) => {
+, processDeck, isDefault}) => {
   const [name, setName] = useState(deck.name)
   const [useSubjunctive, setUseSubjunctive] = useState(deck.useSubjunctive)
   const [useIndicative, setUseIndicative] = useState(deck.useIndicative)
@@ -15,7 +14,7 @@ const DeckForm = ({ deck=initialDeckSettings
   const [useImperfect, setUseImperfect] = useState(deck.useImperfect)
   const [useFuture, setUseFuture] = useState(deck.useFuture)
   const [usePresent, setUsePresent] = useState(deck.usePresent)
-  const [isDefault, setIsDefault] = useState(deck.IsDefault)
+  const [isDefaultDeck, setIsDefaultDeck] = useState(isDefault)
   const [useInfinitive, setUseInfinitive] = useState(deck.useInfinitive);
   const [useYo, setUseYo] = useState(deck.useYo);
   const [useTu, setUseTu] = useState(deck.useTu);
@@ -32,7 +31,7 @@ const DeckForm = ({ deck=initialDeckSettings
       processDeck({
         name, useSubjunctive, useInfinitive, useIndicative, useImperative, useParticiple, usePreterite, useImperfect, useFuture, usePresent,
         useYo, useTu, useEl, useVos, useEllos, useNosotros, useVosotros
-      })
+      },isDefaultDeck)
     }
 
     const clickNo = () => {
@@ -60,7 +59,7 @@ const DeckForm = ({ deck=initialDeckSettings
   return (
     <>
       <form className='bg-gray-100' onSubmit={onSubmit}>
-        <fieldset className="flex justify-evenly bg-white border-b border-bookBlue pt-2 ">
+        <fieldset className="flex justify-evenly bg-white border-b border-bookBlue p-4 ">
           <div className='flex flex-col mb-4'>
             <label className="mb-2 font-semibold text-2xl">Deck name</label>
             <input className="border py-2 px-3"
@@ -74,9 +73,9 @@ const DeckForm = ({ deck=initialDeckSettings
               <label className="mb-4 font-semibold text-2xl">Default deck</label>
               <input className="form-check-input"
                 type='checkbox'
-                checked={isDefault}
-                value={isDefault}
-                onChange={(e) => setIsDefault(e.currentTarget.checked)}
+                checked={isDefaultDeck}
+                value={isDefaultDeck}
+                onChange={(e) => setIsDefaultDeck(e.currentTarget.checked)}
               />
             </div>
         </fieldset>

@@ -56,36 +56,37 @@ const ChangeUserSettings = ({userProfile, setUpdatedUserProfile}) => {
                     <h4>Edit user settings:</h4>
               </header>
                 <form className='add-form' onSubmit={onSubmit}>
-                  <fieldset className="fieldset-container default-deck">
-                    <div className='form-control'>
-                      <label>Display name</label>
-                      <input
+                  <div className="flex justify-center p-4 text-lg">
+                    <p>here you can customize your user settings and deck modifiers (only change these if you know what you're doing)</p>
+                  </div>
+                  
+                  <div className="flex justify-evenly">
+                  <fieldset className="form-fieldset">
+                  <legend className="bg-bookBlue py-2 px-4 rounded-full text-white text-center">User</legend>
+                    <div className='flex flex-col mb-4'>
+                      <label className="mb-2  text-2xl">Display name</label>
+                      <input className="border py-2 px-3"
                         type='text'
                         placeholder={displayName ? displayName : ''}
                         value={displayName ? displayName : ''}
                         onChange={(e) => setDisplayName(e.target.value)}
                       />
                     </div>
-                    <div className='form-control form-control-check default-deck'>
-                        <label className="center">Default deck</label>
-                        <select value={defaultDeckId} onChange={(e) => setDefaultDeckId(e.target.value)}>
+                    <div className='flex flex-col mb-4'>
+                        <label className="mb-2  text-2xl">Default deck</label>
+                        <select className="border py-2 px-3" value={defaultDeckId} onChange={(e) => setDefaultDeckId(e.target.value)}>
                             {userProfile.decks.map((deck) => (
                                 <option key={deck.deckId} value={deck.deckId}>{deck.name}</option>
                             ))}
                         </select>
                       </div>
                   </fieldset>
-                  <div className="center">
-          <h4>Flashcard options</h4>
-        </div>
-        <p>Here you can customize how your flashcards work. ONLY CHANGE THESE IF YOU KNOW WHAT YOU ARE DOING. </p>
-                  <div className="fieldset-container">
-          <fieldset className="deck-fieldset">
-            <legend>New cards:</legend>
+          <fieldset className="form-fieldset">
+            <legend className="bg-bookBlue p-2 rounded-full text-white text-center">New cards</legend>
             <div>
-                <div className='form-control form-control'>
-                <label>Steps</label>
-                <input
+                <div className='flex flex-col mb-4'>
+                <label className="mb-2  text-2xl">Steps</label>
+                <input className="border py-2 px-3"
                   type='text'
                   placeholder={steps}
                   value={steps}
@@ -93,35 +94,35 @@ const ChangeUserSettings = ({userProfile, setUpdatedUserProfile}) => {
                 />
               </div>
 
-              <div className='form-control form-control'>
-                <label>Max new cards per day</label>
-                <input
+              <div className='flex flex-col mb-4'>
+                <label className="mb-2  text-2xl">Max new cards per day</label>
+                <input className="border py-2 px-3"
                   type='number'
                   placeholder={newCardsPerDay}
                   value={newCardsPerDay}
                   onChange={(e) => setNewCardsPerDay(e.currentTarget.value)}
                 />
               </div>
-              <div className='form-control form-control'>
-                <label>Graduating interval (days)</label>
-                <input
+              <div className='flex flex-col mb-4'>
+                <label className="mb-2  text-2xl">Graduating interval (days)</label>
+                <input className="border py-2 px-3"
                   type='number'
                   value={graduatingInterval}
                   onChange={(e) => setGraduatingInterval(e.currentTarget.value)}
                 />
               </div>
-              <div className='form-control form-control'>
-                <label>Easy interval (days)</label>
-                <input
+              <div className='flex flex-col mb-4'>
+                <label className="mb-2  text-2xl">Easy interval (days)</label>
+                <input className="border py-2 px-3"
                   type='number'
                   value={easyInterval}
                   onChange={(e) => setEasyInterval(e.currentTarget.value)}
                 />
               </div>
 
-              <div className='form-control form-control'>
-                <label>Starting ease (%)</label>
-                <input
+              <div className='flex flex-col mb-4'>
+                <label className="mb-2  text-2xl">Starting ease (%)</label>
+                <input className="border py-2 px-3"
                   type='number'
                   value={startingEase}
                   onChange={(e) => setStartingEase(e.currentTarget.value)}
@@ -129,39 +130,39 @@ const ChangeUserSettings = ({userProfile, setUpdatedUserProfile}) => {
               </div>
             </div>
           </fieldset>
-          <fieldset className="deck-fieldset">
-            <legend>Review Cards:</legend>
+          <fieldset className="form-fieldset">
+            <legend className="bg-bookBlue p-2 rounded-full text-white text-center">Review Cards</legend>
             <div>
-            <div className='form-control form-control'>
-                <label>Maximum reviews per day</label>
-                <input
+            <div className='flex flex-col mb-4'>
+                <label className="mb-2 text-2xl">Maximum reviews per day</label>
+                <input className="border py-2 px-3"
                   type='number'
                   value={reviewsPerDay}
                   onChange={(e) => setReviewsPerDay(e.currentTarget.value)}
                 />
               </div>
 
-              <div className='form-control form-control'>
-                <label>Easy bonus (%)</label>
-                <input
+              <div className='flex flex-col mb-4'>
+                <label className="mb-2 text-2xl">Easy bonus (%)</label>
+                <input className="border py-2 px-3"
                   type='number'
                   value={easyBonus}
                   onChange={(e) => setEasyBonus(e.currentTarget.value)}
                 />
               </div>
 
-              <div className='form-control form-control'>
-                <label>Interval modifier (%)</label>
-                <input
+              <div className='flex flex-col mb-4'>
+                <label className="mb-2 text-2xl">Interval modifier (%)</label>
+                <input className="border py-2 px-3"
                   type='number'
                   value={intervalModifier}
                   onChange={(e) => setIntervalModifier(e.currentTarget.value)}
                 />
               </div>
 
-              <div className='form-control form-control'>
-                <label>Maximum interval</label>
-                <input
+              <div className='flex flex-col mb-4'>
+                <label className="mb-2 text-2xl">Maximum interval</label>
+                <input className="border py-2 px-3"
                   type='number'
                   value={maximumInterval}
                   onChange={(e) => setMaximumInterval(e.currentTarget.value)}
@@ -172,9 +173,9 @@ const ChangeUserSettings = ({userProfile, setUpdatedUserProfile}) => {
           </fieldset>
         </div>
 
-                  <div className="center">
-                    <Link to="/home" className="back-link">Back</Link>
-                    <input type='submit' value='Save settings' className='btn btn-block' />
+                  <div className="flex justify-center mt-4">
+                    <Link to="/home" className="btn" >Back</Link>
+                    <input type='submit' value='Save settings' className='btn border border-terraCotta-500' />
                   </div>
                 </form>
               </>

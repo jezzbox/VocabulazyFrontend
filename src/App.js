@@ -11,9 +11,10 @@ import ChangeUserSettings from './components/ChangeUserSettings';
 import DeckForm from './components/DeckSection/DeckForm'
 import fetchData from './Actions/FetchData'
 import Table from './components/Table'
-import getDecksData from './Actions/GetDecksData'
-import TestTable from './components/TestTable'
 import { confirmAlert } from 'react-confirm-alert'; // Import
+import AddCards from './components/DeckSection/AddCards'
+import Footer from './components/Footer'
+import About from './components/About'
 
 function App() {
   const { isAuthenticated, isLoading } = useAuth0();
@@ -21,12 +22,16 @@ function App() {
   const { data: userProfile, isPending, error } = useFetch(`users?authIdentifier=`, updatedUserProfile, "user")
   const [decks, setDecks] = useState(null)
   const [currentDeck, setCurrentDeck] = useState(null)
+  const [showAddCards, setShowAddCards] = useState(false)
 
 
   const getDefaultDeck = useCallback((decks) => {
     const defaultDeck = decks.find(deck => deck.deckId === userProfile.defaultDeckId)
 
         if(defaultDeck === undefined) {
+          if(decks.length === 0) {
+            return null
+          }
           const newestDeck = decks.reduce((l,d) => l.dueDate > d.dueDate ? l : d)
           newestDeck.flashcards = processFlashcards(newestDeck)
           return newestDeck;
@@ -74,6 +79,7 @@ function App() {
       newDeck.flashcards = []
       setCurrentDeck(newDeck)
       setDecks([...decks, newDeck])
+      setShowAddCards(true)
     }
 
   }
@@ -173,13 +179,11 @@ function App() {
       Delete</button>)
     },
   ]
-  //google-oauth2|109641767784145272988
-  // fetch decks
-
+  
   return (
     <Router>
       <>
-      {console.log(error)}
+      {error && console.log(error)}
         <Header isAuthenticated={isAuthenticated} isLoading={isLoading}/>
         {!isPending && <nav className="border-b-2 border-bookBlue flex justify-evenly p-2 bg-white   text-2xl ">
             <NavLink className="hover:text-viola-600" activeClassName="font-semibold" to="/home"><svg className="w-6 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -196,7 +200,7 @@ function App() {
 </svg>User settings</NavLink>
         </nav>}
 
-        <main className='px-16 py-6 bg-gray-100'>
+        <main className='flex-grow px-16 py-6 bg-gray-100'>
 
           {/* Initial redirects */}
           {!isLoading ?
@@ -216,14 +220,15 @@ function App() {
             {/* home page */}
             <Route path="/home">
               {currentDeck ? <>
-                <DeckSection currentDeck={currentDeck} decks={decks} setDecks={setDecks} setCurrentDeck={setCurrentDeck} userProfile={userProfile}/>
+                {showAddCards && <AddCards startingEase={userProfile.startingEase} cardsInDeck={[]} currentDeck={currentDeck} setCurrentDeck={setCurrentDeck} setShowAddCards={setShowAddCards} newDeck={true}/>}
+                <DeckSection setUpdatedUserProfile={setUpdatedUserProfile} userId = {userProfile.userId} defaultDeckId={userProfile.defaultDeckId} currentDeck={currentDeck} decks={decks} setDecks={setDecks} setCurrentDeck={setCurrentDeck} userProfile={userProfile} startingEase={userProfile.startingEase}/>
                 {
                   <div className="flex justify-center text-4xl">
                     <div className=" p-4 w-1/2 flex justify-center text-center">
                       <Link className="h-12 w-40 btn text-8xl transition-colors duration-150 bg-puertoRico-300 border focus:shadow-outline hover:bg-puertoRico-100" to ="/flashcards">Start</Link>
                     </div>
                   </div>}
-              </>: isAuthenticated ? <h1>No decks, create one to get started</h1> : null}
+              </>: isAuthenticated ? <div className="flex justify-center"><h1 className="text-2xl">No decks, create one to get started!</h1></div> : null}
             </Route>
             
             {/* User settings */}
@@ -241,7 +246,7 @@ function App() {
                       <h1 className="text-center text-2xl text-white">New</h1>
                     </div>
                     <div className="border border-bookBlue">
-                      <DeckForm processDeck={addDeck}/>
+                    {!showAddCards ? <DeckForm processDeck={addDeck}/> : <Redirect to="/home" exact/>}
                     </div>
                   </div>
                   </div>
@@ -252,8 +257,8 @@ function App() {
 
             {/* Manage decks */}
             <Route path="/decks/change">
-              {decks && currentDeck &&
-              <section className="border-2 border-bookBlue rounded-md bg-white mx-80">
+                <section className="border-2 border-bookBlue rounded-md bg-white mx-80">
+                {decks && currentDeck ? <>
                 <header className="flex justify-between p-2 mx-8">
                     <Link className="btn border-2 border-terraCotta-500 bg-gray-100" to="/home">Back</Link>
                 </header>
@@ -263,11 +268,12 @@ function App() {
                         <h2 className="text-2xl text-white">Change deck</h2>
                     </div>
                   <div className="flex justify-center bg-white overflow-scrollborder border-2 border-bookBlue scrollbar-thin scrollbar-thumb-bookBlue scrollbar-track-gray-100 overflow-y-scroll">
-                    <TestTable columns={decksColumns} data={decks} />
+                    <Table columns={decksColumns} data={decks} />
                   </div>
                   </div>
                   </div>
-                  </section>}
+                  </>:<div className="flex justify-center"><h1 className="text-lg">You don't have any decks yet</h1></div>}
+                  </section>
             </Route>
 
 
@@ -280,9 +286,14 @@ function App() {
                   }
 
             </Route>
+            <Route path="/About">
+              <About />
+            </Route>
+            
 
         </main>
-        <footer className="border-t-4 border-white bg-bookBlue">This is the footer</footer>
+
+        <Footer className="flex justify-center border-t-4 border-white bg-bookBlue p-6"/>
       </>
     </Router>
   );
