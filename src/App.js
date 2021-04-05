@@ -63,7 +63,6 @@ function App() {
 
   useEffect(() => {
     if (userProfile) {
-      console.log(userProfile)
       setUpdatedUserProfile(null)
     }
   }, [userProfile])
@@ -168,7 +167,7 @@ function App() {
       Header: 'Due',
       id:'cardsDue',
       accessor: 'flashcards', // accessor is the "key" in the data
-      Cell: ({row}) => (<span onClick={() => console.log(row.original)} className="text-xl p-2">{(processFlashcards(row.original).filter((flashcard) => flashcard.dueDate <= new Date().toJSON())).length}</span>)
+      Cell: ({row}) => (<span className="text-xl p-2">{(processFlashcards(row.original).filter((flashcard) => flashcard.dueDate <= new Date().toJSON())).length}</span>)
     },
     
     {
@@ -183,7 +182,7 @@ function App() {
   return (
     <Router>
       <>
-      {error && console.log(error)}
+      {error && <h1 className="text-red-500">Your login was successful, but there was problem fetching your data. please log out and try again later.</h1>}
         <Header isAuthenticated={isAuthenticated} isLoading={isLoading}/>
         {!isPending && <nav className="border-b-2 border-bookBlue flex justify-evenly p-2 bg-white   text-2xl ">
             <NavLink className="hover:text-viola-600" activeClassName="font-semibold" to="/home"><svg className="w-6 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">

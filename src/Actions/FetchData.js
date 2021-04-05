@@ -56,7 +56,7 @@ const fetchData = async (url,method='GET',bodyData=[]) => {
 
     // const fetchData = async () => {
     //     if(url === null) {
-    //         console.log("loading ...")
+
     //         setIsPending(false)
     //         return
     //     }
@@ -70,8 +70,7 @@ const fetchData = async (url,method='GET',bodyData=[]) => {
     //         }
     //         else {
     //             setData(dataFromServer)
-    //             console.log(data)
-    //             console.log(dataFromServer)
+
     //             setIsPending(false)
     //         }
 

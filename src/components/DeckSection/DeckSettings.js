@@ -40,7 +40,6 @@ const DeckSettings = ({ currentDeck, setCurrentDeck, updateDeck, startingEase, d
             changeCardSuspension(flashcard)
             const objIndex = cardsInDeck.findIndex((card => card.word === flashcard.word && card.wordType === flashcard.wordType));
             cardsInDeck[objIndex].isSuspended = !cardsInDeck[objIndex].isSuspended
-            console.log(cardsInDeck)
             setCardsInDeck([...cardsInDeck])
             }
 
@@ -174,7 +173,6 @@ const DeckSettings = ({ currentDeck, setCurrentDeck, updateDeck, startingEase, d
                             <h2 className="text-2xl text-white">Deck settings</h2>
                         </div>
                         <div className="bg-white border-2 border-bookBlue rounded-b-md">
-                            {console.log(defaultDeckId,currentDeck.deckId)}
                             <DeckForm deck={currentDeck} processDeck={updateDeck} isDefault={defaultDeckId === currentDeck.deckId ? true : false} headerText="Edit deck:"/>
                         </div>
                     </div>

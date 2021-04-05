@@ -28,7 +28,6 @@ const Flashcards = ({ currentDeck, setCurrentDeck, userProfile }) => {
     useEffect(() => {
         const currentTime = new Date()
         const learnAheadTime = (new Date(currentTime.setMinutes(currentTime.getMinutes() + 20))).toJSON()
-        console.log(learnAheadTime)
         setLearnAheadTime(learnAheadTime)
     }, [])
 
@@ -79,18 +78,12 @@ const Flashcards = ({ currentDeck, setCurrentDeck, userProfile }) => {
             const todaysCardsFromServer = [...reviewCards, ...learningCards, ...newCards]
 
             setTodaysCards(todaysCardsFromServer)
-            console.log("todayscards are: ")
-            console.log(todaysCardsFromServer)
-
-
         }
     }, [userProfile.newCardsPerDay, userProfile.reviewsPerDay, currentDeck.deckId, flashcards, isFinished])
 
     //get next flashcard
     useEffect(() => {
         if (!isFinished && todaysCards.length > 0) {
-            console.log("effect was triggered to get flashcard")
-            console.log(todaysCards)
 
             const getFlashcard = async (currentFlashcard) => {
                 const flashcard = Object.assign({}, currentFlashcard)
@@ -152,12 +145,9 @@ const Flashcards = ({ currentDeck, setCurrentDeck, userProfile }) => {
             , easyInterval: userProfile.easyInterval
             , easyBonus: userProfile.easyBonus
         }
-        console.log(options)
-        console.log("flashcard is")
-        console.log(flashcard)
+
         const { newEase, newPhase, newInterval, newLearningStep, newDueDate, newLapseCount, newIsSuspended } = processCard(buttonClicked, flashcard, options)
-        console.log("processed card is:")
-        console.log({ newEase, newPhase, newInterval, newLearningStep, newDueDate, newLapseCount, newIsSuspended })
+
         const updateData = { learningStep: newLearningStep, interval: newInterval, phase: newPhase, ease: newEase, dueDate: newDueDate, lapseCount: newLapseCount, isSuspended: newIsSuspended }
         const patchData = getPatchData(updateData)
 

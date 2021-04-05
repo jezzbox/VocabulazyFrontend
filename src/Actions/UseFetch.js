@@ -10,7 +10,6 @@ const useFetch = (url, updatedData, resource) => {
 
     useEffect(() => {
         if (isAuthenticated) {
-            console.log("are we fetching ?")
             if (updatedData) {
                 const updateData = async () => {
                     setIsPending(true)
@@ -18,7 +17,6 @@ const useFetch = (url, updatedData, resource) => {
                     for (const [key, value] of Object.entries(updatedData)) {
                         patchData.push({ "op": "replace", "path": "/" + key, "value": value })
                     }
-                    console.log(`${resource}s/`)
                     const { dataFromServer, error } = await fetchData(`${resource}s/${updatedData[`${resource}Id`]}`, 'PATCH', patchData)
                     setError(error)
                     setData(dataFromServer)
@@ -34,7 +32,6 @@ const useFetch = (url, updatedData, resource) => {
                     if (url === `users?authIdentifier=`) {
                         const authIdentifier = user.sub
                         //user.sub
-                        console.log("here")
                         const { dataFromServer, error } = await fetchData(url + authIdentifier);
                         if (dataFromServer.status === 404) {
                             const { dataFromServer, error } = await fetchData('users', 'POST', { authIdentifier })

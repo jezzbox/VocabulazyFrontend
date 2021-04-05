@@ -22,7 +22,6 @@ const AddCards = ({currentDeck, setCurrentDeck, setShowAddCards, startingEase, n
         card[`${card.wordType}Id`] = card.flashcardId
         card.isSuspended = false
         setCardsToAdd([...cardsToAdd, card])
-        console.log(cardsToAdd)
         }
     
     const onSubmitSearch = async (e) => {
@@ -53,8 +52,6 @@ const AddCards = ({currentDeck, setCurrentDeck, setShowAddCards, startingEase, n
 
     const onClickSubmit = async () => {
         const clickYes = async () => {
-            console.log(currentCards)
-            console.log("clicked yes")
             const { dataFromServer, error } = await addFlashcards(currentDeck.deckId, cardsToAdd, startingEase)
             if (error) {
                 console.log(error)

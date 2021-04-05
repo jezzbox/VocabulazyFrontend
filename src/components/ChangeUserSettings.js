@@ -25,7 +25,6 @@ const ChangeUserSettings = ({userProfile, setUpdatedUserProfile}) => {
                     displayName, defaultDeckId, newCardsPerDay, graduatingInterval, easyInterval, startingEase, steps, reviewsPerDay, easyBonus, intervalModifier,
                     maximumInterval
                 }
-                console.log(updatedUser)
                 setUpdatedUserProfile(updatedUser)
               }
           

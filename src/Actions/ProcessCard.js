@@ -36,12 +36,7 @@ const processCard = (buttonClicked, flashcard, { intervalModifier = null, learni
     }
 
     const processGraduatedCard = (buttonClicked, flashcard, intervalModifier, easyBonus) => {
-        console.log("processing graduated card: ")
-        console.log("button clicked",buttonClicked)
-        console.log("flashcard",flashcard)
-        console.log("intervalModifier",intervalModifier)
-        console.log("easyBonus",easyBonus)
-
+      
         const easeToAdd = buttonClicked === "Easy" ? 15 : buttonClicked === "Hard" ? -15 : 0
         const newEase = flashcard.ease + easeToAdd
 
