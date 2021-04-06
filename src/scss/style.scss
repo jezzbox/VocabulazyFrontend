@@ -1,0 +1,47 @@
+@import 'config';
+@import 'utilities';
+@import 'buttons';
+
+* {
+    box-sizing: border-box;
+    margin:0;
+    padding:0;
+}
+
+body {
+    background-color:$light-color;
+    font-family: $font-stack;
+    line-height:1.6;
+}
+
+img {
+    width:100%;
+}
+
+.showcase {
+    @include set-background($primary-color);
+    height:600px;
+
+}
+
+.container {
+    max-width:1100px;
+    padding: 0 30px;
+    margin: 0 auto;
+    overflow:auto;
+}
+
+&-content {
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    img {
+        width:50%;
+    }
+
+    h1 {
+
+    }
+}

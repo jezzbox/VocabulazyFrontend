@@ -7,8 +7,8 @@ import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
   <Auth0Provider
-    domain="dev-hduvcad5.eu.auth0.com"
-    clientId="ydn3VofQC2OxQqkk52ILkJADCWvT3PoA"
+    domain='dev-hduvcad5.eu.auth0.com'
+    clientId='ydn3VofQC2OxQqkk52ILkJADCWvT3PoA'
     redirectUri={window.location.origin}
   >
     <App />

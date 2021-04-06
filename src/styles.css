@@ -1,0 +1,59 @@
+/* @import url('https://fonts.googleapis.com/css2?family=Dosis:wght@200;300;400;500;600;700;800&display=swap'); */
+/* @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200;300;400;500;600;700&display=swap'); */
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100;200;300;400;500;600;700;800;900&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.btn {
+  @apply rounded-full;
+  @apply py-2;
+  @apply px-3;
+  @apply uppercase;
+  @apply text-base;
+  @apply font-bold;
+  @apply cursor-pointer;
+  @apply tracking-wider;
+}
+
+.box {
+  @apply fixed;
+  @apply inset-80;
+}
+
+.form-check {
+  @apply flex;
+  @apply items-center;
+  @apply justify-end;
+}
+
+.form-check-label {
+  @apply text-2xl;
+}
+
+.form-check-input{
+  @apply ml-2;
+}
+
+.form-fieldset {
+  @apply p-4;
+  @apply bg-white;
+  @apply rounded-lg;
+  @apply flex;
+  @apply flex-col;
+  @apply items-center;
+  @apply shadow-md;
+}
+
+.card {
+  @apply h-40;
+  @apply m-16;
+  @apply p-4;
+  @apply border-2;
+  @apply border-bookBlue;
+  @apply flex;
+  @apply flex-col;
+  @apply items-center;
+  @apply rounded-lg;
+  @apply shadow-xl;
+}
